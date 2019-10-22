@@ -1,0 +1,46 @@
+{
+  "name": "mustafa-celik",
+  "version": "1.0.0",
+  "description": "A example stack with gulp and angular",
+  "main": "index.js",
+  "authors": [
+    "Raiden Dilan <raiden18@me.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "gsap": "^2.1.3",
+    "PreloadJS": "createjs-preloadjs#^1.0.1",
+    "quojs": "^3.0.7",
+    "lethargy": "^1.0.7"
+  },
+  "overrides": {
+    "gsap": {
+      "main": [
+        "src/uncompressed/TweenMax.js"
+      ]
+    },
+    "PreloadJS": {
+      "main": [
+        "lib/preloadjs.js"
+      ]
+    },
+    "lethargy": {
+      "main": [
+        "lethargy.js"
+      ]
+    },
+    "quo": {
+      "main": [
+        "quo.js"
+      ]
+    }
+  }
+}

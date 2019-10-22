@@ -1,0 +1,116 @@
+/*
+  NOTE Breakpoint Sizes
+  e.g. $iPhoneXI-max-w: 414px;
+*/
+
+/* NOTE BREAKPOINT MIXIN */
+@mixin breakpoint($media) {
+	@if $media == iPhoneSE {
+		@media only screen
+			and (max-device-width: 320px)
+			and (min-device-width: 320px)
+			and (max-device-height: 568px)
+			and (min-device-height: 568px)
+      and (-webkit-min-device-pixel-ratio: 2) { @content; }
+	}
+	@else if $media == iPhone8 {
+		@media only screen
+			and (min-device-width: 375px)
+      and (max-device-width: 375px)
+			and (min-device-height: 667px)
+      and (max-device-height: 667px)
+      and (-webkit-device-pixel-ratio: 2) { @content; }
+	}
+	@else if $media == iPhone8Plus {
+		@media only screen
+			and (min-device-width: 414px)
+      and (max-device-width: 414px)
+			and (min-device-height: 736px)
+      and (max-device-height: 736px)
+      and (-webkit-device-pixel-ratio: 3) { @content; }
+	}
+  @else if $media == iPhoneX {
+    @media only screen
+			and (min-device-width: 375px)
+      and (max-device-width: 375px)
+			and (min-device-height: 812px)
+      and (max-device-height: 812px)
+      and (-webkit-device-pixel-ratio: 3) { @content; }
+	}
+  @else if $media == iPhoneXI {
+    @media only screen
+			and (min-device-width: 414px)
+      and (max-device-width: 414px)
+			and (min-device-height: 896px)
+      and (max-device-height: 896px)
+      and (-webkit-device-pixel-ratio: 2) { @content; }
+	}
+  @else if $media == iPhoneXIPro {
+    @media only screen
+			and (min-device-width: 375px)
+      and (max-device-width: 375px)
+			and (min-device-height: 896px)
+      and (max-device-height: 896px)  { @content; }
+	}
+	@else if $media == iPad {
+		@media only screen
+      and (min-device-width: 768px)
+			and (max-device-width: 768px)
+			and (min-device-height: 1024px)
+			and (max-device-height: 1024px) { @content; }
+	}
+  @else if $media == iPadPro {
+		@media only screen
+			and (min-device-width: 1024px)
+			and (max-device-width: 1024px)
+      and (min-device-height: 1366px)
+      and (max-device-height: 1366px) { @content; }
+			// and (-webkit-device-pixel-ratio: 2) { @content; }
+	}
+	@else if $media == iPadMiniPortrait {
+		@media only screen
+			and (min-device-width: 768px)
+      and (max-device-width: 768px)
+			and (min-device-height: 1024px)
+			and (max-device-height: 1024px)
+			and (orientation: portrait) { @content; }
+	}
+	@else if $media == iPadMiniLandscape {
+		@media only screen
+      and (min-device-width: 1024px)
+      and (max-device-width: 1024px)
+			and (min-device-height: 768px)
+      and (max-device-height: 768px)
+			and (orientation: landscape) { @content; }
+	}
+	@else if $media == desktop {
+		@media only screen
+			// and (max-device-width: 1024px)
+			and (min-device-width: 1024px) { @content; }
+	}
+}
+
+// /* ----------- Non-Retina Screens ----------- */
+// @media screen
+//   and (min-device-width: 1200px)
+//   and (max-device-width: 1600px)
+//   and (-webkit-min-device-pixel-ratio: 1) {
+//     .registerForm {
+//       md-card {
+//         width: 50%;
+//       }
+//     }
+// }
+//
+// /* ----------- Retina Screens ----------- */
+// @media screen
+//   and (min-device-width: 1200px)
+//   and (max-device-width: 1600px)
+//   and (-webkit-min-device-pixel-ratio: 2)
+//   and (min-resolution: 192dpi) {
+//     .registerForm {
+//       md-card {
+//         width: 50%;
+//       }
+//     }
+// }
