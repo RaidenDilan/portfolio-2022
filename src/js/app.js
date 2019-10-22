@@ -91,16 +91,16 @@ var currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 //   }}, 0.05);
 //
 //   TweenMax.to('#inner_nom_projet', 0.2, {x: (document.getElementById('nom_projet').clientWidth + 10) / 2 + 'px', delay:0.2, ease:Power2.easeInOut});
-//   TweenMax.staggerTo('.stag', 0.4, {opacity: 1, delay:0.2, ease: Power2.easeOut}, -0.02);
+//   TweenMax.staggerTo('.stag', 0.4, {opacity: 1, delay:0.2, ease: Power2.easeOut }, -0.02);
 // });
 //
 // document.getElementById('to_next_proj').addEventListener('mouseleave', function(event) {
 //   TweenMax.staggerTo('#to_next_proj span', 0.2, {opacity: 0, ease: Power2.easeIn, onComplete:function(e) {
 //     this.target.classList.remove('blanc');
-//     TweenMax.to(this.target, 0.2, {opacity: 1, ease: Power2.easeOut});
+//     TweenMax.to(this.target, 0.2, {opacity: 1, ease: Power2.easeOut });
 //   }}, 0.05);
 //   TweenMax.to('#inner_nom_projet', 0.2, {x: '0px', delay:0.2, ease:Power2.easeInOut});
-//   TweenMax.staggerTo('.stag', 0.4, {opacity: 0, delay:0.2, ease: Power2.easeOut}, 0.02);
+//   TweenMax.staggerTo('.stag', 0.4, {opacity: 0, delay:0.2, ease: Power2.easeOut }, 0.02);
 // });
 
 /* Add the event listeners for each event. */
@@ -141,13 +141,17 @@ function changeProject() {
       document.getElementById('menu').style.display = 'block';
       TweenMax.to('.feature1', 0.2, { scaleY: 0, delay: 0.2, ease: Power2.easeIn });
 
-      TweenMax.to('#main', 0.2, { opacity: 0, ease: Power2.easeIn, onComplete: function() {
-        if (isMobile()) {
-          window.scrollTo(0, 0);
-          document.getElementById('main').classList.add('bloque');
-          document.querySelector('body').classList.add('temp');
+      TweenMax.to('#main', 0.2, {
+        opacity: 0,
+        ease: Power2.easeIn,
+        onComplete: function() {
+          if (isMobile()) {
+            window.scrollTo(0, 0);
+            document.getElementById('main').classList.add('bloque');
+            document.querySelector('body').classList.add('temp');
+          }
         }
-      }});
+      });
 
       TweenMax.to('#menu', 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
 
@@ -170,14 +174,18 @@ function changeProject() {
       if (the_scroll !== null) the_scroll.on(onscroll);
       if (document.querySelector('body').classList.contains('home')) document.querySelectorAll('.front.point, .front .point').forEach(x => x.classList.remove('black'));
 
-        TweenMax.to('#menu', 0.2, { opacity:0, ease: Power2.easeIn, onComplete: function() {
-          document.getElementById('menu').style.display = 'none';
-          if (isMobile()) {
-            document.getElementById('main').classList.remove('bloque');
-            document.querySelector('body').classList.remove('temp');
-            window.scrollTo(0, scroll_menu_open);
+        TweenMax.to('#menu', 0.2, {
+          opacity:0,
+          ease: Power2.easeIn,
+          onComplete: function() {
+            document.getElementById('menu').style.display = 'none';
+            if (isMobile()) {
+              document.getElementById('main').classList.remove('bloque');
+              document.querySelector('body').classList.remove('temp');
+              window.scrollTo(0, scroll_menu_open);
+            }
           }
-        }});
+        });
 
         TweenMax.to('#main', 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
         TweenMax.to('.feature1', 0.2, { scaleY: 1, delay: 0.2, ease: Power2.easeIn });
@@ -313,15 +321,15 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       current_slide = 0;
-      total_slide = 0;
+      total_slide   = 0;
 
       renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
       document.getElementById('inner_canvas').appendChild(renderer.view);
 
-      renderer.view.width = window.innerWidth;
+      renderer.view.width  = window.innerWidth;
       renderer.view.height = window.innerHeight;
 
-      stage = new PIXI.Container();
+      stage  = new PIXI.Container();
       loader = new PIXI.Loader();
 
       document.querySelectorAll('#images div').forEach(setDimensions);
@@ -337,20 +345,20 @@ document.addEventListener('DOMContentLoaded', function() {
       displacementFilter2 = new PIXI.filters.DisplacementFilter(displacementSprite2);
 
       // settings displacement1
-      // intensité
+      // intensity
       displacementFilter.scale.x = 50;
       displacementFilter.scale.y = 0;
-      // centre pour curseur
+      // center for slider
       displacementSprite.pivot.x = 256;
       displacementSprite.pivot.y = 256;
-      //echelle x/y
+      // ladder x/y
       displacementSprite.scale.x = 0.2;
 
       // settings displacement2
-      // intensité
+      // intensity
       displacementFilter2.scale.x = 0;
       displacementFilter2.scale.y = 0;
-      //echelle x/y
+      // ladder x/y
       displacementSprite2.scale.x = 0.8;
       // displacementSprite2.anchor.x = 1;
 
@@ -385,13 +393,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (the_scroll !== null) the_scroll.destroy();
         the_scroll = null;
         the_scroll = new global_custom2.default({
-            preload: true,
-            native: false,
-            section: document.querySelector('.vs-section'),
-            divs: document.querySelectorAll('.vs-div'),
-            vs : {
-              mouseMultiplier: 0.4
-            }
+          preload: true,
+          native: false,
+          section: document.querySelector('.vs-section'),
+          divs: document.querySelectorAll('.vs-div'),
+          vs : { mouseMultiplier: 0.4 }
         });
         the_scroll.init();
       }
@@ -399,10 +405,15 @@ document.addEventListener('DOMContentLoaded', function() {
       TweenMax.to('#main', 0.4, { backgroundColor: '#EFEFEF', ease: Power2.easeInOut });
       TweenMax.to('#inner_svg', 1, { opacity: 1, ease: Power2.easeIn });
       TweenMax.fromTo('#inner_svg', 2, { rotation: 140 }, { rotation: 0, ease: Power2.easeOut });
-      TweenMax.fromTo('#inner_svg img', 2, { rotation: -140 }, { rotation: 0, ease: Power2.easeOut, onComplete:function() {
-        raf_about();
-      }});
-
+      TweenMax.fromTo('#inner_svg img', 2, {
+        rotation: -140
+      },{
+        rotation: 0,
+        ease: Power2.easeOut,
+        onComplete:function() {
+          raf_about();
+        }
+      });
     }
     else if (document.querySelector('body').classList.contains('single')) {
       if (window.innerWidth < 768) {
@@ -437,24 +448,22 @@ document.addEventListener('DOMContentLoaded', function() {
         TweenMax.set('#nom_projet .stag', { opacity: 1 });
       }
 
-      var hauteur;
+      var height;
       if (window.innerWidth > 767) {
-        hauteur = 0.57 * window.innerWidth + 20;
-        renderer = PIXI.autoDetectRenderer(window.innerWidth, (0.57 * window.innerWidth + 20), { transparent: !0 });
-
-        renderer.view.width = window.innerWidth;
+        height               = 0.57 * window.innerWidth + 20;
+        renderer             = PIXI.autoDetectRenderer(window.innerWidth, (0.57 * window.innerWidth + 20), { transparent: !0 });
+        renderer.view.width  = window.innerWidth;
         renderer.view.height = window.innerHeight;
       }
       else {
-        hauteur = window.innerWidth + 20;
-        renderer = PIXI.autoDetectRenderer(window.innerWidth, (window.innerWidth + 20), { transparent: !0 });
-
-        renderer.view.width = window.innerWidth;
+        height               = window.innerWidth + 20;
+        renderer             = PIXI.autoDetectRenderer(window.innerWidth, (window.innerWidth + 20), { transparent: !0 });
+        renderer.view.width  = window.innerWidth;
         renderer.view.height = window.innerHeight;
       }
       document.getElementById('cover').appendChild(renderer.view);
 
-      stage = new PIXI.Container();
+      stage  = new PIXI.Container();
       loader = new PIXI.Loader();
 
       // document.querySelectorAll('#images div').forEach(setDimensions);
@@ -466,22 +475,22 @@ document.addEventListener('DOMContentLoaded', function() {
       img.src = document.getElementById('cover').getAttribute('data-img');
 
       img.onload = function() {
-        var width = this.width;
-        var height = this.height;
+        var width         = this.width;
+        var height        = this.height;
 
-        var ratio_img = width / height;
-        var ratio_fenetre = window.innerWidth/ hauteur;
+        var ratio_img     = width / height;
+        var ratio_fenetre = window.innerWidth/ height;
 
         // +10 et - 5 valeurs pour éviter les bords blancs
         if (ratio_fenetre >= ratio_img) {
           image.width  = window.innerWidth + 10;
           image.height = height * (window.innerWidth + 10) / width;
           image.x      = -5;
-          image.y      = hauteur / 2 - image.height / 2;
+          image.y      = height / 2 - image.height / 2;
         }
         else {
-          image.height = hauteur;
-          image.width  = (width * hauteur/height) + 10;
+          image.height = height;
+          image.width  = (width * height/height) + 10;
           image.x      = (window.innerWidth / 2 - image.width / 2) - 5;
         }
       };
@@ -551,15 +560,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (document.querySelector('.all_works').classList.contains('actif')) {
       cancelAnimationFrame(raf_pixi_menu);
-      TweenMax.to('#the_menu, #pixi_menu', 0.4, { opacity: 0, ease: Power2.easeInOut, onComplete: function() {
-        stage_menu.removeChildren();
-        exit_ok = true;
-        TweenMax.set('#main', { clearProps: 'backgroundColor' });
-      }});
+
+      TweenMax.to('#the_menu, #pixi_menu', 0.4, {
+        opacity: 0,
+        ease: Power2.easeInOut,
+        onComplete: function() {
+          stage_menu.removeChildren();
+          exit_ok = true;
+          TweenMax.set('#main', { clearProps: 'backgroundColor' });
+        }
+      });
     }
     else if (document.querySelector('body').classList.contains('home')) {
       // vitesse = 4;
-      listenCursor = false;
+      listenCursor  = false;
       bloque_action = true;
 
       // stage.removeChild(displacementSprite);
@@ -569,7 +583,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.querySelectorAll('.random').forEach(x => random.push(x));
 
       random.sort(function() {
-        return 0.5-Math.random();
+        return 0.5 - Math.random();
       });
 
       TweenMax.staggerTo(random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1);
@@ -585,9 +599,14 @@ document.addEventListener('DOMContentLoaded', function() {
       //   onComplete: function() {}
       // });
 
-      TweenMax.to('#main', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete:function() {
-        exit_ok = true;
-      }});
+      TweenMax.to('#main', 1, {
+        opacity: 0,
+        delay: 0.4,
+        ease: Power2.easeInOut,
+        onComplete: function() {
+          exit_ok = true;
+        }
+      });
 
       hovers = document.querySelectorAll('.change_project');
 
@@ -604,30 +623,51 @@ document.addEventListener('DOMContentLoaded', function() {
         var diff;
         if (the_scroll !== null) {
           diff = document.getElementById('main').clientHeight - (the_scroll.vars.current + window.innerHeight);
+
           TweenMax.to('#main', 1.2, { y: - (diff + window.innerHeight), ease: Power2.easeInOut });
-          TweenMax.to('#next_proj > div', 1.2, { y: diff + window.innerHeight - (document.getElementById('demi_haut').clientHeight / 2), ease: Power2.easeInOut, onComplete: function() {
-            TweenMax.to('#next_proj > div', 0.4, { opacity: 0, ease: Power2.easeInOut, onComplete: function() {
-              //TweenMax.set('#main', {clearProps: 'y'});
-              exit_ok = true;
-            }});
+          TweenMax.to('#next_proj > div', 1.2, {
+            y: diff + window.innerHeight - (document.getElementById('demi_haut').clientHeight / 2),
+            ease: Power2.easeInOut,
+            onComplete: function() {
+              TweenMax.to('#next_proj > div', 0.4, {
+                opacity: 0,
+                ease: Power2.easeInOut,
+                onComplete: function() {
+                  // TweenMax.set('#main', {clearProps: 'y'});
+                  exit_ok = true;
+                }
+              });
           }});
         }
         else {
-            diff = document.getElementById('main').clientHeight - (window.pageYOffset + window.innerHeight);
-            TweenMax.to('#next_proj, .inner_img', 1.2, { y: - (diff + window.innerHeight), ease: Power2.easeInOut });
-            TweenMax.to('#next_proj > div', 1.2, { y: diff + window.innerHeight - (document.getElementById('demi_haut').clientHeight / 2), ease: Power2.easeInOut, onComplete: function() {
-              TweenMax.to('#next_proj > div', 0.4, { opacity: 0, ease: Power2.easeInOut, onComplete: function() {
-                //TweenMax.set('#main', {clearProps: 'y'});
-                exit_ok = true;
-                window.scrollTo(0, 0);
-              }});
-            }});
-          }
+          diff = document.getElementById('main').clientHeight - (window.pageYOffset + window.innerHeight);
+
+          TweenMax.to('#next_proj, .inner_img', 1.2, { y: - (diff + window.innerHeight), ease: Power2.easeInOut });
+          TweenMax.to('#next_proj > div', 1.2, {
+            y: diff + window.innerHeight - (document.getElementById('demi_haut').clientHeight / 2),
+            ease: Power2.easeInOut,
+            onComplete: function() {
+              TweenMax.to('#next_proj > div', 0.4, {
+                opacity: 0,
+                ease: Power2.easeInOut,
+                onComplete: function() {
+                  // TweenMax.set('#main', {clearProps: 'y'});
+                  exit_ok = true;
+                  window.scrollTo(0, 0);
+                }
+              });
+            }
+          });
+        }
       }
       else {
-        TweenMax.to('#main', 0.4, {opacity:0, ease: Power2.easeInOut, onComplete:function() {
-          exit_ok = true;
-        }});
+        TweenMax.to('#main', 0.4, {
+          opacity: 0,
+          ease: Power2.easeInOut,
+          onComplete:function() {
+            exit_ok = true;
+          }
+        });
       }
       // exit_ok = true;
     }
@@ -638,22 +678,27 @@ document.addEventListener('DOMContentLoaded', function() {
       //     document.querySelector('.intro2').classList.add('ouvert');
       // document.querySelector('.intro').classList.add('ouvert');
       // }, 400);
-      TweenMax.to('#main', 0.4, { opacity: 0, clearProps: 'backgroundColor', ease:Power2.easeInOut, onComplete: function() {
-        exit_ok = true;
-      }});
+      TweenMax.to('#main', 0.4, {
+        opacity: 0,
+        clearProps: 'backgroundColor',
+        ease:Power2.easeInOut,
+        onComplete: function() {
+          exit_ok = true;
+        }
+      });
     }
     else exit_ok = true;
   },
   // updating the data of the page
   updatePage = function(html) {
-    var parser = new DOMParser();
-    var doc = parser.parseFromString(html, 'text/html');
+    var parser      = new DOMParser();
+    var doc         = parser.parseFromString(html, 'text/html');
     var liste_class = doc.querySelectorAll('body')[0].getAttribute('class');
 
-    // maj titre de la page
+    // main title of the page
     document.title = doc.querySelector('title').innerHTML;
 
-    // maj class du body
+    // main class of body
     // document.querySelectorAll('body')[0].setAttribute('class', doc.querySelectorAll('body')[0].getAttribute('class'));
     var res = liste_class.replace('is-loading', '');
     document.querySelectorAll('body')[0].setAttribute('class', res);
@@ -661,10 +706,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (!isMobile()) document.querySelectorAll('body')[0].classList.add('desktop');
     else document.querySelectorAll('body')[0].classList.add('mobile');
 
-    // maj contenu #main
+    // main content #main
     document.getElementById('main').innerHTML = doc.getElementById('main').innerHTML;
 
-    // on lance la nouvelle page
+    // on launches the new page
     init();
   };
 
@@ -709,7 +754,7 @@ document.addEventListener('DOMContentLoaded', function() {
   renderer_menu = PIXI.autoDetectRenderer(0.24 * window.innerWidth, window.innerHeight - 0.074 * window.innerWidth, { transparent: !0 });
   document.getElementById('pixi_menu').appendChild(renderer_menu.view);
 
-  renderer_menu.view.width = window.innerWidth;
+  renderer_menu.view.width  = window.innerWidth;
   renderer_menu.view.height = window.innerHeight;
 
   stage_menu = new PIXI.Container();
@@ -727,7 +772,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // intensity
   displacementFilter3.scale.x = 0;
   displacementFilter3.scale.y = 0;
-  //ladder x/y
+  // ladder x/y
   displacementSprite3.scale.x = 0.4;
 });
 // end doc ready vanilla
@@ -749,12 +794,12 @@ function next_slide() {
   tl.to(attributs2, 0.9, {
     intensity: 150,
     x: 20,
-    //largeur: 0.8,
+    // width: 0.8,
     ease: Power2.easeIn,
     onUpdate: function() {
       displacementFilter2.scale.x = attributs2.intensity;
       vitesse = attributs2.x;
-      // displacementSprite2.scale.x = attributs2.largeur;
+      // displacementSprite2.scale.x = attributs2.width;
     },
     onComplete:function() {
       tl.reverse();
@@ -780,7 +825,7 @@ function next_slide() {
 
   TweenMax.to(attributs3, 0.6, {
     opacity: 1,
-    delay:0.6,
+    delay: 0.6,
     ease: Linear.easeNone,
     onUpdate: function() {
       window['image'+current_slide].alpha = attributs3.opacity;
@@ -796,12 +841,10 @@ function prev_slide() {
   if (current_slide === 0) {
     window['image'+(total_slide-2)].alpha = 0;
     stage.addChild(window['image'+(total_slide-2)]);
-  }
-  else if (current_slide === 1) {
+  } else if (current_slide === 1) {
     window['image'+(total_slide-1)].alpha = 0;
     stage.addChild(window['image'+(total_slide-1)]);
-  }
-  else {
+  } else {
     window['image'+(current_slide-2)].alpha = 0;
     stage.addChild(window['image'+(current_slide-2)]);
   }
@@ -814,13 +857,13 @@ function prev_slide() {
   tl.to(attributs2, 0.9, {
     intensity: 150,
     x: -20,
-    //largeur: 0.8,
-    //anchor: 1,
+    // width: 0.8,
+    // anchor: 1,
     ease: Power2.easeIn,
     onUpdate: function() {
       displacementFilter2.scale.x = attributs2.intensity;
       vitesse = attributs2.x;
-      // displacementSprite2.scale.x = attributs2.largeur;
+      // displacementSprite2.scale.x = attributs2.width;
       // displacementSprite2.anchor.x = attributs2.anchor;
     },
     onComplete:function() {
@@ -832,7 +875,7 @@ function prev_slide() {
       //     x: 0,
       //     ease: Power1.easeOut,
       //     onUpdate: function() {
-      //         console.log(attributs2.largeur);
+      //         console.log(attributs2.width);
       //         displacementFilter2.scale.x = attributs2.intensity;
       //         vitesse = attributs2.x;
       //     }
@@ -858,7 +901,7 @@ function prev_slide() {
 
   TweenMax.to(attributs3, 0.6, {
     opacity: 1,
-    delay:0.6,
+    delay: 0.6,
     ease: Linear.easeNone,
     onUpdate: function() {
       if (current_slide === 0) window['image'+(total_slide-2)].alpha = attributs3.opacity;
@@ -876,6 +919,7 @@ function transition_commune() {
   stage.addChild(displacementSprite2);
 
   attributs.intensity = displacementFilter.scale.x;
+
   TweenMax.to(attributs, 0.3, {
     intensity: 0,
     ease: Power2.easeOut,
@@ -887,7 +931,7 @@ function transition_commune() {
   displacementSprite2.x = 0;
   attributs2.intensity  = displacementFilter2.scale.x;
   attributs2.x          = vitesse;
-  attributs2.largeur    = displacementSprite2.scale.x;
+  attributs2.width    = displacementSprite2.scale.x;
   attributs3.opacity    = 0;
 }
 
@@ -903,8 +947,8 @@ function setDimensions(item, index) {
   img.src = item.getAttribute('data-url');
 
   img.onload = function() {
-    var width  = this.width;
-    var height = this.height;
+    var width         = this.width;
+    var height        = this.height;
 
     var ratio_img     = width / height;
     var ratio_fenetre = window.innerWidth / window.innerHeight;
@@ -915,8 +959,7 @@ function setDimensions(item, index) {
       window['image'+index].height = height * (window.innerWidth + 10) / width;
       window['image'+index].x = -5;
       window['image'+index].y = window.innerHeight / 2 - window['image'+index].height / 2;
-    }
-    else {
+    } else {
       window['image'+index].height = window.innerHeight;
       window['image'+index].width = (width * window.innerHeight / height) + 10;
       window['image'+index].x = (window.innerWidth / 2 - window['image'+index].width / 2) - 5;
@@ -936,8 +979,8 @@ function setDimensions_menu(item, index) {
   img.src = item.getAttribute('data-img');
 
   img.onload = function() {
-    var width  = this.width;
-    var height = this.height;
+    var width         = this.width;
+    var height        = this.height;
 
     var ratio_img     = width / height;
     var ratio_fenetre = cadre_width / cadre_height;
@@ -948,8 +991,7 @@ function setDimensions_menu(item, index) {
       window['image_menu'+index].height = height * (cadre_width + 10) / width;
       window['image_menu'+index].x      = -5;
       window['image_menu'+index].y      = cadre_height / 2 - window['image_menu'+index].height / 2;
-    }
-    else {
+    } else {
       window['image_menu'+index].height = cadre_height;
       window['image_menu'+index].width  = (width * cadre_height / height) + 10;
       window['image_menu'+index].x      = (cadre_width / 2 - window['image_menu'+index].width / 2) - 5;
@@ -981,7 +1023,6 @@ function update_title(sens) {
 }
 
 function allDone() {
-
   document.querySelectorAll('.random.first').forEach(x => x.classList.remove('first'));
   document.querySelector('#num_lettre .current').classList.add('after');
 
@@ -990,6 +1031,7 @@ function allDone() {
       document.querySelector('#num_lettre .current').nextElementSibling.classList.add('before');
       var next = document.querySelector('#num_lettre .current').nextElementSibling;
       TweenMax.to('.current .lettre', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
+
       TweenMax.to(document.querySelector('#num_lettre .current').nextElementSibling.querySelector('div'), 0.4, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
         document.querySelector('#num_lettre .current').classList.remove('current','after');
         next.classList.add('current');
@@ -999,6 +1041,7 @@ function allDone() {
     else {
       var first = document.querySelector('#num_lettre div');
       first.classList.add('before');
+
       TweenMax.to('.current .lettre', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
       TweenMax.to(first.querySelector('div'), 0.4, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
         if (document.querySelectorAll('.change_project')[total_slide-1].classList.contains('first')) document.querySelectorAll('.change_project')[total_slide-1].classList.remove('first');
@@ -1008,9 +1051,9 @@ function allDone() {
       }});
     }
     document.getElementById('num_projet').innerHTML = current_slide + 1;
-    document.getElementById('titre_h2').innerHTML = document.querySelectorAll('#images div')[current_slide].getAttribute('data-titre');
-    document.getElementById('type').innerHTML = document.querySelectorAll('#images div')[current_slide].getAttribute('data-cat');
-    document.getElementById('year').innerHTML = document.querySelectorAll('#images div')[current_slide].getAttribute('data-year');
+    document.getElementById('titre_h2').innerHTML   = document.querySelectorAll('#images div')[current_slide].getAttribute('data-titre');
+    document.getElementById('type').innerHTML       = document.querySelectorAll('#images div')[current_slide].getAttribute('data-cat');
+    document.getElementById('year').innerHTML       = document.querySelectorAll('#images div')[current_slide].getAttribute('data-year');
 
     document.querySelectorAll('.update_link').forEach(x => x.setAttribute('href',document.querySelectorAll('#images div')[current_slide].getAttribute('data-perma')));
   }
@@ -1018,6 +1061,7 @@ function allDone() {
     if (document.querySelector('#num_lettre .current').previousElementSibling !== null) {
       document.querySelector('#num_lettre .current').previousElementSibling.classList.add('before');
       var prev = document.querySelector('#num_lettre .current').previousElementSibling;
+
       TweenMax.to('.current .lettre', 0.4, { x:'-100%', clearProps: 'x', ease: Power4.easeInOut});
       TweenMax.fromTo(document.querySelector('#num_lettre .current').previousElementSibling.querySelector('div'), 0.4, { x: '100%'}, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
         document.querySelector('#num_lettre .current').classList.remove('current','after');
@@ -1028,6 +1072,7 @@ function allDone() {
     else {
       var last = document.querySelectorAll('#num_lettre > div')[total_slide-1];
       last.classList.add('before');
+
       TweenMax.to('.current .lettre', 0.4, { x: '-100%', clearProps: 'x', ease: Power4.easeInOut });
       TweenMax.fromTo(last.querySelector('div'), 0.4, { x:'100%' }, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
         document.querySelector('#num_lettre .current').classList.remove('current','after');
@@ -1099,7 +1144,7 @@ function pixi_home() {
     mousePos.x = displacementSprite.x;
     //mousePos.y = displacementSprite.y;
     mousePos.intensity = displacementFilter.scale.x;
-    mousePos.largeur = displacementSprite.scale.x;
+    mousePos.width = displacementSprite.scale.x;
 
     if (current_slide !== num_image_temp) {
       num_image_temp = current_slide;
@@ -1115,13 +1160,13 @@ function pixi_home() {
       x: currentMousePos.x,
       //y: currentMousePos.y,
       intensity: (currentMousePos.x - former_delta) * 10,
-      largeur: Math.abs(((currentMousePos.x - former_delta) / 80) - 0.2),
+      width: Math.abs(((currentMousePos.x - former_delta) / 80) - 0.2),
       correction: (currentMousePos.x - former_delta) / 40,
       onUpdate: function() {
         displacementSprite.x = mousePos.x;
         // displacementSprite.y = mousePos.y;
         displacementFilter.scale.x = mousePos.intensity;
-        displacementSprite.scale.x = mousePos.largeur;
+        displacementSprite.scale.x = mousePos.width;
         window['image' + num_image].x = delayx + mousePos.correction;
       },
       ease: Linear.easeNone
@@ -1139,6 +1184,7 @@ function pixi_home() {
         },
         ease: Linear.easeNone
       });
+
       // document.getElementById('titre_h2').innerHTML = gamma;
       displacementSprite2.x += 10;
     }
@@ -1172,20 +1218,20 @@ function pixi_menu() {
   // déplacement menu
   if (!isMobile()) {
     expression = -1 * (height_menu - window.innerHeight) / window.innerHeight * currentMousePos.y;
+
     TweenMax.to('#the_menu', 1.4, {
       y: expression + 'px',
       scaleY: intensity,
       ease: Power2.easeOut
     });
   }
-  else {
-    TweenMax.to('#the_menu', 1.4, { scaleY: intensity, ease:Power2.easeOut });
-  }
+  else TweenMax.to('#the_menu', 1.4, { scaleY: intensity, ease:Power2.easeOut });
 
   if (window.innerWidth > 767) {
     if (percent_cursor > height_margin && percent_cursor < (100 - height_margin)) document.querySelectorAll('#the_menu li').forEach(checkerMenu);
 
     displace.intensity = displacementFilter3.scale.x;
+
     TweenMax.to(displace, 0.3, {
       intensity: (the_delta_menu - delta_menu) * 4,
       onUpdate: function() {
@@ -1205,9 +1251,9 @@ function pixi_single() {
 
   raf_pixi_single = requestAnimationFrame(pixi_single);
 
-  //ladder_scale = parseFloat(Math.round((document.getElementById('les_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('les_imgs').clientHeight * 100) / 100).toFixed(2);
-  //ladder_scale = (document.getElementById('les_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('les_imgs').clientHeight;
-  //ladder_scale = parseFloat(Math.round(ladder_scale * 100) / 100).toFixed(2);
+  //l adder_scale = parseFloat(Math.round((document.getElementById('les_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('les_imgs').clientHeight * 100) / 100).toFixed(2);
+  // ladder_scale = (document.getElementById('les_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('les_imgs').clientHeight;
+  // ladder_scale = parseFloat(Math.round(ladder_scale * 100) / 100).toFixed(2);
   // console.log(ladder_scale);
   // console.log('pixi single tourne');
 
@@ -1219,18 +1265,15 @@ function pixi_single() {
     if (the_scroll.vars.target !== 0 && passe_une_fois === false) {
       passe_une_fois = true;
       singleAnimation();
-    }
-    else if (the_scroll.vars.target === 0 && passe_une_fois === true) {
+    } else if (the_scroll.vars.target === 0 && passe_une_fois === true) {
       passe_une_fois = false;
       singleAnimation2();
     }
-  }
-  else {
+  } else {
     if (window.pageYOffset !== 0 && passe_une_fois === false) {
       passe_une_fois = true;
       singleAnimation();
-    }
-    else if (window.pageYOffset === 0 && passe_une_fois === true) {
+    } else if (window.pageYOffset === 0 && passe_une_fois === true) {
       passe_une_fois = false;
       singleAnimation2();
     }
@@ -1248,6 +1291,7 @@ function raf_about() {
   if (the_scroll !== null) {
     TweenMax.to('#inner_svg', 1, { rotation: -the_scroll.vars.current / 4, ease: Linear.easeNone });
     TweenMax.to('#inner_svg img', 1, { rotation: the_scroll.vars.current / 4, ease: Linear.easeNone });
+
     if (Math.abs((the_scroll.vars.current - delta_scroll) / 200 + 1) < 2.2) intensity = Math.abs((the_scroll.vars.current - delta_scroll) / 200 + 1);
     else intensity = 2.2;
   }
@@ -1314,9 +1358,14 @@ function change_project(element) {
     stage.addChild(window['image'+lindex]);
 
     var tl = new TimelineMax();
-    tl.to(attributs2, 0.9, { intensity: 150, x: 20, ease: Power2.easeIn, onUpdate: function() {
-      displacementFilter2.scale.x = attributs2.intensity;
-      vitesse = attributs2.x;
+
+    tl.to(attributs2, 0.9, {
+      intensity: 150,
+      x: 20,
+      ease: Power2.easeIn,
+      onUpdate: function() {
+        displacementFilter2.scale.x = attributs2.intensity;
+        vitesse = attributs2.x;
       },
       onComplete:function() {
         tl.reverse();
@@ -1335,9 +1384,14 @@ function change_project(element) {
       }
     });
 
-    TweenMax.to(attributs3, 0.6, { opacity: 1, delay: 0.6, ease: Linear.easeNone, onUpdate: function() {
-      window['image'+lindex].alpha = attributs3.opacity;
-    }});
+    TweenMax.to(attributs3, 0.6, {
+      opacity: 1,
+      delay: 0.6,
+      ease: Linear.easeNone,
+      onUpdate: function() {
+        window['image'+lindex].alpha = attributs3.opacity;
+      }
+    });
 
     TweenMax.to('#cercle_blanc', 0.9, { 'stroke-dashoffset' : 190 * (1 - 1 / total_slide - (lindex * 1 / total_slide)), ease: Power4.easeInOut });
 
@@ -1347,19 +1401,25 @@ function change_project(element) {
     random.sort(function() {
       return 0.5 - Math.random();
     });
+
     TweenMax.staggerTo(random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1, allDone2);
   }
 }
 
 function allDone2() {
   document.querySelector('#num_lettre .current').classList.add('after');
-  TweenMax.to('.current .lettre', 0.4, {x:'100%', clearProps:'x', ease:Power4.easeInOut});
+  TweenMax.to('.current .lettre', 0.4, { x:'100%', clearProps:'x', ease:Power4.easeInOut});
   document.querySelectorAll('#num_lettre > div')[lindex].classList.add('before');
-  TweenMax.to(document.querySelectorAll('#num_lettre > div')[lindex].querySelector('div'), 0.4, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
-    document.querySelector('#num_lettre .current').classList.remove('current','after');
-    document.querySelectorAll('#num_lettre > div')[lindex].classList.add('current');
-    document.querySelectorAll('#num_lettre > div')[lindex].classList.remove('before');
-  }});
+  TweenMax.to(document.querySelectorAll('#num_lettre > div')[lindex].querySelector('div'), 0.4, {
+    x: '0%',
+    clearProps: 'x',
+    ease: Power4.easeInOut,
+    onComplete: function() {
+      document.querySelector('#num_lettre .current').classList.remove('current','after');
+      document.querySelectorAll('#num_lettre > div')[lindex].classList.add('current');
+      document.querySelectorAll('#num_lettre > div')[lindex].classList.remove('before');
+    }
+  });
 
   // if (document.querySelector('#num_lettre .current').nextElementSibling !== null) {
   //     document.querySelector('#num_lettre .current').nextElementSibling.classList.add('before');
@@ -1382,38 +1442,51 @@ function allDone2() {
   //     }});
   // }
 
-  document.getElementById('num_projet').innerHTML = lindex+1;
-  document.getElementById('titre_h2').innerHTML = document.querySelectorAll('#images div')[lindex].getAttribute('data-titre');
-  document.getElementById('type').innerHTML = document.querySelectorAll('#images div')[lindex].getAttribute('data-cat');
-  document.getElementById('year').innerHTML = document.querySelectorAll('#images div')[lindex].getAttribute('data-year');
+  document.getElementById('num_projet').innerHTML = lindex + 1;
+  document.getElementById('titre_h2').innerHTML   = document.querySelectorAll('#images div')[lindex].getAttribute('data-titre');
+  document.getElementById('type').innerHTML       = document.querySelectorAll('#images div')[lindex].getAttribute('data-cat');
+  document.getElementById('year').innerHTML       = document.querySelectorAll('#images div')[lindex].getAttribute('data-year');
 
-  document.querySelectorAll('.update_link').forEach(x=> x.setAttribute('href',document.querySelectorAll('#images div')[lindex].getAttribute('data-perma')));
-
+  document.querySelectorAll('.update_link').forEach(x => x.setAttribute('href',document.querySelectorAll('#images div')[lindex].getAttribute('data-perma')));
   document.querySelectorAll('#titre_h2 span').forEach(addRandom);
-
   random = [];
-  document.querySelectorAll('.random').forEach(x=> random.push(x));
+  document.querySelectorAll('.random').forEach(x => random.push(x));
 
-  random.sort(function() { return 0.5-Math.random(); });
-  TweenMax.staggerFromTo(random, 1, {x: '-24px', opacity:0}, {x: '0px', opacity:1, ease:Power2.easeOut}, 0.1);
+  random.sort(function() {
+    return 0.5 - Math.random();
+  });
+
+  TweenMax.staggerFromTo(random, 1, { x: '-24px', opacity:0}, {x: '0px', opacity:1, ease:Power2.easeOut }, 0.1);
 }
 
 function singleAnimation() {
-  vitesse = 4;
-  var attributs2bis = { intensity : 0, x : 4};
-  TweenMax.to(attributs2bis, 0.9, { intensity: 150, x: 6, ease: Power2.easeIn, onUpdate: function() {
-    displacementFilter2.scale.x = attributs2bis.intensity;
-    vitesse = attributs2bis.x;
-  }});
+  vitesse           = 4;
+  var attributs2bis = { intensity : 0, x : 4 };
+
+  TweenMax.to(attributs2bis, 0.9, {
+    intensity: 150,
+    x: 6,
+    ease: Power2.easeIn,
+    onUpdate: function() {
+      displacementFilter2.scale.x = attributs2bis.intensity;
+      vitesse = attributs2bis.x;
+    }
+  });
 }
 
 function singleAnimation2() {
-  vitesse = 6;
-  var attributs2bis = { intensity : 150, x : 6};
-  TweenMax.to(attributs2bis, 0.9, { intensity: 0, x: 4, ease: Power2.easeOut, onUpdate: function() {
-    displacementFilter2.scale.x = attributs2bis.intensity;
-    vitesse = attributs2bis.x;
-  }});
+  vitesse           = 6;
+  var attributs2bis = { intensity : 150, x : 6 };
+
+  TweenMax.to(attributs2bis, 0.9, {
+    intensity: 0,
+    x: 4,
+    ease: Power2.easeOut,
+    onUpdate: function() {
+      displacementFilter2.scale.x = attributs2bis.intensity;
+      vitesse = attributs2bis.x;
+    }
+  });
 }
 
 function onHover(event) {
@@ -1438,7 +1511,6 @@ function onHoverNext (event) {
     });
 
     TweenMax.staggerTo(random, 0.4, { opacity: 0, ease: Power2.easeIn }, 0.05, allDoneNext);
-
     TweenMax.to('#inner_nom_projet', 0.4, { x: (document.getElementById('nom_projet').clientWidth + 10) / 2 + 'px', delay: 0.4, ease: Power2.easeOut });
     TweenMax.staggerTo('.stag', 0.4, { opacity: 1, delay: 0.4, ease: Power2.easeOut }, -0.02);
   }
@@ -1497,8 +1569,8 @@ function handleTouchStart(evt) {
 function handleTouchMove(evt) {
   if (!xDown || !yDown) return;
 
-  var xUp = evt.touches[0].clientX;
-  var yUp = evt.touches[0].clientY;
+  var xUp   = evt.touches[0].clientX;
+  var yUp   = evt.touches[0].clientY;
 
   var xDiff = xDown - xUp;
   var yDiff = yDown - yUp;
