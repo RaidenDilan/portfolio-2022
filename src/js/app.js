@@ -90,7 +90,7 @@ var currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 //     document.getElementById('to_next_proj').innerHTML = document.getElementById('to_next_proj').getAttribute('data-next');
 //   }}, 0.05);
 //
-//   TweenMax.to('#inner_nom_projet', 0.2, {x: (document.getElementById('nom_projet').clientWidth + 10) / 2 + 'px', delay:0.2, ease:Power2.easeInOut});
+//   TweenMax.to('#inner_project name', 0.2, {x: (document.getElementById('project name').clientWidth + 10) / 2 + 'px', delay:0.2, ease:Power2.easeInOut});
 //   TweenMax.staggerTo('.stag', 0.4, {opacity: 1, delay:0.2, ease: Power2.easeOut }, -0.02);
 // });
 //
@@ -99,7 +99,7 @@ var currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 //     this.target.classList.remove('blanc');
 //     TweenMax.to(this.target, 0.2, {opacity: 1, ease: Power2.easeOut });
 //   }}, 0.05);
-//   TweenMax.to('#inner_nom_projet', 0.2, {x: '0px', delay:0.2, ease:Power2.easeInOut});
+//   TweenMax.to('#inner_project name', 0.2, {x: '0px', delay:0.2, ease:Power2.easeInOut});
 //   TweenMax.staggerTo('.stag', 0.4, {opacity: 0, delay:0.2, ease: Power2.easeOut }, 0.02);
 // });
 
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function onClick(event) {
-      if (!event.target.classList.contains('externe')) {
+      if (!event.target.classList.contains('external')) {
         event.preventDefault();
         if (link_in_progress === false) {
           link_in_progress = true;
@@ -328,6 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       renderer.view.width  = window.innerWidth;
       renderer.view.height = window.innerHeight;
+      // renderer.backgroundColor = 0xFF00FF;
 
       stage  = new PIXI.Container();
       loader = new PIXI.Loader();
@@ -439,13 +440,11 @@ document.addEventListener('DOMContentLoaded', function() {
           vs : { mouseMultiplier: 0.4 }
         });
         the_scroll.init();
-
-        console.log('the_scroll', the_scroll);
       }
       else {
         document.getElementById('to_next_proj').innerHTML = document.getElementById('to_next_proj').getAttribute('data-next');
-        TweenMax.set('#inner_nom_projet', { x: (document.getElementById('nom_projet').clientWidth + 10) / 2 + 'px' });
-        TweenMax.set('#nom_projet .stag', { opacity: 1 });
+        TweenMax.set('#inner_project name', { x: (document.getElementById('project name').clientWidth + 10) / 2 + 'px' });
+        TweenMax.set('#project name .stag', { opacity: 1 });
       }
 
       var height;
@@ -454,12 +453,14 @@ document.addEventListener('DOMContentLoaded', function() {
         renderer             = PIXI.autoDetectRenderer(window.innerWidth, (0.57 * window.innerWidth + 20), { transparent: !0 });
         renderer.view.width  = window.innerWidth;
         renderer.view.height = window.innerHeight;
+        // renderer.backgroundColor = 0xFF00FF;
       }
       else {
         height               = window.innerWidth + 20;
         renderer             = PIXI.autoDetectRenderer(window.innerWidth, (window.innerWidth + 20), { transparent: !0 });
         renderer.view.width  = window.innerWidth;
         renderer.view.height = window.innerHeight;
+        // renderer.backgroundColor = 0xFF00FF;
       }
       document.getElementById('cover').appendChild(renderer.view);
 
@@ -525,7 +526,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         document.getElementById('progress').style.display = 'none';
 
-        ladder_scale = (document.getElementById('les_imgs').clientHeight + (0.28 * window.innerHeight)) / document.getElementById('les_imgs').clientHeight;
+        ladder_scale = (document.getElementById('the_imgs').clientHeight + (0.28 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight;
         ladder_scale = parseFloat(Math.round(ladder_scale * 100) / 100).toFixed(2);
       });
     }
@@ -1024,82 +1025,82 @@ function update_title(sens) {
 
 function allDone() {
   document.querySelectorAll('.random.first').forEach(x => x.classList.remove('first'));
-  document.querySelector('#num_lettre .current').classList.add('after');
+  document.querySelector('#num_letter .current').classList.add('after');
 
   if (multiplieur === 1) {
-    if (document.querySelector('#num_lettre .current').nextElementSibling !== null) {
-      document.querySelector('#num_lettre .current').nextElementSibling.classList.add('before');
-      var next = document.querySelector('#num_lettre .current').nextElementSibling;
-      TweenMax.to('.current .lettre', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
+    if (document.querySelector('#num_letter .current').nextElementSibling !== null) {
+      document.querySelector('#num_letter .current').nextElementSibling.classList.add('before');
+      var next = document.querySelector('#num_letter .current').nextElementSibling;
+      TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
 
-      TweenMax.to(document.querySelector('#num_lettre .current').nextElementSibling.querySelector('div'), 0.4, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
-        document.querySelector('#num_lettre .current').classList.remove('current','after');
+      TweenMax.to(document.querySelector('#num_letter .current').nextElementSibling.querySelector('div'), 0.4, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
+        document.querySelector('#num_letter .current').classList.remove('current','after');
         next.classList.add('current');
         next.classList.remove('before');
       }});
     }
     else {
-      var first = document.querySelector('#num_lettre div');
+      var first = document.querySelector('#num_letter div');
       first.classList.add('before');
 
-      TweenMax.to('.current .lettre', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
+      TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
       TweenMax.to(first.querySelector('div'), 0.4, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
         if (document.querySelectorAll('.change_project')[total_slide-1].classList.contains('first')) document.querySelectorAll('.change_project')[total_slide-1].classList.remove('first');
-        document.querySelector('#num_lettre .current').classList.remove('current','after');
+        document.querySelector('#num_letter .current').classList.remove('current','after');
         first.classList.add('current');
         first.classList.remove('before');
       }});
     }
-    document.getElementById('num_projet').innerHTML = current_slide + 1;
-    document.getElementById('titre_h2').innerHTML   = document.querySelectorAll('#images div')[current_slide].getAttribute('data-titre');
+    document.getElementById('num_project').innerHTML = current_slide + 1;
+    document.getElementById('title_h2').innerHTML   = document.querySelectorAll('#images div')[current_slide].getAttribute('data-title');
     document.getElementById('type').innerHTML       = document.querySelectorAll('#images div')[current_slide].getAttribute('data-cat');
     document.getElementById('year').innerHTML       = document.querySelectorAll('#images div')[current_slide].getAttribute('data-year');
 
     document.querySelectorAll('.update_link').forEach(x => x.setAttribute('href',document.querySelectorAll('#images div')[current_slide].getAttribute('data-perma')));
   }
   else {
-    if (document.querySelector('#num_lettre .current').previousElementSibling !== null) {
-      document.querySelector('#num_lettre .current').previousElementSibling.classList.add('before');
-      var prev = document.querySelector('#num_lettre .current').previousElementSibling;
+    if (document.querySelector('#num_letter .current').previousElementSibling !== null) {
+      document.querySelector('#num_letter .current').previousElementSibling.classList.add('before');
+      var prev = document.querySelector('#num_letter .current').previousElementSibling;
 
-      TweenMax.to('.current .lettre', 0.4, { x:'-100%', clearProps: 'x', ease: Power4.easeInOut});
-      TweenMax.fromTo(document.querySelector('#num_lettre .current').previousElementSibling.querySelector('div'), 0.4, { x: '100%'}, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
-        document.querySelector('#num_lettre .current').classList.remove('current','after');
+      TweenMax.to('.current .letter', 0.4, { x:'-100%', clearProps: 'x', ease: Power4.easeInOut});
+      TweenMax.fromTo(document.querySelector('#num_letter .current').previousElementSibling.querySelector('div'), 0.4, { x: '100%'}, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
+        document.querySelector('#num_letter .current').classList.remove('current','after');
         prev.classList.add('current');
         prev.classList.remove('before');
       }});
     }
     else {
-      var last = document.querySelectorAll('#num_lettre > div')[total_slide-1];
+      var last = document.querySelectorAll('#num_letter > div')[total_slide-1];
       last.classList.add('before');
 
-      TweenMax.to('.current .lettre', 0.4, { x: '-100%', clearProps: 'x', ease: Power4.easeInOut });
+      TweenMax.to('.current .letter', 0.4, { x: '-100%', clearProps: 'x', ease: Power4.easeInOut });
       TweenMax.fromTo(last.querySelector('div'), 0.4, { x:'100%' }, { x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: function() {
-        document.querySelector('#num_lettre .current').classList.remove('current','after');
+        document.querySelector('#num_letter .current').classList.remove('current','after');
         last.classList.add('current');
         last.classList.remove('before');
       }});
     }
 
     if (current_slide === 1) {
-      document.getElementById('num_projet').innerHTML = total_slide;
-      document.getElementById('titre_h2').innerHTML   = document.querySelectorAll('#images div')[total_slide-1].getAttribute('data-titre');
+      document.getElementById('num_project').innerHTML = total_slide;
+      document.getElementById('title_h2').innerHTML   = document.querySelectorAll('#images div')[total_slide-1].getAttribute('data-title');
       document.getElementById('type').innerHTML       = document.querySelectorAll('#images div')[total_slide-1].getAttribute('data-cat');
       document.getElementById('year').innerHTML       = document.querySelectorAll('#images div')[total_slide-1].getAttribute('data-year');
 
       document.querySelectorAll('.update_link').forEach(x => x.setAttribute('href', document.querySelectorAll('#images div')[total_slide-1].getAttribute('data-perma')));
     }
     else if (current_slide === 0) {
-      document.getElementById('num_projet').innerHTML = total_slide-1;
-      document.getElementById('titre_h2').innerHTML   = document.querySelectorAll('#images div')[total_slide-2].getAttribute('data-titre');
+      document.getElementById('num_project').innerHTML = total_slide-1;
+      document.getElementById('title_h2').innerHTML   = document.querySelectorAll('#images div')[total_slide-2].getAttribute('data-title');
       document.getElementById('type').innerHTML       = document.querySelectorAll('#images div')[total_slide-2].getAttribute('data-cat');
       document.getElementById('year').innerHTML       = document.querySelectorAll('#images div')[total_slide-2].getAttribute('data-year');
 
       document.querySelectorAll('.update_link').forEach(x=> x.setAttribute('href', document.querySelectorAll('#images div')[total_slide-2].getAttribute('data-perma')));
     }
     else {
-      document.getElementById('num_projet').innerHTML = current_slide-1;
-      document.getElementById('titre_h2').innerHTML   = document.querySelectorAll('#images div')[current_slide-2].getAttribute('data-titre');
+      document.getElementById('num_project').innerHTML = current_slide-1;
+      document.getElementById('title_h2').innerHTML   = document.querySelectorAll('#images div')[current_slide-2].getAttribute('data-title');
       document.getElementById('type').innerHTML       = document.querySelectorAll('#images div')[current_slide-2].getAttribute('data-cat');
       document.getElementById('year').innerHTML       = document.querySelectorAll('#images div')[current_slide-2].getAttribute('data-year');
 
@@ -1107,7 +1108,7 @@ function allDone() {
     }
   }
 
-  document.querySelectorAll('#titre_h2 span').forEach(addRandom);
+  document.querySelectorAll('#title_h2 span').forEach(addRandom);
   random = [];
   document.querySelectorAll('.random').forEach(x => random.push(x));
 
@@ -1185,7 +1186,7 @@ function pixi_home() {
         ease: Linear.easeNone
       });
 
-      // document.getElementById('titre_h2').innerHTML = gamma;
+      // document.getElementById('title_h2').innerHTML = gamma;
       displacementSprite2.x += 10;
     }
   }
@@ -1251,8 +1252,8 @@ function pixi_single() {
 
   raf_pixi_single = requestAnimationFrame(pixi_single);
 
-  //l adder_scale = parseFloat(Math.round((document.getElementById('les_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('les_imgs').clientHeight * 100) / 100).toFixed(2);
-  // ladder_scale = (document.getElementById('les_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('les_imgs').clientHeight;
+  //l adder_scale = parseFloat(Math.round((document.getElementById('the_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight * 100) / 100).toFixed(2);
+  // ladder_scale = (document.getElementById('the_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight;
   // ladder_scale = parseFloat(Math.round(ladder_scale * 100) / 100).toFixed(2);
   // console.log(ladder_scale);
   // console.log('pixi single tourne');
@@ -1279,7 +1280,7 @@ function pixi_single() {
     }
   }
 
-  // TweenMax.to('#les_imgs', 1.4, { scaleY: intensity, ease: Power2.easeOut });
+  // TweenMax.to('#the_imgs', 1.4, { scaleY: intensity, ease: Power2.easeOut });
 
   // if (the_scroll !== null) delta_scroll = the_scroll.vars.current;
   // else {}
@@ -1348,8 +1349,8 @@ function checkerMenu(item, index) {
 function change_project(element) {
   if (element.classList.contains('current')) return;
   else {
-    lindex = Array.from(document.getElementById('num_lettre').children).indexOf(element);
-    const index_courant = Array.from(document.getElementById('num_lettre').children).indexOf(document.querySelector('#num_lettre .current'));
+    lindex = Array.from(document.getElementById('num_letter').children).indexOf(element);
+    const index_courant = Array.from(document.getElementById('num_letter').children).indexOf(document.querySelector('#num_letter .current'));
 
     vitesse = 4;
     transition_commune();
@@ -1407,48 +1408,48 @@ function change_project(element) {
 }
 
 function allDone2() {
-  document.querySelector('#num_lettre .current').classList.add('after');
-  TweenMax.to('.current .lettre', 0.4, { x:'100%', clearProps:'x', ease:Power4.easeInOut});
-  document.querySelectorAll('#num_lettre > div')[lindex].classList.add('before');
-  TweenMax.to(document.querySelectorAll('#num_lettre > div')[lindex].querySelector('div'), 0.4, {
+  document.querySelector('#num_letter .current').classList.add('after');
+  TweenMax.to('.current .letter', 0.4, { x:'100%', clearProps:'x', ease:Power4.easeInOut});
+  document.querySelectorAll('#num_letter > div')[lindex].classList.add('before');
+  TweenMax.to(document.querySelectorAll('#num_letter > div')[lindex].querySelector('div'), 0.4, {
     x: '0%',
     clearProps: 'x',
     ease: Power4.easeInOut,
     onComplete: function() {
-      document.querySelector('#num_lettre .current').classList.remove('current','after');
-      document.querySelectorAll('#num_lettre > div')[lindex].classList.add('current');
-      document.querySelectorAll('#num_lettre > div')[lindex].classList.remove('before');
+      document.querySelector('#num_letter .current').classList.remove('current','after');
+      document.querySelectorAll('#num_letter > div')[lindex].classList.add('current');
+      document.querySelectorAll('#num_letter > div')[lindex].classList.remove('before');
     }
   });
 
-  // if (document.querySelector('#num_lettre .current').nextElementSibling !== null) {
-  //     document.querySelector('#num_lettre .current').nextElementSibling.classList.add('before');
-  //     var next = document.querySelector('#num_lettre .current').nextElementSibling;
-  //     TweenMax.to('.current .lettre', 0.4, {x:'100%', clearProps:'x', ease:Power4.easeInOut});
-  //     TweenMax.to(document.querySelector('#num_lettre .current').nextElementSibling.querySelector('div'), 0.4, {x:'0%', clearProps:'x', ease:Power4.easeInOut, onComplete:function() {
-  //         document.querySelector('#num_lettre .current').classList.remove('current','after');
+  // if (document.querySelector('#num_letter .current').nextElementSibling !== null) {
+  //     document.querySelector('#num_letter .current').nextElementSibling.classList.add('before');
+  //     var next = document.querySelector('#num_letter .current').nextElementSibling;
+  //     TweenMax.to('.current .letter', 0.4, {x:'100%', clearProps:'x', ease:Power4.easeInOut});
+  //     TweenMax.to(document.querySelector('#num_letter .current').nextElementSibling.querySelector('div'), 0.4, {x:'0%', clearProps:'x', ease:Power4.easeInOut, onComplete:function() {
+  //         document.querySelector('#num_letter .current').classList.remove('current','after');
   //         next.classList.add('current');
   //         next.classList.remove('before');
   //     }});
   // }else{
-  //     var first = document.querySelector('#num_lettre div');
+  //     var first = document.querySelector('#num_letter div');
   //     first.classList.add('before');
 
-  //     TweenMax.to('.current .lettre', 0.4, {x:'100%', clearProps:'x', ease:Power4.easeInOut});
+  //     TweenMax.to('.current .letter', 0.4, {x:'100%', clearProps:'x', ease:Power4.easeInOut});
   //     TweenMax.to(first.querySelector('div'), 0.4, {x:'0%', clearProps:'x', ease:Power4.easeInOut, onComplete:function() {
-  //         document.querySelector('#num_lettre .current').classList.remove('current','after');
+  //         document.querySelector('#num_letter .current').classList.remove('current','after');
   //         first.classList.add('current');
   //         first.classList.remove('before');
   //     }});
   // }
 
-  document.getElementById('num_projet').innerHTML = lindex + 1;
-  document.getElementById('titre_h2').innerHTML   = document.querySelectorAll('#images div')[lindex].getAttribute('data-titre');
+  document.getElementById('num_project').innerHTML = lindex + 1;
+  document.getElementById('title_h2').innerHTML   = document.querySelectorAll('#images div')[lindex].getAttribute('data-title');
   document.getElementById('type').innerHTML       = document.querySelectorAll('#images div')[lindex].getAttribute('data-cat');
   document.getElementById('year').innerHTML       = document.querySelectorAll('#images div')[lindex].getAttribute('data-year');
 
   document.querySelectorAll('.update_link').forEach(x => x.setAttribute('href',document.querySelectorAll('#images div')[lindex].getAttribute('data-perma')));
-  document.querySelectorAll('#titre_h2 span').forEach(addRandom);
+  document.querySelectorAll('#title_h2 span').forEach(addRandom);
   random = [];
   document.querySelectorAll('.random').forEach(x => random.push(x));
 
@@ -1511,7 +1512,7 @@ function onHoverNext (event) {
     });
 
     TweenMax.staggerTo(random, 0.4, { opacity: 0, ease: Power2.easeIn }, 0.05, allDoneNext);
-    TweenMax.to('#inner_nom_projet', 0.4, { x: (document.getElementById('nom_projet').clientWidth + 10) / 2 + 'px', delay: 0.4, ease: Power2.easeOut });
+    TweenMax.to('#inner_project name', 0.4, { x: (document.getElementById('project name').clientWidth + 10) / 2 + 'px', delay: 0.4, ease: Power2.easeOut });
     TweenMax.staggerTo('.stag', 0.4, { opacity: 1, delay: 0.4, ease: Power2.easeOut }, -0.02);
   }
 }
@@ -1557,7 +1558,7 @@ function allDoneNext2() {
 
   TweenMax.staggerTo(random, 0.4, { opacity: 1, ease: Power2.easeOut }, 0.05);
 
-  TweenMax.to('#inner_nom_projet', 0.4, { x: '0px', ease: Power2.easeOut });
+  TweenMax.to('#inner_project name', 0.4, { x: '0px', ease: Power2.easeOut });
   TweenMax.staggerTo('.stag', 0.4, { opacity: 0, ease: Power2.easeOut }, 0.02);
 }
 
