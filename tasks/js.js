@@ -26,8 +26,8 @@ const validateLocalJs = () => {
 
 const fetchLocalJs = () => {
   return validateLocalJs()
-    .pipe(order([config.main.js,config.selectors.js]))
-    .pipe(babel({ presets: ['env'] }));
+    .pipe(order([config.main.js, config.selectors.js]))
+    .pipe(babel({ presets: ['env'], ignore: '**/*/pixi.js' }));
 };
 
 const buildJs = () => {
@@ -35,7 +35,7 @@ const buildJs = () => {
     fetchVendorJs(),
     fetchLocalJs()
   )
-  .pipe(order([config.vendor.js, config.selectors.js]))
+  .pipe(order([config.vendor.js, '**/*/pixi.js', config.selectors.js]))
   .pipe(gulpIf(global.production, replace('http://localhost:4000', process.env.API_URL)))
   .pipe(concat(config.output.js))
   .pipe(sourcemaps.init())

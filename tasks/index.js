@@ -9,13 +9,6 @@ const config      = require('../package').gulp;
 const validateIndex = () => {
   return gulp
     .src(`${config.srcDir}${config.selectors.html}`)
-    // .pipe(inject(gulp.src(['./*.js', './docs/*.docx'], { read: false }), {
-    //   transform: function(filepath) {
-    //     if (filepath.slice(-5) === '.docx') return '<li><a href="' + filepath + '">' + filepath + '</a></li>';
-    //     // Use the default transform as fallback:
-    //     return inject.transform.apply(inject.transform, arguments);
-    //   }
-    // }))
     .pipe(htmlhint({ 'doctype-first': false, 'attr-lowercase': ['viewBox'] }))
     .pipe(htmlhint.reporter('htmlhint-stylish'));
 };
