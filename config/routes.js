@@ -9,12 +9,22 @@ router.route('/home')
 router.route('/about')
   .get(pages.about);
 
-router.route('/top-paddock')
-  .get(pages.topPaddock);
+router.route('/resorts')
+  .get(pages.resorts);
 
-router.route('/band-some')
-  .get(pages.bandSome);
+router.route('/grouparty')
+  .get(pages.grouparty);
 
-router.all('*', (req, res) => res.notFound());
+router.route('/palm-trees')
+  .get(pages.palmtrees);
+
+router.route('/rdt')
+  .get(pages.rdt);
+
+router.route('/ads')
+  .get(pages.ads);
+
+router.all('*', (req, res) => res.render(`home`));
+// router.all('*', (req, res) => res.notFound());
 
 module.exports = router;

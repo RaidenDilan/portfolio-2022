@@ -1,0 +1,202 @@
+.projects {
+  position: absolute;
+  top: calc(7vw - 6px);
+  right: calc(7vw - 6px);
+  font: 400 normal 13px/13px 'Graphik';
+  position: absolute;
+  cursor: pointer;
+  line-height: 0px;
+  padding: 14px 6px 14px 6px;
+}
+
+@media (max-width: 767px) {
+  .projects {
+    right: 29px;
+    top: 34px;
+  }
+}
+
+@media (max-width: 320px) {
+  .projects {
+    top: 35px;
+  }
+}
+
+#main.blocked {
+  display: none;
+  position: relative !important;
+}
+
+#next_proj {
+  height: 100vh;
+  background: #000000;
+}
+
+#next_proj > div {
+  display: block;
+  width: 80%;
+  margin-left: 10%;
+  text-align: center;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+#next_proj > div a {
+  font: 500 normal 120px/120px 'Adelon';
+  -webkit-text-stroke: 1px #FFFFFF;
+  text-stroke: 1px #FFFFFF;
+  -ms-text-stroke: 1px #FFFFFF;
+  color: #000000;
+}
+
+@media (max-width: 767px) {
+  #next_proj > div a {
+    font: 500 normal 19vw/24vw 'Adelon';
+  }
+}
+
+#next_proj > div a span {
+  -webkit-text-stroke: 1px #FFFFFF;
+      -ms-text-stroke: 1px #FFFFFF;
+          text-stroke: 1px #FFFFFF;
+  color: #000000;
+  pointer-events: none;
+}
+
+#next_proj > div a span.blanc {
+  -webkit-text-stroke: 0px #FFFFFF;
+      -ms-text-stroke: 0px #FFFFFF;
+          text-stroke: 0px #FFFFFF;
+  color: #FFFFFF;
+}
+
+#next_proj > div div {
+  position: absolute;
+  color: #FFFFFF;
+  -webkit-text-stroke: 0px #000000;
+      -ms-text-stroke: 0px #000000;
+          text-stroke: 0px #000000;
+  font: 400 normal 13px/13px 'Graphik';
+  width: 100%;
+  text-align: center;
+  padding-top: 2vw;
+}
+
+@media (max-width: 767px) {
+  #next_proj > div div {
+    padding-top: 7vw;
+  }
+}
+
+#next_proj > div div > span {
+  display: inline-block;
+  position: absolute;
+  white-space: nowrap;
+  right: calc(50% + 28px);
+}
+
+#next_proj .stag {
+  opacity: 0;
+}
+
+#to_next_proj {
+  display: inline-block;
+}
+
+.projects span {
+  padding-right: 30px;
+}
+
+.projects * {
+  pointer-events: none;
+}
+
+.inner_img {
+  background: #f6f6f6;
+  padding: 14vw 0 5.5vw 0;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .inner_img {
+    padding: 22vw 0 12vw 0;
+  }
+}
+
+.inner_img .wrap {
+  margin: 0 auto;
+  width: 62%;
+  position: relative;
+  -webkit-transform-origin: 50% 50%;
+          transform-origin: 50% 50%;
+}
+
+@media (max-width: 767px) {
+  .inner_img .wrap {
+    width: calc(100% - 72px);
+  }
+}
+
+.inner_img img {
+  display: block;
+  width: 100%;
+  margin-bottom: 8.5vw;
+}
+
+@media (max-width: 767px) {
+  .inner_img img {
+    margin-bottom: 10vw;
+  }
+}
+
+// Rawand Dilan Therapy
+.rdt {
+  .inner_img {
+    .wrap {
+      img {
+        &:nth-child(2),
+        &:nth-child(4),
+        &:nth-child(5),
+        &:nth-child(6),
+        &:nth-child(8) {
+          margin-bottom: 0;
+        }
+        &:nth-child(11) {
+          margin-bottom: -3px;
+        }
+      }
+    }
+  }
+}
+
+
+.datas {
+  font: 400 normal 13px/28px 'Graphik';
+  padding: 12px 0 5vw 68vw;
+}
+
+@media (max-width: 767px) {
+  .datas {
+    padding: 11vw 0 15vw 37vw;
+  }
+}
+
+.datas svg {
+  margin-left: 7px;
+}
+
+.datas a, .datas span {
+  display: block;
+  color: $black;
+}
+
+.datas span:last-child {
+  margin-top: 28px;
+}
+
+.datas a {
+  padding-left: 8px;
+  margin-left: -8px;
+}

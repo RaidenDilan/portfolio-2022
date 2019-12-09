@@ -1,0 +1,150 @@
+.single-works h1 {
+  font: 500 normal 120px/140px 'Adelon';
+  padding: 15vw 0 0 26vw;
+  margin-left: -5px;
+}
+
+@media (max-width: 767px) {
+  .single-works h1 {
+    font: 500 normal 18vw/20vw 'Adelon';
+    padding: calc(18vh - 3vw) 0 0 80px;
+  }
+}
+
+.single-works .cover {
+  // width: 100vw;
+  // height: 57vw;
+  display: block;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .single-works .cover {
+    height: 100vw;
+  }
+}
+
+.single-works .cover canvas {
+  margin-top: -10px
+}
+
+.single-works .random {
+  opacity: 0;
+}
+
+
+.point {
+  color: $white;
+  -webkit-transition: 1s;
+          transition: 1s;
+  -webkit-transition-property: color;
+          transition-property: color;
+}
+
+.point.black {
+  color: $black;
+}
+
+.point.black::after {
+  background: $black;
+}
+
+.point::after {
+  content: '';
+  width: 3px;
+  height: 3px;
+  background: $white;
+  border-radius: 100%;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 7px;
+  pointer-events: none;
+  opacity: 0;
+  -webkit-transform-origin: 0 100%;
+          transform-origin: 0 100%;
+  -webkit-transform: scaleY(5);
+          transform: scaleY(5);
+  transition-property: background, opacity, transform, -webkit-transform;
+  -webkit-transition-duration: 1s, 0.1s, 0.1s, 0.1s;
+          transition-duration: 1s, 0.1s, 0.1s, 0.1s;
+}
+
+.point:hover::after {
+  opacity: 1;
+  -webkit-transform: scaleY(1);
+          transform: scaleY(1);
+}
+
+.point2::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: $black;
+  border-radius: 100%;
+  position: absolute;
+  top: calc(100% + 20px);
+  left: 7px;
+  pointer-events: none;
+  opacity: 0;
+  -webkit-transform-origin: 0 100%;
+          transform-origin: 0 100%;
+  -webkit-transform: scaleY(5);
+          transform: scaleY(5);
+  -webkit-transition: 0.1s;
+          transition: 0.1s;
+}
+
+.point2:hover::after {
+  opacity: 1;
+  -webkit-transform: scaleY(1);
+  transform: scaleY(1);
+}
+
+.cover {
+  background-size: cover !important;
+}
+
+.contain {
+  background-size: contain !important;
+}
+
+.clear {
+  clear: both;
+  float: none;
+}
+
+#progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 30;
+  cursor: progress !important;
+}
+
+.ahead {
+  z-index: 20;
+}
+
+// .background_intro {
+//   width: 87%;
+//   height: 100%;
+//   top: 0;
+//   left: 0;
+//   position: absolute;
+//   background: #DADADA;
+//   z-index: 1;
+//   -webkit-transform-origin: 0 0;
+//           transform-origin: 0 0;
+//   -webkit-transform: scaleX(0);
+//           transform: scaleX(0);
+// }
+//
+// @media (max-width: 767px) {
+//   .background_intro {
+//     width: calc(100% - 36px);
+//   }
+// }

@@ -6,17 +6,32 @@ function aboutRoute(req, res) {
   return res.render('about');
 }
 
-function topPaddockRoute(req, res) {
-  return res.render('top-paddock');
+function resortsRoute(req, res) {
+  return res.render('resorts');
 }
 
-function bandSomeRoute(req, res) {
-  return res.render('band-some');
+function groupartyRoute(req, res) {
+  return res.render('grouparty');
+}
+
+function palmtreesRoute(req, res) {
+  return res.render('palm-trees');
+}
+
+function rdtRoute(req, res) {
+  return res.render('rawand-dilan-therapy');
+}
+
+function adsRoute(req, res) {
+  return res.render('architectural-design-services');
 }
 
 module.exports = {
   home: homeRoute,
   about: aboutRoute,
-  topPaddock: topPaddockRoute,
-  bandSome: bandSomeRoute
+  resorts: resortsRoute,
+  grouparty: groupartyRoute,
+  palmtrees: palmtreesRoute,
+  rdt: rdtRoute,
+  ads: adsRoute
 };

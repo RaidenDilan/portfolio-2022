@@ -1,1 +1,229 @@
-@import 'queries';
+header {
+  z-index: 12;
+  position: fixed;
+  width: 100%;
+}
+
+header .inner_siri {
+  position: absolute;
+  top: 0;
+  left: 26vw;
+  width: 98px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.feature1 {
+  position: absolute;
+  width: 2px;
+  height: 10px;
+  background: $white;
+  top: 8px;
+  right: 11px;
+  -webkit-transform-origin: 0 50%;
+          transform-origin: 0 50%;
+  -webkit-transition-property: background-color;
+          transition-property: background-color;
+  -webkit-transition-duration: 1s;
+          transition-duration: 1s;
+}
+.feature2 {
+  position: absolute;
+  width: 10px;
+  height: 2px;
+  background: $white;
+  top: 12px;
+  right: 7px;
+  -webkit-transform-origin: 100% 0;
+          transform-origin: 100% 0;
+  -webkit-transition-property: background-color;
+          transition-property: background-color;
+  -webkit-transition-duration: 1s;
+          transition-duration: 1s;
+}
+
+.black .feature1,
+.black .feature2 {
+  background: $black;
+}
+
+.raidendilan {
+  font: 500 normal 16px/16px 'Graphik';
+  position: absolute;
+  top: 7vw;
+  left: calc(26vw - 6px);
+  z-index: 1;
+}
+
+@media (max-width: 767px) {
+  .raidendilan {
+    left: 29px;
+    top: 40px;
+  }
+}
+
+.raidendilan a {
+  padding: 6px;
+  position: relative;
+}
+
+.logo {
+  font: 600 normal 20px/20px 'Graphik';
+  position: absolute;
+  top: calc(7vw - 6px);
+  left: calc(7vw - 7px);
+  -webkit-transform-origin: 100% 0%;
+          transform-origin: 100% 0%;
+  -webkit-transform: translateX(-100%) rotate(-90deg);
+          transform: translateX(-100%) rotate(-90deg);
+  padding: 6px;
+}
+
+@media (max-width: 767px) {
+  .logo {
+    display: none;
+  }
+}
+
+.logo div {
+  overflow: hidden;
+  height: 16px;
+}
+
+
+#menu {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+  background: #FFFFFF;
+  z-index: 10;
+  display: none;
+  opacity: 0;
+}
+
+#menu a {
+  color: #000000;
+}
+
+#menu .projects span {
+  color: #000000;
+}
+
+#menu .projects div {
+  background: #000000;
+}
+
+#menu .logo {
+  z-index: 1;
+}
+
+#menu ol {
+  font: 500 normal 68px/133px 'Adelon';
+  // padding: calc(50vh - 70px) 0 calc(50vh - 70px) 26%;
+  padding: calc(50vh - 70px) 0 calc(50vh - 70px) 18%;
+  list-style-type: none;
+  counter-reset: compteListe;
+  width: 76%;
+}
+
+@media (max-width: 1024px) {
+  #menu ol {
+    font: 500 normal 5.5vw/10.4vw 'Adelon';
+  }
+}
+
+@media (max-width: 767px) {
+  #menu ol {
+    padding-left: 80px;
+    width: 100%;
+    font: 500 normal 11vw/25vw 'Adelon';
+  }
+}
+
+#menu ol li {
+  position: relative
+}
+
+#menu ol li::before {
+  counter-increment: compteListe 1;
+  color: #000000;
+  content: '0' counter(compteListe);
+  position: absolute;
+  font: 400 normal 12px/12px 'Graphik';
+  top: 40%;
+  right: calc(100% + 68px);
+  -webkit-transform-origin: 100% 100%;
+          transform-origin: 100% 100%;
+  -webkit-transform: translateY(-50%) rotate(-90deg);
+          transform: translateY(-50%) rotate(-90deg);
+}
+
+@media (max-width: 767px) {
+  #menu ol li::before {
+    right: calc(100% + 32px);
+  }
+}
+
+#menu ol li a {
+  display: block;
+}
+
+#menu ol li.active a::after {
+  content: 'Discover';
+  font: 400 normal 12px/12px 'Graphik';
+  margin: 0 0 0 22px;
+  -webkit-transform: translateY(-14px);
+          transform: translateY(-14px);
+  display: inline-block;
+  opacity: 0;
+  -webkit-text-stroke: 0px #000000;
+      -ms-text-stroke: 0px #000000;
+          text-stroke: 0px #000000;
+  color: #000000;
+}
+
+@media (max-width: 1024px) {
+  #menu ol li.active a::after {
+    -webkit-transform: translateY(-1vw);
+            transform: translateY(-1vw);
+  }
+}
+
+@media (max-width: 767px) {
+  #menu ol li.active a::after {
+    content: '';
+  }
+}
+
+#menu ol li.active a {
+  -webkit-text-stroke: 1px #000000;
+      -ms-text-stroke: 1px #000000;
+          text-stroke: 1px #000000;
+  color: #FFFFFF;
+}
+
+#menu ol li.active a::after {
+  opacity: 1;
+}
+
+#menu #pixi_menu {
+  width: 40vw;
+  // width: 24vw;
+  height: 100vh;
+  // height: calc(100vh - 7.4vw);
+  position: fixed;
+  right: 0;
+  top: 0;
+  // top: 3.7vw;
+  z-index: -1;
+  background: #7F7F7F;
+}
+
+@media (max-width: 767px) {
+  #menu #pixi_menu {
+    display: none;
+  }
+}

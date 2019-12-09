@@ -45,7 +45,7 @@ app.use(customResponses);
 // set up our routes - just BEFORE our error handler
 app.use(routes);
 
-// set up errorHandler - our LAST peie of middleare
+// set up errorHandler - our LAST piece of middleare
 app.use(errorHandler);
 
 app.listen(port, () => console.log(`Express has started on port: ${port}`));

@@ -1,0 +1,67 @@
+// font-family: 'Montserrat', sans-serif;
+// font-family: 'Anton', sans-serif;
+// font-family: 'Calistoga', cursive;
+// font-family: 'Abril Fatface', cursive;
+// font-family: 'Righteous', cursive;
+// font-family: 'Alfa Slab One', cursive;
+// font-family: 'Ultra', serif;
+// font-family: 'Luckiest Guy', cursive;
+// font-family: 'Tangerine', cursive;
+// font-family: 'Audiowide', cursive;
+// font-family: 'Bowlby One SC', cursive;
+// font-family: 'Yeseva One', cursive;
+// font-family: 'Paytone One', sans-serif;
+// font-family: 'Black Ops One', cursive;
+// font-family: 'Aclonica', sans-serif;
+// font-family: 'Titan One', cursive;
+// font-family: 'Chonburi', cursive;
+// font-family: 'Limelight', cursive;
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Regular.ttf') format('ttf');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Medium.ttf') format('ttf');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('../fonts/Montserrat-Semibold.ttf') format('ttf');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Graphik';
+  src: url('../fonts/Graphik-Regular.woff2') format('woff2'), url('../fonts/Graphik-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Graphik';
+  src: url('../fonts/Graphik-Medium.woff2') format('woff2'), url('../fonts/Graphik-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Graphik';
+  src: url('../fonts/Graphik-Semibold.woff2') format('woff2'), url('../fonts/Graphik-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Adelon';
+  src: url('../fonts/adelon-medium-webfont.woff2') format('woff2'), url('../fonts/adelon-medium-webfont.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+}
