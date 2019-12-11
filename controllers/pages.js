@@ -19,11 +19,11 @@ function palmtreesRoute(req, res) {
 }
 
 function rdtRoute(req, res) {
-  return res.render('rawand-dilan-therapy');
+  return res.render('rdt');
 }
 
 function adsRoute(req, res) {
-  return res.render('architectural-design-services');
+  return res.render('ads');
 }
 
 module.exports = {
