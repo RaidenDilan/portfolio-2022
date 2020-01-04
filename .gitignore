@@ -1,5 +1,5 @@
-/bower_components
-/node_modules
-/public
-/archive
-/vendor
+bower_components
+node_modules
+public
+archive
+vendor

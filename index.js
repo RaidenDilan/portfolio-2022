@@ -7,19 +7,16 @@ const { port, env, sessionSecret } = require('./config/environment');
 const errorHandler                 = require('./lib/errorHandler');
 const customResponses              = require('./lib/customResponses');
 const routes                       = require('./config/routes');
-const dest                         = `${__dirname}/public`;
 
-// create an express app
 const app = express();
 
 app.engine('html', require('ejs').renderFile);
+
 app.set('view engine', 'html');
-app.set('views', `${dest}/views`);
+// app.set('views', `${__dirname}/src/views`);
+app.set('views', `${__dirname}/public/views`);
+app.use(express.static(`${__dirname}/public`));
 
-// set up our static files folder
-app.use(express.static(dest));
-
-// set up middleware
 if(env !== 'test') app.use(morgan('dev'));
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -32,20 +29,13 @@ app.use(methodOverride((req) => {
   }
 }));
 
-// set up our sessions
 app.use(session({
   secret: sessionSecret,
   resave: false,
   saveUninitialized: false
 }));
 
-// set up custom middleware - requires flash
 app.use(customResponses);
-
-// set up our routes - just BEFORE our error handler
 app.use(routes);
-
-// set up errorHandler - our LAST piece of middleare
 app.use(errorHandler);
-
 app.listen(port, () => console.log(`Express has started on port: ${port}`));

@@ -25,7 +25,8 @@ footer a::after {
 }
 
 footer h3 {
-  color: #F73F04;
+  color: $black;
+  // color: #F73F04;
   position: absolute;
   right: -86px;
   bottom: -166px;

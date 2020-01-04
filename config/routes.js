@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const pages  = require('../controllers/pages');
 
-router.get('/', (req, res) => res.render(`home`));
+router.get('/', (req, res) => res.render(`index`));
+// router.get('/', (req, res) => res.render('statics/index'));
 
-router.route('/home')
-  .get(pages.home);
+// router.route('/index')
+  // .get(pages.index);
 
 router.route('/about')
   .get(pages.about);
@@ -24,7 +25,6 @@ router.route('/rdt')
 router.route('/ads')
   .get(pages.ads);
 
-router.all('*', (req, res) => res.render(`home`));
-// router.all('*', (req, res) => res.notFound());
+router.all('*', (req, res) => res.notFound());
 
 module.exports = router;

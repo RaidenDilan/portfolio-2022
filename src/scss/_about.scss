@@ -7,7 +7,8 @@
 }
 
 #about, #contact {
-  font: 400 normal 13px/13px 'Graphik';
+  font: 400 normal 10px/10px 'Graphik';
+  text-transform: uppercase;
   position: fixed;
   padding: 6px;
   z-index: 2;
@@ -19,7 +20,9 @@
 
 #about {
   top: 50vh;
-  left: calc(7vw - 30px);
+  left: calc(5vw - 20px);
+  // left: calc(5vw - 30px);
+  // left: calc(7vw - 30px);
   -webkit-transform-origin: 50% 0%;
           transform-origin: 50% 0%;
   -webkit-transform: rotate(-90deg);
@@ -34,7 +37,9 @@
 
 #contact {
   top: 50vh;
-  right: calc(7vw - 36px);
+  right: calc(5vw - 20px);
+  // right: calc(5vw - 36px);
+  // right: calc(7vw - 36px);
   -webkit-transform: rotate(90deg);
           transform: rotate(90deg);
   -webkit-transform-origin: 50% 0%;
@@ -69,7 +74,7 @@
   margin-left: 10px;
 }
 
-.ville {
+.city {
   -webkit-box-flex: 0;
   -ms-flex: 0 0 36vw;
   flex: 0 0 36vw;
@@ -78,7 +83,7 @@
 }
 
 @media (max-width: 767px) {
-  .ville {
+  .city {
     -webkit-box-flex: 0;
     -ms-flex: none;
     flex: none;
@@ -87,12 +92,12 @@
 }
 
 @media (max-width: 767px) {
-  .ville > div:first-child {
+  .city > div:first-child {
     display: none;
   }
 }
 
-.ville #inner_svg {
+.city #inner_svg {
   width: 65px;
   height: 65px;
   position: relative;
@@ -101,43 +106,43 @@
 }
 
 @media (max-width: 767px) {
-  .ville #inner_svg {
+  .city #inner_svg {
     margin-top: 50px;
   }
 }
 
-.ville #inner_svg * {
+.city #inner_svg * {
   position: absolute;
   -webkit-transform-origin: 50% 50%;
           transform-origin: 50% 50%;
 }
 
-.ville #inner_svg #d {
+.city #inner_svg #d {
   top: 0;
   left: 29px;
 }
 
-.ville #inner_svg #e {
+.city #inner_svg #e {
   top: 15px;
   right: 3px;
 }
 
-.ville #inner_svg #s {
+.city #inner_svg #s {
   bottom: 15px;
   right: 3px;
 }
 
-.ville #inner_svg #i {
+.city #inner_svg #i {
   bottom: 0;
   left: 30px
 }
 
-.ville #inner_svg #g {
+.city #inner_svg #g {
   bottom: 15px;
   left: 3px;
 }
 
-.ville #inner_svg #n {
+.city #inner_svg #n {
   top: 15px;
   left: 3px;
 }
@@ -286,6 +291,15 @@
 .coded {
   padding: 9vw 0 0 calc(51% - 6px);
   position: relative;
+
+  .point3.black {
+    .svg_menu {
+      // width: 76px;
+
+      .svg_line {
+      }
+    }
+  }
 }
 
 @media (max-width: 767px) {
@@ -346,7 +360,8 @@
 
 .intro2 h1 {
   font: 500 normal 300px/300px 'Adelon';
-  color: #F73F04;
+  color: $black;
+  // color: #F73F04;
   position: absolute;
   top: calc(100% + 252px);
   -webkit-transform-origin: 0 0;

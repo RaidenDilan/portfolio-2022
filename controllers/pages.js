@@ -1,5 +1,5 @@
-function homeRoute(req, res) {
-  return res.render('home');
+function indexRoute(req, res) {
+  return res.render('index');
 }
 
 function aboutRoute(req, res) {
@@ -27,7 +27,7 @@ function adsRoute(req, res) {
 }
 
 module.exports = {
-  home: homeRoute,
+  index: indexRoute,
   about: aboutRoute,
   resorts: resortsRoute,
   grouparty: groupartyRoute,
