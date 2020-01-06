@@ -7,7 +7,7 @@ const config      = require('../package').gulp;
 
 const validatePartials = () => {
   return gulp
-    .src(`${config.src.js}${config.selectors.html}`)
+    .src(`${config.srcDir}${config.selectors.html}`)
     .pipe(htmlhint({ 'doctype-first': false, 'attr-lowercase': ['viewBox']  }))
     .pipe(htmlhint.reporter('htmlhint-stylish'));
 };

@@ -13,14 +13,20 @@
 }
 .single-works h1 {
   font: 500 normal 120px/140px 'Adelon';
-  padding: 15vw 0 0 26vw;
+  padding: 15vw 16vw 0 20vw;
+  // padding: 15vw 0 0 26vw;
   margin-left: -5px;
 }
 
+@media (max-width: 1024px) {
+  .single-works h1 {
+    padding: 15vw 0 0 18vw;
+  }
+}
 @media (max-width: 767px) {
   .single-works h1 {
-    font: 500 normal 18vw/20vw 'Adelon';
-    padding: calc(18vh - 3vw) 0 0 80px;
+    font: 500 normal 15vw/16vw 'Adelon';
+    padding: calc(18vh - 3vw) 0 0 120px;
   }
 }
 

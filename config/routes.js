@@ -25,6 +25,6 @@ router.route('/rdt')
 router.route('/ads')
   .get(pages.ads);
 
-router.all('*', (req, res) => res.notFound());
+router.all('/*', (req, res) => res.notFound());
 
 module.exports = router;

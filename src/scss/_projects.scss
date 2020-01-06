@@ -1,7 +1,17 @@
+#white_circle {
+  stroke-dashoffset: -438;
+  stroke-dasharray: 1009;
+  position: absolute;
+  stroke-linecap: round;
+}
+
 header {
   transition: all 0.3s ease-in, background 0.5s ease-in;
   transition-delay: 0.25s;
 
+  .svg-circle {
+    // transform: rotate(94deg);
+  }
   .projects {
     cursor: pointer;
     // pointer-events: bounding-box;
@@ -27,7 +37,7 @@ header {
       width: 16px;
       height: 2px;
       background: #ffffff;
-      background: var(--button-color, #ffffff);
+      // background: var(--button-color, #ffffff);
       transition:
         width 0.125s ease-in-out,
         top 0.25s ease-in-out 0.5s,
@@ -225,6 +235,7 @@ header {
         }
       }
       a {
+        display: inline-block;
         font: 500 normal 120px/120px 'Adelon';
         letter-spacing: 1px;
         -webkit-text-stroke: 1px #FFFFFF;
@@ -249,7 +260,7 @@ header {
       }
     }
     #to_next_project {
-      display: inline-block;
+      // display: inline-block;
     }
   }
   .datas {
@@ -297,18 +308,25 @@ header {
 }
 
 @media (max-width: 767px) {
+  header {
+    .logo {
+      left: calc(49vw - 27px);
+    }
+  }
   .projects {
     right: 29px;
     top: 34px;
   }
-  #next_proj {
-    > div {
-      a {
-        font: 500 normal 19vw/24vw 'Adelon';
+  #main {
+    #next_proj {
+      > div {
+        a {
+          font: 500 normal 19vw/24vw 'Adelon';
+        }
       }
-    }
-    div {
-      padding-top: 7vw;
+      div {
+        padding-top: 7vw;
+      }
     }
   }
   .inner_img {
