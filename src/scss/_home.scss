@@ -10,6 +10,7 @@
     height: 100%;
     // z-index: -1;
     z-index: 0;
+    // padding: calc(6vw - 1rem);
   }
 
   &.mobile {
@@ -60,7 +61,7 @@
         height: 4px;
         border-radius: 100%;
         background: $white;
-        opacity: 0.44;
+        opacity: 0.66;
         position: absolute;
         bottom: 6px;
         left: 9px;
@@ -96,7 +97,7 @@
         }
         &.first {
           &::before {
-            opacity: 0.44;
+            opacity: 0.66;
           }
           &::after {
             -webkit-transform: scaleY(0);
@@ -183,7 +184,7 @@
     #white_circle {
       stroke-dashoffset: 1900;
       stroke-dasharray: 1900;
-      // position: absolute;
+      position: fixed;
       // top: calc(20vh - 35px);
       // top: calc(40vh - 35px);
       stroke-linecap: round;
@@ -211,14 +212,14 @@
       bottom: calc(7vw - 17px);
       // right: 30px;
       // left: 210px;
-      left: calc(17vw - 4px);
+      left: calc(17vw - 8px);
       // left: -17px;
       position: absolute;
       line-height: 0;
       font-size: 0;
 
       > div {
-        opacity: 0.44;
+        opacity: 0.66;
         padding: 17px;
         position: relative;
         display: inline-block;
@@ -241,7 +242,7 @@
       font: 600 normal 15px/15px 'Graphik';
       position: absolute;
       bottom: calc(20vw - 10px);
-      left: calc(49vw - 6px);
+      left: calc(49vw - 5px);
       // left: calc(35vw - 62px + 5vw);
       // left: 28vw;
       // left: 24vw;
@@ -464,7 +465,7 @@
   .home {
     #col1 {
       // padding: 1% 1% 1% 1%;
-      padding: calc(15vh - 34px) 0 0 12%;
+      padding: calc(15vh - 34px) 0 0 16%;
 
       // > div {
       //   margin-left: -6px;
@@ -474,11 +475,7 @@
         // top: calc(40vh - 30px);
       }
       svg {
-        // position: fixed;
-        // top: 0;
-        // left: 0;
-        // width: 100%;
-        // height: 100%;
+        padding: calc(6vw - 1rem);
       }
     }
     #col2 {
@@ -487,7 +484,7 @@
         // font: 300 normal 160px/160px 'Adelon';
       }
       #num {
-        left: calc(54vw - 6px);
+        left: calc(49vw - 6px);
       }
     }
   }
@@ -508,10 +505,11 @@
       //   top: calc(23 - 50px + 1.44vw);
       // }
       svg {
-        width: 85%;
-        height: 85%;
-        top: calc(8vw - 1px);
-        left: calc(8vw - 1px);
+        padding: calc(10vw - 1rem);
+        // width: 85%;
+        // height: 85%;
+        // top: calc(8vw - 1px);
+        // left: calc(8vw - 1px);
       }
     }
     #col2 {
@@ -521,7 +519,7 @@
       }
       #num {
         bottom: calc(32vw - 10px);
-        left: calc(59vw - 56px + 4vw);
+        left: calc(59vw - 50px + 2vw);
       }
       #prev_next {
         // left: 159px;
@@ -548,7 +546,7 @@
       // top: 0;
       // left: 0;
       // padding: 60vh 0 0 0;
-      padding: calc(1vh - 5px + 1.44vw) 0 0 3.5%;
+      padding: calc(3vh - 5px + 1.44vw) 0 0 4.5%;
 
       // #white_circle {
         // top: calc(23vh - 48px + 1.44vw);
@@ -563,10 +561,11 @@
         }
       }
       svg {
-        width: 85%;
-        height: 85%;
-        top: calc(8vw - 1px);
-        left: calc(8vw - 1px);
+        padding: calc(12vw - 1rem);
+        // width: 85%;
+        // height: 85%;
+        // top: calc(8vw - 1px);
+        // left: calc(8vw - 1px);
       }
     }
     #col2 {
@@ -596,8 +595,8 @@
       #num {
         // display: none;
 
-        bottom: calc(27vw - 10px);
-        left: calc(88vw - 53px + 4vw);
+        bottom: calc(32vw - 10px);
+        left: calc(87vw - 53px + 4vw);
       }
     }
   }

@@ -179,6 +179,15 @@
   //   }
   // }
 
+  // svg {
+  //   stroke: $white;
+  // }
+  .svg_menu {
+    .svg_line {
+      stroke: $white;
+    }
+  }
+
   &.black {
     color: $black;
 
