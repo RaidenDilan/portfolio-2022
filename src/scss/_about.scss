@@ -101,15 +101,16 @@
 // }
 
 .madein {
-  padding: 0 0 0 26vw;
+  // padding: 0 0 0 26vw;
+  padding: 0 0 0 35vw;
   -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
-  flex: 1 1 auto;
+  -ms-flex: 0.2 1 auto;
+      flex: 0.2 1 auto;
   z-index: 2;
 
   div {
     color: $black;
-    display: inline-block;
+    // display: inline-block;
     // font-size: 5vw;
     // line-height: 100vh;
     // font-family: 'Roboto Slab', serif;
@@ -124,10 +125,17 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 
+    &:first-child {
+      font: 400 normal 30px/45px 'Graphik';
+      // font: 400 normal 30px/45px 'Graphik';
+    }
+
     span {
-      font-size: 6.2vw;
-      font-weight: 700;
-      margin-left: -3px;
+      display: block;
+      font: 700 normal 5.8vw/5.8vw 'Financier Display';
+      // font: 700 normal 74px/74px 'Financier Display';
+      margin-left: 1px;
+      margin-top: -20px;
     }
     // &:after {
     //   color: $white;
@@ -139,12 +147,9 @@
     //   font-size: 1em;
     // }
   }
-}
-.madein > div:first-child {
-  font: 400 normal 30px/45px 'Graphik';
-}
-.madein svg {
-  margin-left: 10px;
+  svg {
+    margin-left: 10px;
+  }
 }
 
 .city {
@@ -165,6 +170,7 @@
 
   div:first-child {
     padding-top: 3.5rem;
+    margin-top: -6px;
     // color: $black;
     // display: inline-block;
     // font-size: 5vw;
@@ -250,29 +256,6 @@
   transform: translateY(1px);
 }
 
-.reach {
-  padding: 18vw 0 0 calc(51% - 6px);
-  position: relative;
-}
-.reach h3 {
-  position: absolute;
-  font: 400 normal 13px/36px 'Graphik';
-  color: #ACACAC;
-  right: calc(49% + 78px);
-  white-space: nowrap;
-  top: calc(18vw + 12px);
-}
-.reach a {
-  font: 500 normal 50px/50px 'Adelon';;
-  color: $black;
-  padding: 6px;
-  position: relative;
-}
-.reach img {
-  width: 23px;
-  // margin: 0 0 6px 6px;
-}
-
 .point3 {
   &:hover .svg_menu .svg_line {
     animation: dash4 0.5s linear forwards;
@@ -285,31 +268,82 @@ footer {
   }
 }
 
+.deets-dash {
+  position: absolute;
+  width: 4px;
+  height: 60%;
+  background: $black;
+  top: 20%;
+  left: -10%;
+  transform: rotate(90deg);
+}
+
+.reach {
+  padding: 9vw 0 0 calc(40% - 6px);
+  // padding: 18vw26 0 30lc(51% - 6px);
+  position: relative;
+
+  h3 {
+    display: inline-block;
+    // position: absolute;
+    // top: calc(18vw + 12px);
+    // right: calc(49% + 78px);
+    font: 600 normal 26px/30px 'Financier Display';
+    // font: 400 normal 13px/36px 'Graphik';
+    // color: #ACACAC;
+    color: #ceced6;
+    white-space: nowrap;
+  }
+  a {
+    display: inline-block;
+    font: 600 normal 26px/30px 'Financier Display';
+    // font: 500 normal 50px/50px 'Adelon';;
+    color: $black;
+    padding: 6px 6px 12px 0;
+    margin-left: 30px;
+    position: relative;
+  }
+  img {
+    width: 23px;
+    // margin: 0 0 6px 6px;
+  }
+}
+
 .coded {
-  padding: 9vw 0 0 calc(51% - 6px);
+  padding: 9vw 0 0 calc(40% - 6px);
   position: relative;
 
   a {
-    display: block;
+    display: inline-block;
+    font: 600 normal 26px/30px 'Financier Display';
+    // font: 400 normal 13px/36px 'Graphik';
     color: $black;
-    // padding: 6px;
+    padding: 6px 0 6px 0;
+    margin-left: 15px;
     position: relative;
-    font: 400 normal 13px/36px 'Graphik';
 
     .svg_menu {
       margin: 0;
     }
-    &:hover .svg_menu .svg_line {
-      animation: dash4 0.5s linear forwards;
+    &:hover {
+      .svg_menu {
+        .svg_line {
+          animation: dash4 0.5s linear forwards;
+        }
+      }
     }
   }
   h3 {
-    position: absolute;
-    font: 400 normal 13px/36px 'Graphik';
-    color: #ACACAC;
-    right: calc(49% + 78px);
+    display: inline-block;
+    // position: absolute;
+    // right: calc(49% + 78px);
+    // top: calc(9vw + 5px);
+    // font: 400 normal 32px/40px 'Graphik';
+    font: 600 normal 26px/30px 'Financier Display', Georgia;
+    // color: #ACACAC;
+    letter-spacing: 0.5px;
+    color: #ceced6;
     white-space: nowrap;
-    top: calc(9vw + 5px);
   }
 }
 
@@ -323,40 +357,51 @@ footer {
 
 .intro2 {
   position: relative;
-}
-.intro2 h1 {
-  font: 500 normal 300px/300px 'Adelon';
-  text-transform: uppercase;
-  color: $black;
-  // color: #F73F04;
-  position: absolute;
-  top: calc(100% + 452px);
-  left: calc(9.5vw + 60px);
-  -webkit-transform-origin: 0 0;
-          transform-origin: 0 0;
-  -webkit-transform: rotate(-90deg);
-          transform: rotate(-90deg);
-  z-index: 2;
-}
-.intro2 h1 span {
-  position: relative;
-  -webkit-transform-origin: 50% 50%;
-  transform-origin: 50% 50%;
-  display: block;
-}
-.intro2 h2 {
-  padding: 3.4vw 0 0 15%;
-  width: 44%;
-  text-align: right;
-  font: 500 normal 45px/51px 'Adelon';
-  position: relative;
-  z-index: 2;
-}
-.intro2 p {
-  font: 400 normal 13px/28px 'Graphik';
-  padding: 7vw 22% 11vw 51%;
-  z-index: 2;
-  position: relative;
+
+  h1 {
+    font: 500 normal 300px/300px 'Adelon';
+    text-transform: uppercase;
+    color: $black;
+    // color: #F73F04;
+    position: absolute;
+    top: calc(100% + 452px);
+    left: calc(7.5vw + 60px);
+    -webkit-transform-origin: 0 0;
+            transform-origin: 0 0;
+    -webkit-transform: rotate(-90deg);
+            transform: rotate(-90deg);
+    z-index: 2;
+
+    span {
+      position: relative;
+      -webkit-transform-origin: 50% 50%;
+              transform-origin: 50% 50%;
+      display: block;
+    }
+  }
+  h2 {
+    padding: 3.4vw 0 0 15%;
+    width: 44%;
+    // width: 65%;
+    text-align: right;
+    font: 500 normal 45px/51px 'Adelon';
+    color: #ACACAC;
+    // font: 600 normal 45px/51px 'Financier Display';
+    position: relative;
+    z-index: 2;
+
+    span {
+      font: 600 normal 45px/51px 'Financier Display';
+      color: $black;
+    }
+  }
+  p {
+    font: 400 normal 15px/28px 'Chronicle Deck A', 'Chronicle Deck B', Georgia;
+    // font: 400 normal 13px/28px 'Graphik';
+    padding: 7vw 22% 11vw 48%;
+    z-index: 2;
+    position: relative;
+  }
 }
 
 @media (max-width: 1440px) {
@@ -472,7 +517,8 @@ footer {
     // width: calc(100% - 72px);
   }
   .intro2 p {
-    padding: 46px 100px 30vw 100px;
+    padding: 46px 100px 20vw 100px;
+    // padding: 46px 100px 30vw 100px;
     // padding: 46px 56px 30vw 36px;
   }
 
@@ -493,8 +539,10 @@ footer {
       font: 400 normal 29px/45px 'Graphik';
 
       span {
-        font-size: 10.1vw;
-        margin-left: -3px;
+        font-size: 9.4vw;
+        margin-left: 1px;
+        margin-top: -10px;
+        line-height: 6.8vw;
       }
     }
   }

@@ -112,12 +112,35 @@
 
     <nav id="menu">
       <ol id="the_menu">
-        <li class="active"><a href="/ads" class="link" data-img="../images/06/ads.jpeg">ADS</a></li>
-        <li><a href="/rdt" class="link" data-img="../images/05/rdt.jpg">RDT</a></li>
-        <li><a href="/palm-trees" class="link" data-img="../images/04/palm-trees.jpeg">Palm Trees</a></li>
-        <li><a href="/grouparty" class="link" data-img="../images/03/home-1698x1080.jpg">Grouparty</a></li>
-        <li><a href="/resorts" class="link" data-img="../images/02/home-1.jpg">Resorts</a></li>
+        <li data-id="ads" class="active"><a href="/ads" class="link" data-img="../images/06/ads.jpeg">ADS</a></li>
+        <li data-id="rdt"><a href="/rdt" class="link" data-img="../images/05/rdt.jpg">RDT</a></li>
+        <li data-id="palm-trees"><a href="/palm-trees" class="link" data-img="../images/04/palm-trees.jpeg">Palm Trees</a></li>
+        <li data-id="grouparty"><a href="/grouparty" class="link" data-img="../images/03/home-1698x1080.jpg">Grouparty</a></li>
+        <li data-id="resorts"><a href="/resorts" class="link" data-img="../images/02/home-1.jpg">Resorts</a></li>
       </ol>
+
+      <div class="first_line"></div>
+      <div class="second_line"></div>
+      <div class="third_line"></div>
+
+      <svg class="svg-circle" viewBox="0 0 625 625" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <g transform="translate(-319.000000, -257.000000)" stroke="#FFFFFF" stroke-width="1">
+            <g transform="translate(330.000000, 270.000000)">
+              <circle class="Oval" opacity="0.1" cx="300" cy="300" r="300"></circle>
+            </g>
+          </g>
+        </g>
+      </svg>
+      <svg class="svg-circle" viewBox="0 0 625 625" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <g transform="translate(-319.000000, -257.000000)" stroke="#000000" stroke-width="1">
+            <g class="Group-4" transform="translate(330.000000, 270.000000)">
+              <circle class="Oval" opacity="0.1" cx="300" cy="300" r="300"></circle>
+            </g>
+          </g>
+        </g>
+      </svg>
 
       <a href="#" class="link" id="pixi_menu"></a>
     </nav>
@@ -132,7 +155,7 @@
             <div>
               <div class="random">
                 Made in
-                <br/>
+                <!-- <br/> -->
                 <span>UK</span>
               </div>
               <!-- <div class="random">Made in<br />London</div> -->
@@ -164,8 +187,12 @@
 
         <div class="intro2">
           <div class="fond_intro"></div>
-          <h1 class="random"><span id="scaleA">About</span></h1>
-          <h2 class="random">I'm a full stack web developer currently working in London</h2>
+          <h1 class="random">
+            <span id="scaleA">About</span>
+            <div class="deets-dash"></div>
+            <!-- <div>RD</div> -->
+          </h1>
+          <h2 class="random">I'm a <span>full stack</span> web developer currently working in <span>London</span></h2>
           <p class="random">I'm Raiden, a British designer based in London. I get inspired by novel ideas, original design and creativity. My work has been varied – from branding, print, apps, UX/UI, websites and digital tools – but always with a human-centered approach and a keen eye for detail. I like to take influences from nature, architecture and cinematography, and always lean towards minimalism and simplicity. I'm glad to collaborate with many creative disciplines and offer a full range of production services in the design, lifestyle, arts, fashion and architecture industries. I'm a big typography lover and into minimal design. I aim for a high quality, polished product to achieve my clinkts goals. My work has been recognized on Awwwards, CSSDA and many more. Let's get in touch, for any project inquires or just drop me a message.
           </p>
         </div>
@@ -284,7 +311,21 @@
 
         <div class="reach">
           <h3>Reach me</h3>
-          <a class="point3" href="mailto:raiden18@me.com">Say Hi</a>
+          <a class="point3" href="mailto:raiden18@me.com">
+            <div>Say Hi</div>
+            <svg class="svg_menu" width="170" height="10" viewBox="0 0 170 5" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 112px;">
+              <path
+                class="svg_line"
+                d="M1 4C6.42012 3.90335 11.4217 3.49649 16.8086 3.23433C37.7681 2.21431 59.5389 1.2828 80.6174 1.10828C110.043 0.864635 139.569 1.10831 169 1.10831"
+                stroke="#000000"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                style="stroke-dashoffset: 1000;"
+                >
+              </path>
+            </svg>
+          </a>
           <img src="../images/peace.png" alt="" />
         </div>
 
@@ -293,12 +334,12 @@
           <a class="point3 black external" target="_blank" href="http://www.raidendilan.com">
             <div>RaidenDilan</div>
             <!-- RaidenDilan -->
-            <svg class="svg_menu" width="170" height="10" viewBox="0 0 170 5" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 76px;">
+            <svg class="svg_menu" width="170" height="10" viewBox="0 0 170 5" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 142px;">
               <path
                 class="svg_line"
                 d="M1 4C6.42012 3.90335 11.4217 3.49649 16.8086 3.23433C37.7681 2.21431 59.5389 1.2828 80.6174 1.10828C110.043 0.864635 139.569 1.10831 169 1.10831"
                 stroke="#000000"
-                stroke-width="3.6"
+                stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
                 style="stroke-dashoffset: 1000;"

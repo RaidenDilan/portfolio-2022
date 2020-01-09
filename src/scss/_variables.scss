@@ -2,3 +2,10 @@ $white  : #FFFFFF;
 $black  : #000000;
 $orange : #F34B3A;
 $graphik: 'Graphik';
+$italiana: 'Italiana';
+
+@mixin stroke($width, $color) {
+  -webkit-text-stroke: $width $color;
+      -ms-text-stroke: $width $color;
+          text-stroke: $width $color;
+}

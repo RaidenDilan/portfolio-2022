@@ -1,14 +1,32 @@
+svg.svg-circle {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  // padding: calc(6vw - 1rem);
+}
+
+#white_circle {
+  stroke-dashoffset: -438;
+  stroke-dasharray: 1009;
+  position: absolute;
+  stroke-linecap: round;
+  z-index: 1;
+}
+
 .home {
   color: $white;
 
-  svg.svg-circle {
+  svg#home-circle {
     display: block;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    // z-index: -1;
     z-index: 0;
     // padding: calc(6vw - 1rem);
   }
@@ -156,7 +174,8 @@
                 flex: 0 1 30%;
 
     > div {
-      font: 400 normal 13px/25px 'Graphik';
+      // font: 400 normal 13px/25px 'Graphik';
+      font: 500 normal 16px/20px 'Financier Display';
       // font: 400 normal 13px/35px 'Graphik';
       margin-top: 208px;
       // margin-top: 116px;
@@ -164,9 +183,22 @@
       margin-left: -56px;
       // margin-left: -35px;
 
+      // #year {
+      //   display: inline-block;
+      // }
+      .slash {
+        // font: 600 normal 25px/15px 'Financier Display';
+        // -webkit-transform: scaleY(0.8) translateY(-1px);
+                // transform: scaleY(0.8) translateY(-1px);
+        -webkit-transform: scaleY(1) translateY(0);
+                transform: scaleY(1) translateY(0);
+        display: inline-block;
+        margin-right: 2px;
+      }
+
       a {
+        font: 500 normal 16px/20px 'Financier Display';
         color: $white;
-        font-weight: 500;
         display: block;
         padding-bottom: 1rem;
 
@@ -175,8 +207,9 @@
         }
       }
       span {
-        font-size: 12px;
-        font-weight: 500;
+        font: 500 normal 16px/15px 'Financier Display';
+        // font-size: 12px;
+        // font-weight: 500;
         text-align: right;
         display: block;
       }
@@ -202,7 +235,8 @@
     z-index: 2;
 
     #type {
-      font: 400 normal 14px/14px 'Graphik';
+      // font: 400 normal 14px/14px 'Graphik';
+      font: 500 normal 16px/16px 'Financier Display';
       position: absolute;
       top: calc(40vh - 56px);
       // top: calc(40vh - 96px);
@@ -238,8 +272,10 @@
                 transform: rotate(180deg);
       }
     }
+
     #num {
-      font: 600 normal 15px/15px 'Graphik';
+      // font: 600 normal 15px/15px 'Graphik';
+      font: 600 normal 20px/15px 'Financier Display';
       position: absolute;
       bottom: calc(20vw - 10px);
       left: calc(49vw - 5px);
@@ -248,14 +284,18 @@
       // left: 24vw;
 
       #slash {
-        -webkit-transform: scaleY(0.8) translateY(-1px);
-                transform: scaleY(0.8) translateY(-1px);
+        // font: 600 normal 25px/15px 'Financier Display';
+        // -webkit-transform: scaleY(0.8) translateY(-1px);
+                // transform: scaleY(0.8) translateY(-1px);
+                -webkit-transform: scaleY(1) translateY(0);
+                transform: scaleY(1) translateY(0);
         display: inline-block;
         margin-right: 2px;
       }
       #work {
-        font: 400 normal 11px/11px 'Graphik';
-        margin-left: 10px;
+        font: 400 normal 16px/15px 'Financier Display';
+        // font: 400 normal 11px/11px 'Graphik';
+        margin-left: 5px;
         -webkit-transform: translateY(-2px);
                 transform: translateY(-2px);
         display: inline-block;
@@ -285,7 +325,7 @@
 
     .first_line, .second_line, .third_line {
       width: 1px;
-      position: absolute;
+      position: fixed;
       top: 0;
       height: 100vh;
       background: $white;

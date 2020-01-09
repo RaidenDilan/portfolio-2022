@@ -11,9 +11,11 @@
   -webkit-transition: width 0.5s cubic-bezier(0.215, 0.61, 0.355,1);
           transition: width 0.5s cubic-bezier(0.215, 0.61, 0.355,1);
 }
+
 .single-works h1 {
-  font: 500 normal 120px/140px 'Adelon';
-  padding: 15vw 16vw 0 20vw;
+  // font: 500 normal 120px/140px 'Adelon';
+  font: 500 normal 120px/140px $italiana;
+  padding: 15vw 16vw 0 17vw;
   // padding: 15vw 0 0 26vw;
   margin-left: -5px;
 }
@@ -25,7 +27,8 @@
 }
 @media (max-width: 767px) {
   .single-works h1 {
-    font: 500 normal 15vw/16vw 'Adelon';
+    // font: 500 normal 15vw/16vw 'Adelon';
+    font: 500 normal 14vw/14vw $italiana;
     padding: calc(18vh - 3vw) 0 0 120px;
   }
 }
@@ -35,7 +38,7 @@
   // height: 57vw;
   display: block;
   opacity: 0;
-  overflow: hidden;
+  // overflow: hidden;
   pointer-events: none;
 }
 
@@ -46,7 +49,7 @@
 }
 
 .single-works .cover canvas {
-  margin-top: -10px
+  // margin-top: -10px
 }
 
 .single-works .random {
@@ -245,6 +248,8 @@
   height: 100%;
   z-index: 30;
   cursor: progress !important;
+
+  // background-image: url('../images/peace.png');
 }
 
 .ahead {
