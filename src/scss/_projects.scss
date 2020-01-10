@@ -211,7 +211,7 @@ header {
         position: absolute;
         color: $white;
         @include stroke(0px, $white);
-        font: 400 normal 14px/14px 'Graphik';
+        font: 400 normal 14px/14px $graphik;
         // font: 400 normal 16px/16px 'Adelon';
         // font: 400 normal 15px/15px 'Italiana', serif;
         width: 100%;
@@ -219,7 +219,7 @@ header {
         padding-top: 2vw;
 
         > span {
-          // font: 400 normal 13px/13px 'Graphik';
+          // font: 400 normal 13px/13px $graphik;
           display: inline-block;
           position: absolute;
           white-space: nowrap;
@@ -228,14 +228,23 @@ header {
       }
       a {
         display: inline-block;
-        font: 500 normal 100px/100px 'Italiana', serif;
-        letter-spacing: 1px;
+        // font: 500 normal 100px/100px $italiana, serif;
+        // letter-spacing: 1px;
         text-transform: uppercase;
         color: $black;
         @include stroke(1px, $white);
 
+        &.changing {
+          span {
+            color: $black;
+            @include stroke(1px, $black);
+            transition: color 0.25s ease-in-out 0.6s, -webkit-text-stroke 0.25s ease-in-out 0.6s, -ms-text-stroke 0.25s ease-in-out 0.6s;
+          }
+        }
+
         span {
-          color: $black;
+          font: 500 normal 100px/100px $italiana, serif;
+          color: $white;
           @include stroke(1px, $white);
           pointer-events: none;
 
@@ -246,6 +255,7 @@ header {
         }
       }
     }
+    // .bottom_link {}
     // #to_next_project {
     //   display: inline-block;
     // }

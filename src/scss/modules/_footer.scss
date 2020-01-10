@@ -25,16 +25,27 @@ footer {
     // bottom: -166px;
     // font: 500 normal 400px/400px 'Adelon';
     right: 126px;
-    bottom: 66px;
+    bottom: 126px;
     font: 500 normal 300px/300px 'Adelon';
     z-index: 9;
     transform: rotate(90deg);
   }
 }
 
+@media (max-width: 1024px) {
+  footer {
+    h3 {
+      right: 50px;
+    }
+  }
+}
 @media (max-width: 767px) {
   footer {
     padding: 25vw 0 26vw 80px;
     // padding: 25vw 0 26vw 21px;
+
+    h3 {
+      display: none;
+    }
   }
 }
