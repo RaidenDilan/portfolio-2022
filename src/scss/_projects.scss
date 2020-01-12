@@ -174,7 +174,8 @@ header {
   }
   .inner_img {
     background: #f6f6f6;
-    padding: 14vw 0 5.5vw 0;
+    padding: 80vw 0 5.5vw 0;
+    // padding: 14vw 0 5.5vw 0;
     overflow: hidden;
 
     img {
@@ -261,6 +262,15 @@ header {
     // }
   }
   .datas {
+    a {
+      padding-bottom: 15px;
+
+      &:hover .svg_line {
+        animation: dash4 0.5s linear forwards;
+      }
+    }
+  }
+  .datas {
     // font: 900 normal 12px/28px $italiana;
     font: 400 normal 13px/28px $graphik;
     // letter-spacing: 2px;
@@ -287,23 +297,31 @@ header {
       padding: 8px 0 15px 8px;
       // padding-left: 8px;
       margin-left: -8px;
+
+      .svg_menu {
+        bottom: 10px;
+        left: 0px;
+      }
     }
   }
 }
 
 .rdt {
-  .inner_img {
-    .wrap {
-      img {
-        &:nth-child(2),
-        &:nth-child(4),
-        &:nth-child(5),
-        &:nth-child(6),
-        &:nth-child(8) {
-          margin-bottom: 0;
-        }
-        &:nth-child(11) {
-          margin-bottom: -3px;
+  #main {
+    .inner_img {
+      .wrap {
+        img {
+          &:nth-child(2),
+          &:nth-child(4),
+          &:nth-child(5),
+          &:nth-child(6),
+          &:nth-child(8) {
+            margin-bottom: 0;
+          }
+          &:nth-child(11) {
+            margin-bottom: -2px;
+            // margin-bottom: -3px;
+          }
         }
       }
     }
@@ -315,22 +333,36 @@ header {
     .logo {
       left: calc(49vw - 27px);
     }
-  }
-  .projects {
-    right: 29px;
-    top: 34px;
+    .projects {
+      // right: 29px;
+      // top: 34px;
+      right: 0;
+    }
+    #social {
+      left: 0;
+    }
   }
   #main {
     #next_proj {
       > div {
+        margin-left: 5%;
+        width: 90%;
+
         a {
           // font: 500 normal 19vw/24vw 'Adelon';
           font: 500 normal 11vw/11vw $italiana;
+
+          span {
+            font: 500 normal 45px/55px 'Italiana', serif;
+          }
         }
       }
       div {
         padding-top: 7vw;
       }
+    }
+    .datas {
+      padding: 12px 0 5vw 11%;
     }
   }
   .inner_img {
@@ -350,8 +382,13 @@ header {
 }
 
 @media (max-width: 320px) {
-  .projects {
-    top: 35px;
+  header {
+    .projects {
+      right: 0;
+    }
+    #social {
+      left: 0;
+    }
   }
 }
 

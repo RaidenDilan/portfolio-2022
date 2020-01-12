@@ -14,12 +14,7 @@ const cleanImages = () => {
 const copyImages = () => {
   return gulp
     .src(`${config.src.images}${config.selectors.images}`)
-    // .pipe(imagemin())
-    // .pipe(imagemin({
-    //   optimizationLevel: 3,
-    //   progressive: true,
-    //   interlaced: true
-    // }))
+    // .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
     .pipe(gulp.dest(config.dest.images));
 };
 

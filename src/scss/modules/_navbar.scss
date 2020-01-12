@@ -289,8 +289,8 @@ header {
     #pixi_menu {
       display: none;
     }
-    ol {
-      padding-left: 160px;
+    ol#the_menu {
+      padding-left: 60px;
       width: 100%;
       // font: 500 normal 10vw/20vw 'Alconica';
       font: 500 normal 11vw/25vw 'Alconica';
@@ -302,7 +302,13 @@ header {
       // line-height: 25vw;
 
       li {
+        font: 300 normal 45px/80px 'MullerLight', Arial, Helvetica, sans-serif;
+
+        a::after {
+          display: none;
+        }
         &::before {
+          top: 35%;
           right: calc(100% + 32px);
         }
         &.active {
