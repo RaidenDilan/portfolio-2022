@@ -1,11 +1,10 @@
-$white  : #FFFFFF;
-$black  : #000000;
-$orange : #F34B3A;
+$white: #FFFFFF;
+$black: #000000;
+// $drag: #FF3366;
+// $green: #D4FF45;
+// $blue: #0077B2;
+$drag: #FFFFFF;
+
 $graphik: 'Graphik';
 $italiana: 'Italiana';
-
-@mixin stroke($width, $color) {
-  -webkit-text-stroke: $width $color;
-      -ms-text-stroke: $width $color;
-          text-stroke: $width $color;
-}
+$financierDisplay: 'Financier Display';

@@ -61,7 +61,7 @@
       "css": "**/*.css",
       "scss": "**/*.scss",
       "html": "**/*.html",
-      "images": "**/*.{png,jpg,jpeg,gif,ico}",
+      "images": "**/*.{png,jpg,jpeg,gif,ico,svg}",
       "fonts": "**/*.{eot,svg,ttf,woff,woff2}"
     }
   },

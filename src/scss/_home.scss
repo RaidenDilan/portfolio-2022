@@ -1,35 +1,207 @@
+.cursor_main {
+  content: '.';
+  pointer-events: none;
+  position: fixed;
+  width: 50px;
+  height: 50px;
+  top: 0;
+  left: 0;
+  background-color: rgba(233, 106, 91, 0);
+  border: 2px solid $white;
+  border-radius: 50%;
+  z-index: 1000;
+  opacity: 0.3;
+  display: none;
+  transition: width 0.2s ease, left 0.2s ease, top 0.2s ease, height 0.2s ease, opacity 0.2s ease-in, background-color 0.5s;
+
+  // &:before {
+  //   content: '.';
+  //   display: block;
+  //   font-size: 30px;
+  //   color: $white;
+  //   // opacity: 0.3;
+  //   position: relative;
+  //   top: 0;
+  //   left: 35%;
+  //   transform: translate(5%, -13%); // translate(x, y);
+  //   // transition: transform 0s ease, left 0s ease;
+  // }
+  &.black {
+    border: 2px solid $black;
+  }
+  &.visible {
+    display: block
+  }
+  &.vertical_scroll {
+    left: 18px;
+    top: 18px;
+    opacity: 1;
+    width: 14px;
+    height: 14px;
+    border: 2px solid $black;
+
+    &::after {
+      content: 'scroll';
+      text-transform: uppercase;
+      color: $black;
+      font-size: 9px;
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: -30px;
+      left: -12px
+    }
+  }
+}
+
+.cursor_main-small {
+  width: 35px;
+  height: 35px;
+  top: 7.5px;
+  left: 7.5px;
+
+  // &:before {
+  //   top: 0;
+  //   left: 32%;
+  //   transform: translate(5%, -31%);
+  //   // transition: transform 0s ease, left 0s ease;
+  // }
+}
+
+.cursor_junior {
+  // content: '.';
+  pointer-events: none;
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  top: 0;
+  left: 0;
+  background-color: $white;
+  border-radius: 50%;
+  z-index: 1001;
+  opacity: 0;
+  transition: opacity .3s ease;
+  display: none;
+
+  &.black {
+    background-color: $black;
+  }
+  &.visible {
+    display: block
+  }
+  &.vertical_scroll {
+    opacity: 1;
+    width: 4px;
+    height: 4px;
+    top: 3px;
+    left: -14px;
+    background-color: $black;
+    // transform: rotate(-90deg);
+
+    &::after {
+      background-color: $black;
+      border-radius: 50%;
+      content: '';
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      left: 34px;
+      // opacity0.3;
+    }
+  }
+}
+
+.mainDrag {
+  left: 18px;
+  top: 18px;
+  opacity: 1;
+  width: 14px;
+  height: 14px;
+  border: 2px solid $drag;
+
+  &::after {
+    content: 'drag';
+    position: absolute;
+    width: 100%;
+    top: -30px;
+    left: -8px;
+    color: $drag;
+    text-transform: uppercase;
+    font-size: 9px;
+    text-align: center;
+  }
+}
+
+.j_Drag {
+  opacity: 1;
+  width: 4px;
+  height: 4px;
+  top: 3px;
+  left: -14px;
+  background-color: $drag;
+
+  &::after {
+    background-color: $drag;
+    border-radius: 50%;
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    left: 34px;
+    // opacity0.3;
+  }
+}
+
+#svg-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
 svg.svg-circle {
   display: block;
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  // z-index: -10;
+  padding: 0 !important;
   // padding: calc(6vw - 1rem);
 }
 
+// #white_circle {
+//   stroke-dashoffset: -438;
+//   stroke-dasharray: 1009;
+//   // position: absolute;
+//   // top: 0;
+//   // left: 0;
+//   stroke-linecap: round;
+//   // z-index: -1;
+// }
+
 #white_circle {
-  stroke-dashoffset: -438;
-  stroke-dasharray: 1009;
-  position: absolute;
+  stroke-dashoffset: 1900;
+  stroke-dasharray: 1900;
+  // position: fixed;
+  // top: calc(20vh - 35px);
+  // top: calc(40vh - 35px);
   stroke-linecap: round;
-  z-index: -1;
 }
+
+// svg#home-circle {
+//   display: block;
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100%;
+//   height: 100%;
+//   z-index: -1;
+//   // padding: calc(6vw - 1rem);
+// }
 
 .home {
   color: $white;
-
-  svg#home-circle {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    // padding: calc(6vw - 1rem);
-  }
 
   &.mobile {
     #main {
@@ -58,7 +230,7 @@ svg.svg-circle {
       vertical-align: bottom;
       width: 22px;
       height: 54px;
-      cursor: pointer;
+      // cursor: pointer;
       overflow: hidden;
 
       .letter {
@@ -68,8 +240,8 @@ svg.svg-circle {
         bottom: -3px;
         width: 100%;
         text-align: center;
-        -webkit-transform: rotate(-90deg) translateY(-100%);
-                transform: rotate(-90deg) translateY(-100%);
+        -webkit-transform: rotate(-50deg) translate(-94%, -111%); // translate(-100%, -100%);
+                transform: rotate(-50deg) translate(-94%, -111%); // translate(-100%, -100%);
         height: 22px;
         padding-top: 3px;
       }
@@ -97,20 +269,22 @@ svg.svg-circle {
         left: 10px;
         -webkit-transform: scaleY(0);
                 transform: scaleY(0);
-        -webkit-transition: 0.2s cubic-bezier(0.17, 0.67, 0, 0.99);
-                transition: 0.2s cubic-bezier(0.17, 0.67, 0, 0.99);
+        -webkit-transition: 1.2s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
+                transition: 1.2s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
         -webkit-transform-origin: 0 0;
                 transform-origin: 0 0;
       }
       &.current {
         .letter {
-          -webkit-transform: rotate(-90deg);
-                  transform: rotate(-90deg);
+          -webkit-transform: rotate(-45deg) translate(0%, 0%);
+                  transform: rotate(-45deg) translate(0%, 0%);
         }
         &::before {
           opacity: 0;
         }
         &::after {
+          -webkit-transition: 0.7s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
+                  transition: 0.7s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
           -webkit-transform: scaleY(1);
                   transform: scaleY(1);
         }
@@ -123,8 +297,8 @@ svg.svg-circle {
                     transform: scaleY(0);
           }
           .letter {
-            -webkit-transform: rotate(-90deg) translateY(100%) !important;
-                    transform: rotate(-90deg) translateY(100%) !important;
+            -webkit-transform: rotate(-45deg) translate(-94%, -111%) !important; // 100%, -100%
+                    transform: rotate(-45deg) translate(-94%, -111%) !important; // 100%, -100%
           }
         }
         &.after::after {
@@ -166,7 +340,7 @@ svg.svg-circle {
   }
   #col1 {
     // padding: calc(5vh - 34px) 0 0 19%;
-    padding: calc(40vh - 34px) 0 0 19%;
+    padding: calc(40vh - 34px) 0 0 17%;
     // padding: calc(40vh - 35px) 0 0 26%;
     // padding: calc(45vh - 75px) 14vw 0 0;
     display: inline-block;
@@ -177,11 +351,11 @@ svg.svg-circle {
     -webkit-box-flex: 0;
             -ms-flex: 0 1 27%;
                 flex: 0 1 27%;
-    z-index: 2;
+    // z-index: 2;
 
     > div {
       // font: 400 normal 13px/25px $graphik;
-      font: 500 normal 13px/35px 'Financier Display';
+      font: 500 normal 13px/35px $financierDisplay;
       // font: 400 normal 13px/35px $graphik;
       // margin-top: 208px;
       // margin-top: 116px;
@@ -194,46 +368,70 @@ svg.svg-circle {
       div.random {
         display: inline-block;
       }
-
-      // #year {
-      //   display: inline-block;
-      // }
-      .slash {
-        // font: 600 normal 25px/15px 'Financier Display';
+      #year {
+        font: 600 normal 16px/16px $financierDisplay;
+      }
+      #slash {
+        // font: 600 normal 25px/15px $financierDisplay;
         // -webkit-transform: scaleY(0.8) translateY(-1px);
                 // transform: scaleY(0.8) translateY(-1px);
-        -webkit-transform: scaleY(1) translateY(0);
+                -webkit-transform: scaleY(1) translateY(0);
                 transform: scaleY(1) translateY(0);
         display: inline-block;
         margin-right: 2px;
       }
 
+      // #work {
+      //   font: 400 normal 16px/15px $financierDisplay;
+      //   // font: 400 normal 11px/11px $graphik;
+      //   margin-left: 5px;
+      //   -webkit-transform: translateY(-2px);
+      //           transform: translateY(-2px);
+      //   display: inline-block;
+      // }
+
+      // .slash {
+      //   // font: 600 normal 25px/15px $financierDisplay;
+      //   // -webkit-transform: scaleY(0.8) translateY(-1px);
+      //           // transform: scaleY(0.8) translateY(-1px);
+      //   -webkit-transform: scaleY(1) translateY(0);
+      //           transform: scaleY(1) translateY(0);
+      //   display: inline-block;
+      //   margin-right: 2px;
+      // }
       a {
-        // font: 500 normal 16px/20px 'Financier Display';
+        // font: 500 normal 16px/20px $financierDisplay;
         color: $white;
         display: block;
         padding-bottom: 1rem;
 
-        &:hover .svg_line {
-          animation: dash4 0.5s linear forwards;
-        }
+        font: 400 normal 15px/14px $financierDisplay;
+        // font: 400 normal 11px/11px $graphik;
+        margin-left: 5px;
+        -webkit-transform: translateY(-2px);
+                transform: translateY(-2px);
+        display: inline-block;
+
+        // &:hover .svg_line {
+        //   animation: dash4 0.5s linear forwards;
+        // }
       }
       span {
-        font: 500 normal 13px/35px 'Financier Display';
+        font: 500 normal 13px/35px $financierDisplay;
         // font-size: 12px;
         // font-weight: 500;
         text-align: right;
         display: block;
       }
     }
-    #white_circle {
-      stroke-dashoffset: 1900;
-      stroke-dasharray: 1900;
-      position: fixed;
-      // top: calc(20vh - 35px);
-      // top: calc(40vh - 35px);
-      stroke-linecap: round;
-    }
+    // #white_circle {
+    //   stroke-dashoffset: 1900;
+    //   stroke-dasharray: 1900;
+    //   // position: fixed;
+    //   // top: calc(20vh - 35px);
+    //   // top: calc(40vh - 35px);
+    //   stroke-linecap: round;
+    // }
   }
   #col2 {
     padding: calc(45vh - 75px) 14vw 0 0;
@@ -248,7 +446,7 @@ svg.svg-circle {
 
     #type {
       // font: 400 normal 14px/14px $graphik;
-      font: 500 normal 16px/16px 'Financier Display';
+      font: 500 normal 16px/16px $financierDisplay;
       position: absolute;
       top: calc(40vh - 56px);
       // top: calc(40vh - 96px);
@@ -269,7 +467,7 @@ svg.svg-circle {
         padding: 17px;
         position: relative;
         display: inline-block;
-        cursor: pointer;
+        // cursor: pointer;
 
         &:hover {
           opacity: 1;
@@ -287,7 +485,7 @@ svg.svg-circle {
 
     #num {
       // font: 600 normal 15px/15px $graphik;
-      font: 600 normal 20px/15px 'Financier Display';
+      font: 600 normal 20px/15px $financierDisplay;
       position: absolute;
       bottom: calc(20vw - 10px);
       left: calc(52vw - 5px);
@@ -296,7 +494,7 @@ svg.svg-circle {
       // left: 24vw;
 
       #slash {
-        // font: 600 normal 25px/15px 'Financier Display';
+        // font: 600 normal 25px/15px $financierDisplay;
         // -webkit-transform: scaleY(0.8) translateY(-1px);
                 // transform: scaleY(0.8) translateY(-1px);
                 -webkit-transform: scaleY(1) translateY(0);
@@ -305,7 +503,7 @@ svg.svg-circle {
         margin-right: 2px;
       }
       #work {
-        font: 400 normal 16px/15px 'Financier Display';
+        font: 400 normal 16px/15px $financierDisplay;
         // font: 400 normal 11px/11px $graphik;
         margin-left: 5px;
         -webkit-transform: translateY(-2px);
@@ -314,10 +512,13 @@ svg.svg-circle {
       }
     }
     .inner_h2 {
+      display: block;
       // position: relative;
-      // top: 0;
       position: absolute;
-      margin: 20px 0 0 0;
+      // top: 0;
+      left: 0;
+      margin: 20px 0 0 20px;
+      // margin: 20px 0 0 0;
       // margin: 20px 0 0 -3px;
       color: $white;
       // font-weight: 300;
@@ -328,8 +529,18 @@ svg.svg-circle {
       }
     }
     h2 {
-      font: 300 normal 70px/70px 'MullerLight', Arial, Helvetica, sans-serif;
+      position: relative;
+      display: block;
+      font: 900 normal 70px/70px $italiana, Arial, Helvetica, sans-serif;
+      // font: 300 normal 70px/70px 'MullerLight', Arial, Helvetica, sans-serif;
       // font: 300 normal 120px/120px 'Adelon';
+
+      span:nth-child(2) {
+        margin-left: 35px;
+      }
+      span:nth-child(3) {
+        margin-left: 65px;
+      }
     }
   }
   #inner_col {
@@ -361,69 +572,45 @@ svg.svg-circle {
 
 #social {
   font: 500 normal 14px/14px $graphik;
-  // font: 500 normal 13px/13px $graphik;
   position: fixed;
-  // bottom: 7wv;
-  // right: calc(5vw - 6px);
   top: 14px;
   width: 102px;
   height: 72px;
-  // top: calc(4vw - 12px);
   left: calc(3.75% - 24px);
-  // left: calc(2vw - 18px);
-  // right: calc(7vw - 6px);
   z-index: 2;
 
   a {
-    // padding: 30px 6px;
-    // padding: 6px 6px 30px;
-    // padding: 6px 6px 22px;
-    // padding: 6px 6px 22px;
-    // color: $white;
-    // margin-left: 24px;
-    // position: relative;
     position: absolute;
-    // top: 20px;
-    // left: 20px;
 
-    &:hover .svg_line {
-      animation: dash4 0.5s linear forwards;
-    }
     &:first-child {
       top: 29px;
       left: 20px;
-      // margin-right: 24px;
-      // margin-left: 24px;
     }
     &:last-child {
       top: 29px;
       right: 20px;
-      // margin-left: 24px
     }
   }
   .svg_menu {
     bottom: -10px;
     left: 0;
   }
-  // &.black {
-  //   color: black;
-  // }
 }
 
-.logo {
-  &:hover .svg_line {
-    animation: dash4 0.5s linear forwards;
-  }
-}
+// .logo {
+//   &:hover .svg_line {
+//     animation: dash4 0.5s linear forwards;
+//   }
+// }
 
-.svg_menu path {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 0;
-}
+// .svg_menu path {
+//   stroke-dasharray: 1000;
+//   stroke-dashoffset: 0;
+// }
 
 @keyframes dash4 {
   100% {
-    stroke-dashoffset: 700
+    stroke-dashoffset: 700;
   }
 }
 
@@ -559,8 +746,8 @@ svg.svg-circle {
       // }
 
       > div {
-        font: 500 normal 15px/35px 'Financier Display';
-        // font: 500 normal 12px/25px 'Financier Display';
+        font: 500 normal 15px/35px $financierDisplay;
+        // font: 500 normal 12px/25px $financierDisplay;
         margin: 0 0 0 80px;
         // margin: 125px 0 0 -70px;
         // margin: 0 0 0 80px;
@@ -573,8 +760,8 @@ svg.svg-circle {
           }
         }
         span {
-          font: 600 normal 15px/35px 'Financier Display';
-          // font: 500 normal 12px/35px 'Financier Display';
+          font: 600 normal 15px/35px $financierDisplay;
+          // font: 500 normal 12px/35px $financierDisplay;
         }
       }
       svg {
@@ -590,7 +777,7 @@ svg.svg-circle {
     #col2 {
       display: block;
       width: 100%;
-      padding: 30% 0 0 10%;
+      padding: 30% 0 0 8%;
       // padding: 35vh 0 0 80px;
       // padding: 45% 0 0 10%;
       // padding: 20vh 0 0 30px;
@@ -603,17 +790,27 @@ svg.svg-circle {
 
       h2 {
         // font: 300 normal 18vw/20vw  'MullerLight', Arial, Helvetica, sans-serif;
-        font: 900 normal 15vw/15vw $italiana;
+        font: 900 normal 12vw/14vw $italiana;
+        // font: 900 normal 15vw/15vw $italiana;
         // font: 300 normal 13vw/13vw  'MullerLight', Arial, Helvetica, sans-serif;
         // font: 300 normal 14vw/14vw  'MullerLight', Arial, Helvetica, sans-serif;
         // word-wrap: break-word;
         // width: 199px;
         // font: 300 normal 18vw/20vw 'Adelon';
+        overflow-wrap: break-word;
+        width: 325px;
+
+        span:nth-child(2) {
+          margin-left: 15px;
+        }
+        span:nth-child(3) {
+          margin-left: 30px;
+        }
       }
       #type {
         position: relative;
         top: auto;
-        font: 500 normal 13px/13px 'Financier Display';
+        font: 500 normal 13px/13px $financierDisplay;
       }
       #prev_next {
         bottom: 21px;
@@ -623,7 +820,7 @@ svg.svg-circle {
       }
       #num {
         // display: none;
-        font: 600 normal 16px/16px 'Financier Display';
+        font: 600 normal 16px/16px $financierDisplay;
         letter-spacing: 1px;
         bottom: calc(20% - 10px);
         // bottom: calc(65vw - 10px);

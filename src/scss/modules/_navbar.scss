@@ -1,10 +1,19 @@
+#nav-svg-circle {
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  z-index: -1;
+}
+
 header {
   z-index: 12;
   position: fixed;
   width: 100%;
 
   .raidendilan {
-    font: 500 normal 16px/16px 'Graphik';
+    // font: 500 normal 16px/16px $graphik;
+    font: 500 normal 16px/16px $italiana;
     position: absolute;
     top: 7vw;
     // left: calc(26vw - 6px);
@@ -24,16 +33,18 @@ header {
     }
   }
   .logo {
-    font: 600 20px/30px 'MullerLight', Arial, Helvetica, sans-serif;
-    // font: 600 normal 20px/20px 'Graphik';
+    font: 900 25px/30px $italiana, Arial, Helvetica, sans-serif;
+    // font: 600 20px/30px 'MullerLight', Arial, Helvetica, sans-serif;
+    // font: 600 normal 20px/20px $graphik;
     // position: absolute;
     // top: calc(6vw + 3px);
     display: block;
-    width: 72px;
-    height: 72px;
+    width: 45px;
+    height: 55px;
     position: fixed;
-    top: 14px;
-    left: calc(49vw - 21px);
+    overflow: hidden;
+    top: 32px;
+    left: calc(50vw - 22px);
     // left: calc(53vw - 20px);
     // left: calc(8vw - 17px);
     // left: calc(10vw - 17px);
@@ -48,11 +59,19 @@ header {
 
     div {
       position: absolute;
-      top: 20px;
-      left: 20px;
+      // top: 20px;
+      // left: 20px;
       overflow: hidden;
-      height: 28px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      // height: 28px;
       // height: 16px;
+      width: 45px;
+      height: 35px;
+    }
+    svg {
+      z-index: -1;
     }
   }
 }
@@ -134,9 +153,9 @@ header {
     left: calc(75vw - 1px);
   }
 
-  svg, .svg-circle {
-    z-index: -1;
-  }
+  // svg, .svg-circle {
+  //   z-index: -1;
+  // }
 
   #pixi_menu {
     width: 50vw;
@@ -179,7 +198,8 @@ header {
     z-index: 1;
   }
   ol#the_menu {
-    font: 300 normal 68px/133px 'MullerLight', Arial, Helvetica, sans-serif;
+    font: 300 normal 68px/133px $italiana, Arial, Helvetica, sans-serif;
+    // font: 300 normal 68px/133px 'MullerLight', Arial, Helvetica, sans-serif;
     // font: 500 normal 68px/133px 'Alconica';
     // font-family: 'Alconica';
     // font-weight: 400;
@@ -207,7 +227,8 @@ header {
         color: $black;
         content: '0' counter(completeList);
         position: absolute;
-        font: 400 normal 12px/12px 'Graphik';
+        // font: 900 normal 12px/12px $italiana;
+        font: 400 normal 13px/13px $graphik;
         top: 40%;
         right: calc(100% + 68px);
         -webkit-transform-origin: 100% 100%;
@@ -222,10 +243,12 @@ header {
       a {
         &::after {
           content: 'Discover';
-          font: 400 normal 12px/12px 'Graphik';
+          // font: 400 normal 16px/16px $italiana;
+          font: 400 normal 12px/12px $graphik;
+          // letter-spacing: 2px;
           margin: 0 0 0 22px;
-          -webkit-transform: translateY(-14px);
-                  transform: translateY(-14px);
+          -webkit-transform: translateY(-15px);
+                  transform: translateY(-15px);
           display: inline-block;
           opacity: 0;
           -webkit-text-stroke: 0px $black;
@@ -250,9 +273,7 @@ header {
   }
 }
 
-@media (max-width: 1440px) {
-
-}
+// @media (max-width: 1440px) {}
 
 @media (max-width: 1024px) {
   #menu ol {
@@ -278,6 +299,9 @@ header {
 }
 
 @media (max-width: 767px) {
+  #nav-svg-circle {
+    position: fixed;
+  }
   .raidendilan {
     left: 29px;
     top: 40px;

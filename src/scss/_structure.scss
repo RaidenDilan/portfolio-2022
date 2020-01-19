@@ -16,11 +16,16 @@
   h1 {
     // font: 500 normal 120px/140px 'Adelon';
     // font: 500 normal 120px/140px $italiana;
-    font: 500 normal 100px/100px 'Italiana', serif;
+    font: 500 normal 100px/100px $italiana, serif;
     text-transform: uppercase;
     padding: 15vw 16vw 0 17vw;
     // padding: 15vw 0 0 26vw;
     margin-left: -5px;
+    opacity: 0;
+    // transform: rotateX(-70deg) skewX(24deg);
+    // transform-origin: center bottom;
+    // transform-style: preserve-3d;
+    // display: inline-block;
   }
   .cover {
     // width: 100vw;
@@ -61,11 +66,25 @@
   }
 }
 
-.svg_menu {
+svg.svg_menu {
   position: absolute;
   bottom: 16px;
-  left: 20px;
-  width: 106px;
+  left: 0;
+
+  path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+  }
+}
+svg.svg_underline {
+  position: absolute;
+  bottom: 6px;
+  left: 14px;
+
+  path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 0;
+  }
 }
 
 .point {
@@ -194,10 +213,12 @@
   //   }
   // }
 
-  // svg {
-  //   stroke: $white;
-  // }
   .svg_menu {
+    .svg_line {
+      stroke: $white;
+    }
+  }
+  .svg_underline {
     .svg_line {
       stroke: $white;
     }
@@ -207,6 +228,11 @@
     color: $black;
 
     .svg_menu {
+      .svg_line {
+        stroke: $black;
+      }
+    }
+    .svg_underline {
       .svg_line {
         stroke: $black;
       }
@@ -259,7 +285,7 @@
   width: 100%;
   height: 100%;
   z-index: 30;
-  cursor: progress !important;
+  // cursor: progress !important; // ADD YOU CUSTOM CURSOR WHEN RELOADING || PROGRESS IS ACTIVE
 
   // background-image: url('../images/peace.png');
 }
@@ -287,3 +313,9 @@
 //     width: calc(100% - 36px);
 //   }
 // }
+
+@keyframes dash4 {
+  100% {
+    stroke-dashoffset: 700;
+  }
+}
