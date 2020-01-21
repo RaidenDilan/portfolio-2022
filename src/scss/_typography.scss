@@ -40,6 +40,11 @@ body {
       overflow: scroll;
     }
   }
+  // &.dragging {
+  //   overflow-x: scroll;
+  //   overflow-y: hidden;
+  //   will-change: transform;
+  // }
 }
 
 input, textarea {
@@ -48,4 +53,10 @@ input, textarea {
 
 a {
   text-decoration: none;
+}
+
+@media (max-width: 767px) {
+  html, body {
+    height: auto;
+  }
 }

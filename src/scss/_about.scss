@@ -107,6 +107,16 @@
       }
     }
   }
+  &.light {
+    .all_work {
+      text {
+        fill: $white;
+      }
+      .cls-1 {
+        stroke: $white;
+      }
+    }
+  }
 }
 
 #about {
@@ -794,6 +804,17 @@ footer {
       .all_work {
         .cls-1 {
           stroke: none;
+        }
+      }
+    }
+    &.light {
+      .all_work {
+        text {
+          fill: $white;
+        }
+        .cls-1 {
+          // stroke: $white;
+          display: none;
         }
       }
     }

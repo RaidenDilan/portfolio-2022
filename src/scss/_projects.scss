@@ -11,8 +11,8 @@ header {
     display: block;
     width: 72px;
     height: 72px;
-    right: calc(3.75% - 24px);
-    top: 14px;
+    right: calc(5.75% - 24px);
+    top: 13px;
     z-index: 100;
     transition: transform 0.5s ease-in-out 0.125s;
 
@@ -328,19 +328,6 @@ header {
 }
 
 @media (max-width: 767px) {
-  header {
-    .logo {
-      left: calc(49vw - 27px);
-    }
-    .projects {
-      // right: 29px;
-      // top: 34px;
-      right: 0;
-    }
-    #social {
-      left: 0;
-    }
-  }
   #main {
     #next_proj {
       > div {
@@ -377,17 +364,6 @@ header {
 
   .datas {
     padding: 11vw 0 15vw 37vw;
-  }
-}
-
-@media (max-width: 320px) {
-  header {
-    .projects {
-      right: 0;
-    }
-    #social {
-      left: 0;
-    }
   }
 }
 

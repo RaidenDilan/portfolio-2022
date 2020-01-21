@@ -29,9 +29,14 @@
   &.black {
     border: 2px solid $black;
   }
+  // &.white {
+  //   border: 2px solid $white;
+  // }
+
   &.visible {
     display: block
   }
+
   &.vertical_scroll {
     left: 18px;
     top: 18px;
@@ -51,6 +56,10 @@
       top: -30px;
       left: -12px
     }
+  }
+
+  &.menu_opened {
+    border: 2px solid $black;
   }
 }
 
@@ -86,9 +95,14 @@
   &.black {
     background-color: $black;
   }
+  // &.white {
+  //   background-color: $white;
+  // }
+
   &.visible {
     display: block
   }
+
   &.vertical_scroll {
     opacity: 1;
     width: 4px;
@@ -513,22 +527,21 @@ svg.svg-circle {
     }
     .inner_h2 {
       display: block;
-      // position: relative;
-      position: absolute;
-      // top: 0;
-      left: 0;
+      position: relative;
+      // position: absolute;
+      // left: 0;
       margin: 20px 0 0 20px;
       // margin: 20px 0 0 0;
-      // margin: 20px 0 0 -3px;
       color: $white;
-      // font-weight: 300;
       text-transform: uppercase;
+      // z-index: 1000;
 
       span {
         display: block;
       }
     }
     h2 {
+      // z-index: 1000;
       position: relative;
       display: block;
       font: 900 normal 70px/70px $italiana, Arial, Helvetica, sans-serif;
@@ -573,11 +586,22 @@ svg.svg-circle {
 #social {
   font: 500 normal 14px/14px $graphik;
   position: fixed;
-  top: 14px;
+  top: 15px;
   width: 102px;
   height: 72px;
   left: calc(3.75% - 24px);
   z-index: 2;
+
+  &.light {
+    a {
+      color: $white;
+    }
+    svg.svg_menu {
+      .svg_line {
+        stroke: $white;
+      }
+    }
+  }
 
   a {
     position: absolute;
@@ -723,9 +747,8 @@ svg.svg-circle {
 }
 
 @media (max-width: 767px) {
-  #social {
-    // top: calc(6vw - 3px);
-    // left: calc(1vw - 6px);
+  .cursor_main, .cursor_junior {
+    display: none;
   }
   .home {
     #num_letter {
@@ -833,6 +856,9 @@ svg.svg-circle {
           -webkit-transform: translateY(-1px);
                   transform: translateY(-1px);
         }
+      }
+      .inner_h2 {
+        margin: 20px 0 0 10px;
       }
     }
   }
