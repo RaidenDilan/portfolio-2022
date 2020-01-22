@@ -1,3 +1,11 @@
+@mixin flexbox($display: false, $flow: false, $justify: false, $items: false, $content: false) {
+  @if $display { display: $display; }
+  @if $flow { flex-flow: $flow; }
+  @if $justify { justify-content: $justify; }
+  @if $items { align-items: $items; }
+  @if $content { align-content: $content; }
+}
+
 @mixin stroke($width, $color) {
   -webkit-text-stroke: $width $color;
       -ms-text-stroke: $width $color;

@@ -1,8 +1,4 @@
 PIXI.utils.skipHello();
-// PIXI.spine.loaders.atlasParser.enableCaching = false;
-
-// console.log('PIXI', PIXI);
-// console.log('PIXI.utils.TextureCache', PIXI.utils.TextureCache);
 
 var Site = Site || {};
 
@@ -19,22 +15,6 @@ Site.setup = function setup() {
 
   Site.initMenuPixi();
 };
-
-/*----------------------------------------------------------------------------*/
-/*                           HELP FUNCTIONS - START                           */
-/*----------------------------------------------------------------------------*/
-
-Site.getElem = function getElem(el) {
-  return document.getElementById(el);
-};
-
-Site.acceptsTouch = function acceptsTouch() {
-  return 'ontouchstart' in document.documentElement;
-};
-
-/*----------------------------------------------------------------------------*/
-/*                           HELP FUNCTIONS - END                           */
-/*----------------------------------------------------------------------------*/
 
 /* called each time a page is launched */
 Site.init = function init() {
@@ -111,7 +91,12 @@ Site.init = function init() {
 
   setTimeout(() => document.querySelector('.projects').classList.remove('arrow-transition-out'), 500);
 
-  if (Site.body.classList.contains('is-loading')) setTimeout(() => document.querySelector('.is-loading').classList.remove('is-loading'), 2000, false);
+  /* classList of undefined when going from state to another => BUG!!! */
+  if (Site.body.classList.contains('is-loading')) {
+    setTimeout(function() {
+      document.querySelector('.is-loading').classList.remove('is-loading');
+    }, 2000, false);
+  }
 
   /* removes event listeners from elements with 'link' class before adding click events to each element */
   Site.links.forEach((link) => link.removeEventListener('click', Site.onClick, false));
@@ -153,6 +138,7 @@ Site.onClick = function onClick(event) {
 
     if (Site.linkInProgress === false) {
       Site.linkInProgress = true;
+
       var href = this.getAttribute('href');
 
       if (event.target.classList.contains('bottom_link')) {
@@ -163,6 +149,7 @@ Site.onClick = function onClick(event) {
       history.pushState({}, '', href);
       Site.loadPage(href);
       Site.theRafLoading();
+
       return false;
     }
     else return false;
@@ -280,6 +267,8 @@ Site.animations = function animations() {
       document.getElementById('progress').style.display = 'none';
     });
   }
+  else if (Site.body.classList.contains('notFound')) document.getElementById('progress').style.display = 'none';
+  else if (Site.body.classList.contains('internalServerError')) document.getElementById('progress').style.display = 'none';
   else if (Site.body.classList.contains('page-template-about')) {
     document.getElementById('progress').style.display = 'none';
     document.querySelectorAll('.point3').forEach(x => x.classList.add('black'));
@@ -317,13 +306,13 @@ Site.animations = function animations() {
   }
   else if (Site.body.classList.contains('single')) {
     if (window.innerWidth < 768) {
-      document.querySelectorAll('#the_menu li').forEach(x => {
+      document.querySelectorAll('#the_menu li').forEach((x) => {
         // console.log('x', x);
         if (Site.body.classList.contains(x.getAttribute('data-id'))) x.classList.add('active');
       });
     }
 
-    document.querySelectorAll('.point3').forEach(x => x.classList.add('black'));
+    document.querySelectorAll('.point3').forEach((x) => x.classList.add('black'));
 
     if (!Site.isMobile()) {
       Site.cursorMain.classList.add('vertical_scroll');
@@ -666,7 +655,7 @@ Site.initMenuPixi = function initMenuPixi() {
 
   document.querySelectorAll('#the_menu li a').forEach(Site.setMenuDimensions);
 
-  // displacement 2
+  /* displacement 2 */
   Site.displacementSprite3 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
   Site.displacementSprite3.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
   Site.displacementFilter3 = new PIXI.filters.DisplacementFilter(Site.displacementSprite3);
@@ -699,8 +688,8 @@ Site.documentEventListeners = function documentEventListeners() {
   document.addEventListener('DOMMouseScroll', Site.showHideArrow, false);
 
   if (!Site.isMobile()) {
-    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Site.onMouseOver, false));
-    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Site.onMouseOut, false));
+    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Site.handleMouseOver, false));
+    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Site.handleMouseOut, false));
   }
 };
 
@@ -746,135 +735,10 @@ Site.windowEventListeners = function windowEventListeners() {
 
   window.addEventListener('resize', Site.resize, false);
   // window.addEventListener('scroll', Site.showHideArrow, false);
-  if (!Site.isMobile()) window.addEventListener('mousemove', Site.onMouseMove, false);
+  if (!Site.isMobile()) window.addEventListener('mousemove', Site.handlerMouseMove, false);
 
   /* device giroscope event */
   if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Site.handleCircle, false);
-};
-
-/* homePixi mouse/touch : drag events */
-Site.dragStart = function dragStart(event) {
-  // Site.isDown = true;
-  event.preventDefault();
-  event = event || window.event;
-
-  Site.startPosition = event.pageX;
-  // Site.body.classList.add('dragging');
-
-  if (event.type == 'touchstart') Site.posX1 = event.touches[0].clientX;
-  else {
-    Site.posX1 = event.clientX;
-    document.onmouseup   = Site.dragEnd;
-    document.onmousemove = Site.dragAction;
-  }
-};
-Site.dragMove = function dragMove(event) {
-  // if(!Site.isDown) return;
-  event.preventDefault();
-  event = event || window.event;
-
-  if (event.type == 'touchmove') {
-    Site.posX2 = Site.posX1 - event.touches[0].clientX;
-    Site.posX1 = event.touches[0].clientX;
-  }
-  else {
-    Site.posX2 = Site.posX1 - event.clientX;
-    Site.posX1 = event.clientX;
-  }
-};
-Site.dragEnd = function dragEnd(event) {
-  var threshold = 100; /* DRAG VARIABLES */
-  // Site.isDown         = false;
-
-  event.preventDefault();
-  event = event || window.event;
-
-  Site.finishPosition = event.pageX;
-  // Site.body.classList.remove('dragging');
-
-  if (Site.finishPosition - Site.startPosition < -threshold) Site.nextSlide();
-  else if (Site.finishPosition - Site.startPosition > threshold) Site.prevSlide();
-
-  document.onmouseup   = null;
-  document.onmousemove = null;
-};
-
-/* anchor mouse events */
-Site.onMouseOver = function onMouseOver(event) {
-  event = event || window.event;
-  event.preventDefault();
-
-  if (event.target.classList.contains('link_hover')) {
-    if (Site.body.classList.contains('home')) {
-      // console.log('link_hover', event.target.classList.contains('link_hover'));
-      Site.cursorMain.classList.remove('mainDrag');
-      Site.cursorJunior.classList.remove('j_Drag');
-      Site.cursorMain.classList.add('cursor_main-small');
-    }
-    else {
-      Site.cursorMain.classList.remove('vertical_scroll');
-      Site.cursorJunior.classList.remove('vertical_scroll');
-      Site.cursorMain.classList.add('cursor_main-small');
-    }
-  }
-  return false;
-};
-Site.onMouseOut = function onMouseOut(event) {
-  event = event || window.event;
-  event.preventDefault();
-
-  if (event.target.classList.contains('link_hover')) {
-    if (Site.body.classList.contains('home')) {
-      Site.cursorMain.classList.add('mainDrag');
-      Site.cursorJunior.classList.add('j_Drag');
-      Site.cursorMain.classList.remove('cursor_main-small');
-      Site.cursorMain.classList.remove('menu_opened');
-
-      if (document.querySelector('.projects').classList.contains('active')) {
-        Site.cursorMain.classList.remove('mainDrag');
-        Site.cursorJunior.classList.remove('j_Drag');
-        Site.cursorMain.classList.add('menu_opened');
-      }
-    }
-    else {
-      if (Site.scrolling.vars.target <= Math.round(Site.scrolling.vars.bounding - 500)) {
-        Site.cursorMain.classList.add('vertical_scroll');
-        Site.cursorJunior.classList.add('vertical_scroll');
-        Site.cursorMain.classList.remove('cursor_main-small');
-        Site.cursorMain.classList.remove('menu_opened');
-      }
-
-      if (document.querySelector('.projects').classList.contains('active')) {
-        Site.cursorMain.classList.remove('vertical_scroll');
-        Site.cursorJunior.classList.remove('vertical_scroll');
-        Site.cursorMain.classList.add('menu_opened');
-      }
-
-      Site.cursorMain.classList.remove('cursor_main-small');
-    }
-  }
-  else Site.mouseOverLinks.forEach((obj) => document.removeEventListener('mousemove', Site.onMouseOver, false));
-
-  return false;
-};
-Site.onMouseMove = function onMouseMove(event) {
-  event = event || window.event;
-  event.preventDefault();
-
-  let pad  = 26;
-  let pad2 = 5;
-
-  // if (!Site.isMobile()) {
-    if (!Site.cursorMain.classList.contains('visible')) {
-      Site.cursorMain.classList.add('visible');
-      Site.cursorJunior.classList.add('visible');
-    }
-    else if (Site.cursorMain.classList.contains('visible')) {
-      TweenMax.to(Site.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }); // Site.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
-      TweenMax.to(Site.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }); // Site.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
-    }
-  // }
-  return false;
 };
 
 Site.changeProject = function changeProject() {
@@ -1234,11 +1098,129 @@ Site.scrollBackUp = function scrollBackUp(target) {
   }
 };
 
-Site.addRandom = function addRandom(item, index) {
-  item.classList.add('random');
+/* homePixi mouse/touch : drag events */
+Site.dragStart = function dragStart(event) {
+  // Site.isDown = true;
+  event.preventDefault();
+  event = event || window.event;
+
+  Site.startPosition = event.pageX;
+  // Site.body.classList.add('dragging');
+
+  if (event.type == 'touchstart') Site.posX1 = event.touches[0].clientX;
+  else {
+    Site.posX1 = event.clientX;
+    document.onmouseup   = Site.dragEnd;
+    document.onmousemove = Site.dragAction;
+  }
 };
-Site.isMobile = function isMobile() {
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+Site.dragMove = function dragMove(event) {
+  // if(!Site.isDown) return;
+  event.preventDefault();
+  event = event || window.event;
+
+  if (event.type == 'touchmove') {
+    Site.posX2 = Site.posX1 - event.touches[0].clientX;
+    Site.posX1 = event.touches[0].clientX;
+  }
+  else {
+    Site.posX2 = Site.posX1 - event.clientX;
+    Site.posX1 = event.clientX;
+  }
+};
+Site.dragEnd = function dragEnd(event) {
+  var threshold = 100; /* DRAG VARIABLES */
+  // Site.isDown         = false;
+
+  event.preventDefault();
+  event = event || window.event;
+
+  Site.finishPosition = event.pageX;
+  // Site.body.classList.remove('dragging');
+
+  if (Site.finishPosition - Site.startPosition < -threshold) Site.nextSlide();
+  else if (Site.finishPosition - Site.startPosition > threshold) Site.prevSlide();
+
+  document.onmouseup   = null;
+  document.onmousemove = null;
+};
+
+/* anchor mouse events */
+Site.handleMouseOver = function handleMouseOver(event) {
+  event = event || window.event;
+  event.preventDefault();
+
+  if (event.target.classList.contains('link_hover')) {
+    if (Site.body.classList.contains('home')) {
+      // console.log('link_hover', event.target.classList.contains('link_hover'));
+      Site.cursorMain.classList.remove('mainDrag');
+      Site.cursorJunior.classList.remove('j_Drag');
+      Site.cursorMain.classList.add('cursor_main-small');
+    }
+    else {
+      Site.cursorMain.classList.remove('vertical_scroll');
+      Site.cursorJunior.classList.remove('vertical_scroll');
+      Site.cursorMain.classList.add('cursor_main-small');
+    }
+  }
+  return false;
+};
+Site.handleMouseOut = function handleMouseOut(event) {
+  event = event || window.event;
+  event.preventDefault();
+
+  if (event.target.classList.contains('link_hover')) {
+    if (Site.body.classList.contains('home')) {
+      Site.cursorMain.classList.add('mainDrag');
+      Site.cursorJunior.classList.add('j_Drag');
+      Site.cursorMain.classList.remove('cursor_main-small');
+      Site.cursorMain.classList.remove('menu_opened');
+
+      if (document.querySelector('.projects').classList.contains('active')) {
+        Site.cursorMain.classList.remove('mainDrag');
+        Site.cursorJunior.classList.remove('j_Drag');
+        Site.cursorMain.classList.add('menu_opened');
+      }
+    }
+    else {
+      if (Site.scrolling.vars.target <= Math.round(Site.scrolling.vars.bounding - 500)) {
+        Site.cursorMain.classList.add('vertical_scroll');
+        Site.cursorJunior.classList.add('vertical_scroll');
+        Site.cursorMain.classList.remove('cursor_main-small');
+        Site.cursorMain.classList.remove('menu_opened');
+      }
+
+      if (document.querySelector('.projects').classList.contains('active')) {
+        Site.cursorMain.classList.remove('vertical_scroll');
+        Site.cursorJunior.classList.remove('vertical_scroll');
+        Site.cursorMain.classList.add('menu_opened');
+      }
+
+      Site.cursorMain.classList.remove('cursor_main-small');
+    }
+  }
+  else Site.mouseOverLinks.forEach((obj) => document.removeEventListener('mousemove', Site.handleMouseOver, false));
+
+  return false;
+};
+Site.handlerMouseMove = function handlerMouseMove(event) {
+  event = event || window.event;
+  event.preventDefault();
+
+  let pad  = 26;
+  let pad2 = 5;
+
+  // if (!Site.isMobile()) {
+    if (!Site.cursorMain.classList.contains('visible')) {
+      Site.cursorMain.classList.add('visible');
+      Site.cursorJunior.classList.add('visible');
+    }
+    else if (Site.cursorMain.classList.contains('visible')) {
+      TweenMax.to(Site.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }); // Site.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
+      TweenMax.to(Site.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }); // Site.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
+    }
+  // }
+  return false;
 };
 
 Site.handleCircle = function handleCircle(event) {
@@ -1381,11 +1363,6 @@ Site.showHideArrow = function showHideArrow(event) {
       }
     }
   }
-};
-
-Site.mousePosition = function mousePosition(event) {
-  Site.currentMousePos.x = event.pageX;
-  Site.currentMousePos.y = event.pageY;
 };
 
 Site.homePixi = function homePixi() {
@@ -1921,6 +1898,35 @@ Site.animateNextInnerBtn = function animateNextInnerBtn() {
   TweenMax.staggerTo('.stag', 0.4, { opacity: 0, ease: Power2.easeOut }, 0.02);
 };
 
+/*----------------------------------------------------------------------------*/
+/*                           HELP FUNCTIONS - START                           */
+/*----------------------------------------------------------------------------*/
+
+Site.addRandom = function addRandom(item, index) {
+  item.classList.add('random');
+};
+
+Site.isMobile = function isMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+};
+
+Site.mousePosition = function mousePosition(event) {
+  Site.currentMousePos.x = event.pageX;
+  Site.currentMousePos.y = event.pageY;
+};
+
+// Site.getElem = function getElem(el) {
+//   return document.getElementById(el);
+// };
+//
+// Site.acceptsTouch = function acceptsTouch() {
+//   return 'ontouchstart' in document.documentElement;
+// };
+
+/*----------------------------------------------------------------------------*/
+/*                           HELP FUNCTIONS - END                           */
+/*----------------------------------------------------------------------------*/
+
 // Site.moveBackground = function moveBackground() {
 //   Site.x += (Site.lFollowX - Site.x) * Site.friction;
 //   Site.y += (Site.lFollowY - Site.y) * Site.friction;
@@ -1933,6 +1939,7 @@ Site.animateNextInnerBtn = function animateNextInnerBtn() {
 //
 //   window.requestAnimationFrame(Site.moveBackground);
 // };
+//
 // Site.backgroundGyro = function backgroundGyro() {
 //   document.getElementById('#container').on('mousemove', function(e) {
 //     parallaxIt(e, '.slide', -100);
@@ -1949,97 +1956,6 @@ Site.animateNextInnerBtn = function animateNextInnerBtn() {
 //       y: (relY - $this.height() / 2) / $this.height() * movement
 //     });
 //   }
-// };
-
-// Site.getEL = function getEL(el) {
-//   return document.getElementById(el);
-// };
-// Site.acceptsTouch = function acceptsTouch() {
-//   return 'ontouchstart' in document.documentElement;
-// };
-// Site.drag = function drag() {
-//   return {
-//     move: function(div, xpos, ypos) {
-//       div.style.left = xpos + 'px';
-//       // div.style.top = ypos + "px"; //not moving y axis in this case
-//     },
-//     startMoving: function(div, container, evt) {
-//       evt = evt || window.event;
-//
-//       var posX    = ((Site.acceptsTouch()) ? evt.touches[0].clientX : evt.clientX);
-//       var posY    = ((Site.acceptsTouch()) ? evt.touches[0].clientY : evt.clientY);
-//
-//       var divTop  = div.style.top.replace('px', '');
-//       var divLeft = div.style.left.replace('px', '');
-//
-//       var offsetX = posX - divLeft;
-//       var offsetY = posY - divTop;
-//
-//       if (Site.acceptsTouch()) {
-//         document.ontouchmove = function(evt) {
-//           evt.preventDefault();
-//           evt = evt || window.event;
-//
-//           var posX   = evt.touches[0].clientX;
-//           var posY   = evt.touches[0].clientY;
-//
-//           var cWidth = getStyle(Site.getEL('inner_col'),'width').replace('px','');
-//           var dWidth = getStyle(Site.getEL('title_h2'),'width').replace('px','');
-//
-//           var finalX = posX - offsetX;
-//           var finalY = posY - offsetY;
-//
-//           if (finalX < 0) finalX = 0;
-//           if (finalY < 0) finalY = 0;
-//           if (finalX <= cWidth - dWidth - 8) Site.drag.move(div, finalX, finalY);
-//         };
-//       } else {
-//         document.onmousemove = function(evt) {
-//           evt.preventDefault();
-//           evt = evt || window.event;
-//
-//           var posX   = evt.clientX;
-//           var posY   = evt.clientY;
-//
-//           var cWidth = Site.getStyle(Site.getEL('col2'),'width').replace('px',''); //container width
-//           var dWidth = Site.getStyle(Site.getEL('inner_h2'),'width').replace('px',''); //slider widt
-//
-//           var finalX = posX - offsetX;
-//           var finalY = posY - offsetY;
-//
-//           if (finalX < 0) finalX = 0;
-//           if (finalY < 0) finalY = 0;
-//           if (finalX <= cWidth - dWidth - 8) Site.drag.move(div, finalX, finalY);
-//         };
-//       }
-//     },
-//     stopMoving: function(div, container, evt) {
-//       if (Site.acceptsTouch()) {
-//         // evt.changedTouches[0].clientX
-//         div.style.left = '20px';
-//       }
-//       else {
-//         document.getElementById(container).style.cursor = 'default';
-//         document.onmousemove = function() {
-//           console.log('stopMoving : onmousemove');
-//         };
-//         // evt.clientX
-//         div.style.left = '20px';
-//       }
-//     },
-//   };
-// }();
-// Site.getStyle = function getStyle(oElm, strCssRule) {
-//   var strValue = '';
-//
-//   if (document.defaultView && document.defaultView.getComputedStyle) strValue = document.defaultView.getComputedStyle(oElm, '').getPropertyValue(strCssRule);
-//   else if (oElm.currentStyle) {
-//     strCssRule = strCssRule.replace(/\-(\w)/g, function(strMatch, p1) {
-//       return p1.toUpperCase();
-//     });
-//     strValue = oElm.currentStyle[strCssRule];
-//   }
-//   return strValue;
 // };
 
 document.addEventListener('DOMContentLoaded', () => {

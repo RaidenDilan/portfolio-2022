@@ -1,0 +1,71 @@
+.notFound {
+  background-color: #9E9E9E;
+
+  #main {
+    div {
+      height: 100vh;
+      position: relative;
+      @include flexbox(flex, column, center, center, center);
+
+      h1 {
+        font: 100 normal 15vw/15vw 'Avenir Next' ,sans-serif;
+        letter-spacing: 10px;
+        color: $white;
+      }
+      p {
+        font: 600 normal 2vw/2vw $italiana;
+        letter-spacing: 1px;
+        color: $white;
+      }
+      a {
+        font: 600 normal 17px/35px $italiana;
+        text-transform: uppercase;
+        color: $white;
+        margin: 2vw 0 0 0;
+        background: $black;
+        color: $white;
+        padding: 0 10px;
+        border-radius: 3px;
+      }
+    }
+  }
+}
+
+.internalServerError {
+  background-color: #9E9E9E;
+
+  #main {
+    div {
+      height: 100vh;
+      position: relative;
+      @include flexbox(flex, column, center, center, center);
+
+      h1 {
+        font: 100 normal 15vw/15vw 'Avenir Next' ,sans-serif;
+        letter-spacing: 10px;
+        color: $white;
+      }
+      p {
+        letter-spacing: 1px;
+        color: $white;
+
+        &:first-of-type {
+          font: 600 normal 2vw/3vw $italiana;
+        }
+        &:last-of-type {
+          font: 600 normal 1.1vw/3vw $italiana;
+        }
+      }
+      a {
+        font: 600 normal 17px/35px $italiana;
+        text-transform: uppercase;
+        color: $white;
+        margin: 2vw 0 0 0;
+        background: $black;
+        color: $white;
+        padding: 0 10px;
+        border-radius: 3px;
+      }
+    }
+  }
+}
