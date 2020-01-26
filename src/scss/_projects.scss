@@ -1,10 +1,12 @@
 header {
-  transition: all 0.3s ease-in, background 0.5s ease-in;
+  transition: all 0.3s ease-in;
+  // transition: all 0.3s ease-in, background 0.5s ease-in; // ORIGINAL
   transition-delay: 0.25s;
 
   .svg-circle {
     // transform: rotate(94deg);
   }
+
   .projects {
     // pointer-events: bounding-box;
     position: fixed;
@@ -14,6 +16,7 @@ header {
     right: calc(5.75% - 24px);
     top: 13px;
     z-index: 100;
+    transform: rotate(0deg);
     transition: transform 0.5s ease-in-out 0.125s;
 
     * {
@@ -28,10 +31,11 @@ header {
       left: 24px;
       width: 16px;
       height: 2px;
-      background: #ffffff;
-      // background: var(--button-color, #ffffff);
+      background: $white;
+      background: var(--button-color, $white); // not yet implemented with JS
+
       transition:
-        width 0.125s ease-in-out,
+        width 0.125s ease-in-out 0.1s,
         top 0.25s ease-in-out 0.5s,
         transform 0.25s ease-out 0.25s,
         opacity 0.001s linear 0.5s,
@@ -50,33 +54,7 @@ header {
       }
     }
 
-    &.animating {
-      div {
-        transition:
-          width 0.125s ease-in-out,
-          top 0.25s ease-in-out 0.5s,
-          transform 0.25s ease-out 0.25s,
-          opacity 0.001s linear 0.5s;
-      }
-    }
-    &.light {
-      div {
-        background: white;
-      }
-    }
-    &.closing {
-      div {
-        width: 24px;
-      }
-    }
-    &:hover {
-      div {
-        &:nth-child(3) {
-          width: 24px;
-        }
-      }
-    }
-    &.active {
+    &.opened {
       transform: rotate(90deg);
       transition: transform 0.5s ease-in-out 0.375s;
 
@@ -86,7 +64,8 @@ header {
           width 0.125s ease-in-out 0.875s,
           top 0.25s ease-in-out 0.25s,
           transform 0.25s ease-out 0.5s,
-          opacity 0.001s linear 0.5s;
+          opacity 0.001s linear 0.5s,
+          background-color 0.25s linear;
 
         &:nth-child(1) {
           top: 35px;
@@ -102,33 +81,65 @@ header {
       }
     }
 
-    /* Menu Button Arrow for Case Study */
+    // animating class is currently disabled in app.js
+    &.animating {
+      div {
+        transition:
+          width 0.125s ease-in-out,
+          top 0.25s ease-in-out 0.5s,
+          transform 0.25s ease-out 0.25s,
+          opacity 0.001s linear 0.5s;
+      }
+    }
+
+    &.closing {
+      transition: transform 0.5s ease-in-out 0.125s;
+
+      div {
+        width: 24px;
+        transition:
+          width 0.125s ease-in-out 0.1s,
+          top 0.25s ease-in-out 0.5s,
+          transform 0.25s ease-out 0.25s,
+          opacity 0.001s linear 0.5s,
+          background-color 0.25s linear;
+      }
+    }
+
     &.arrow-transition-in {
       transform: rotate(90deg);
       transition: transform 0.25s ease-in-out 0s;
 
       div {
-        // width: 24px;
         transition:
           width 0.125s ease-in-out 0s,
           top 0.2s ease-in-out 0.05s,
           transform 0.25s ease-out 0s,
           background-color 0.25s linear;
+
+        &:nth-child(1) {
+          top: 32px;
+          transform: rotate(-45deg);
+          width: 11px;
+          left: 22px;
+        }
+        &:nth-child(2) {
+          width: 28px;
+        }
+        &:nth-child(3) {
+          top: 38px;
+          transform: rotate(45deg);
+          width: 11px;
+          left: 22px;
+        }
       }
-      div:nth-child(1) {
-        top: 32px;
-        transform: rotate(-45deg);
-        width: 11px;
-        left: 22px;
-      }
-      div:nth-child(2) {
-        width: 28px;
-      }
-      div:nth-child(3) {
-        top: 38px;
-        transform: rotate(45deg);
-        width: 11px;
-        left: 22px;
+
+      &:hover {
+        div {
+          &:nth-child(3) {
+            width: 11px;
+          }
+        }
       }
     }
     &.arrow-transition-out {
@@ -140,30 +151,59 @@ header {
         left: 24px;
         width: 16px;
         height: 2px;
+
         transition:
           width 0.125s ease-in-out 0.1s,
           top 0.125s ease-in-out 0s,
-          transform 0.125s ease-out 0s;
+          transform 0.125s ease-out 0s,
+          background-color 0.25s linear;
 
         &:nth-child(1) {
-              top: 29px;
-              width: 24px;
-            }
+          top: 29px;
+          width: 24px;
+        }
         &:nth-child(2) {
-              top: 35px;
-              width: 24px;
-            }
+          top: 35px;
+          width: 24px;
+        }
         &:nth-child(3) {
-              top: 41px;
-            }
+          top: 41px;
+        }
+      }
+    }
+
+    &.light {
+      div {
+        background: $white;
+      }
+    }
+
+    &:hover {
+      // &.arrow-transition-in {
+      //   div {
+      //     &:nth-child(3) {
+      //       width: 11px;
+      //     }
+      //   }
+      // }
+      div {
+        // transition:
+        //   width 0.125s ease-in-out 0.1s,
+        //   top 0.125s ease-in-out 0s,
+        //   transform 0.125s ease-out 0s;
+
+        &:nth-child(3) {
+          width: 24px;
+        }
       }
     }
   }
 }
 
-.black .feature1, .black .feature2, .black .feature3 {
+.black .feature1,
+.black .feature2,
+.black .feature3 {
   background: $black;
-  // border-color: $black;
 }
 
 #main {
@@ -186,7 +226,7 @@ header {
       margin: 0 auto;
       width: 62%;
       position: relative;
-      -webkit-transform-origin: 50% 50%;
+      // -webkit-transform-origin: 50% 50%;
               transform-origin: 50% 50%;
     }
   }
@@ -204,7 +244,7 @@ header {
       text-align: center;
       position: relative;
       top: 50%;
-      -webkit-transform: translateY(-50%);
+      // -webkit-transform: translateY(-50%);
               transform: translateY(-50%);
 
       div {
@@ -238,7 +278,10 @@ header {
           span {
             color: $black;
             @include stroke(1px, $black);
-            transition: color 0.25s ease-in-out 0.6s, -webkit-text-stroke 0.25s ease-in-out 0.6s, -ms-text-stroke 0.25s ease-in-out 0.6s;
+            transition:
+              color 0.25s ease-in-out 0.6s,
+              -webkit-text-stroke 0.25s ease-in-out 0.6s,
+              -ms-text-stroke 0.25s ease-in-out 0.6s;
           }
         }
 
@@ -261,20 +304,11 @@ header {
     // }
   }
   .datas {
-    a {
-      padding-bottom: 15px;
-
-      &:hover .svg_line {
-        animation: dash4 0.5s linear forwards;
-      }
-    }
-  }
-  .datas {
     // font: 900 normal 12px/28px $italiana;
     font: 400 normal 13px/28px $graphik;
     // letter-spacing: 2px;
     // font: 400 normal 13px/28px $graphik;
-    padding: 12px 0 5vw 64vw;
+    padding: 10vh 0 5vh 65vw;
 
     svg {
       margin-left: 8px;
@@ -294,12 +328,17 @@ header {
       display: block;
       color: $black;
       padding: 8px 0 15px 8px;
+      // padding-bottom: 15px;
       // padding-left: 8px;
       margin-left: -8px;
 
       .svg_menu {
         bottom: 10px;
         left: 0px;
+      }
+
+      &:hover .svg_line {
+        animation: dash4 0.5s linear forwards;
       }
     }
   }
@@ -327,6 +366,31 @@ header {
   }
 }
 
+@media (min-width: 1440px) {
+  header {
+    .projects {
+      right: calc(3.75% - 24px);
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  #main {
+    .datas {
+      padding: 5vh 0 5vh 60vw;
+    }
+    #next_proj {
+      > div {
+        a {
+          span {
+            font: 500 normal 80px/80px $italiana, serif;
+          }
+        }
+      }
+    }
+  }
+}
+
 @media (max-width: 767px) {
   #main {
     #next_proj {
@@ -336,10 +400,10 @@ header {
 
         a {
           // font: 500 normal 19vw/24vw 'Adelon';
-          font: 500 normal 11vw/11vw $italiana;
+          font: 500 normal 11vw/12vw $italiana;
 
           span {
-            font: 500 normal 45px/55px $italiana, serif;
+            font: 500 normal 80px/90px $italiana, serif;
           }
         }
       }
@@ -348,7 +412,7 @@ header {
       }
     }
     .datas {
-      padding: 12px 0 5vw 11%;
+      padding: 6vh 0 5vw 18vw;
     }
   }
   .inner_img {
@@ -362,280 +426,25 @@ header {
     }
   }
 
-  .datas {
-    padding: 11vw 0 15vw 37vw;
-  }
+  // .datas {
+  //   padding: 11vw 0 15vw 37vw;
+  // }
 }
 
-// .projects {
-//   // position: absolute;
-//   // top: calc(7vw - 6px);
-//   // right: calc(5vw - 6px);
-//   // // right: calc(7vw - 6px);
-//   // font: 400 normal 13px/13px $graphik;
-//   // line-height: 0px;
-//   // // cursor: pointer;
-//   // // padding: 14px 6px 14px 6px;
-//   //
-//   // // position: relative;
-//   // display: inline-block;
-//   // // height: 30px;
-//   // // width: 30px;
-//   // width: 72px;
-//   // height: 72px;
-//   // cursor: pointer;
-//   // -webkit-transform: rotate(0deg);
-//   //         transform: rotate(0deg);
-//   // transition: all 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-//   // transition-delay: 0.5s;
-//   // -webkit-user-select: none;
-//   //    -moz-user-select: none;
-//   //     -ms-user-select: none;
-//   //         user-select: none;
-//   // -webkit-tap-highlight-color: transparent;
-//
-//   // pointer-events: bounding-box;
-//   // cursor: pointer;
-//   // position: fixed;
-//   // display: block;
-//   // width: 72px;
-//   // height: 72px;
-//   // right: calc(3.75% - 24px);
-//   // top: 14px;
-//   // z-index: 100;
-//   // transition: transform 0.5s ease-in-out 0.125s;
-//   //
-//   // .feature1, .feature2, .feature3 {
-//   //   position: absolute;
-//   //   left: 24px;
-//   //   width: 16px;
-//   //   height: 2px;
-//   //   background: $white;
-//   //   // background: #1b1b1b;
-//   //   // background: var(--button-color, #1b1b1b);
-//   //   transition: width 0.125s ease-in-out,
-//   //     top 0.25s ease-in-out 0.5s,
-//   //     transform 0.25s ease-out 0.25s,
-//   //     opacity 0.001s linear 0.5s,
-//   //     background-color 0.25s linear;
-//   // }
-//   // // .feature1 {
-//   // //   // width: 100%;
-//   // //   // height: 1px;
-//   // //   // display: block;
-//   // //   // position: relative;
-//   // //   // // background: $black;
-//   // //   // transition: all 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-//   // //   // transition-delay: 0s;
-//   // //   // -webkit-transform: translateY(0px) rotate(0deg);
-//   // //   //         transform: translateY(0px) rotate(0deg);
-//   // // }
-//   // // .feature2 {
-//   // //   // width: 100%;
-//   // //   // height: 1px;
-//   // //   // display: block;
-//   // //   // position: relative;
-//   // //   // // background: $black;
-//   // //   // -webkit-transform: translateY(4px) rotate(0deg);
-//   // //   //         transform: translateY(4px) rotate(0deg);
-//   // //   // transition: all 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-//   // //   // transition-delay: 0s;
-//   // // }
-//   // // .feature3 {
-//   // //   // width: 100%;
-//   // //   // height: 1px;
-//   // //   // display: block;
-//   // //   // position: relative;
-//   // //   // // background: $black;
-//   // //   // -webkit-transform: translateY(8px) rotate(0deg);
-//   // //   //         transform: translateY(8px) rotate(0deg);
-//   // //   // transition: all 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-//   // //   // transition-delay: 0s;
-//   // // }
-//   //
-//   // &.animating div {
-//   //   transition: width 0.125s ease-in-out,
-//   //     top 0.25s ease-in-out 0.5s,
-//   //     transform 0.25s ease-out 0.25s,
-//   //     opacity 0.001s linear 0.5s;
-//   // }
-//   //
-//   // div:nth-child(1), div:nth-child(2), &:hover div {
-//   //   width: 24px;
-//   // }
-//   //
-//   // div:nth-child(1) {
-//   //   top: 29px;
-//   // }
-//   //
-//   // div:nth-child(2) {
-//   //   top: 35px;
-//   // }
-//   //
-//   // div:nth-child(3) {
-//   //   top: 41px;
-//   // }
-//   //
-//   // &.active {
-//   // transform: rotate(90deg);
-//   //   transition: transform 0.5s ease-in-out 0.375s;
-//   // }
-//   //
-//   // &.active div {
-//   // width: 24px;
-//   //
-//   // transition: width 0.125s ease-in-out 0.875s,
-//   //   top 0.25s ease-in-out 0.25s,
-//   //   transform 0.25s ease-out 0.5s,
-//   //   opacity 0.001s linear 0.5s;
-//   // }
-//   //
-//   // &.active div:nth-child(1) {
-//   //   top: 35px;
-//   //   transform: rotate(45deg);
-//   // }
-//   //
-//   // &.active div:nth-child(2) {
-//   //   opacity: 0;
-//   // }
-//   //
-//   // &.active div:nth-child(3) {
-//   //   top: 35px;
-//   //     transform: rotate(-45deg);
-//   // }
-//   //
-//   // &.closing div {
-//   //   width: 24px;
-//   // }
-//   //
-//   // /*/////////////////////////////////
-//   // Menu Button Arrow for Case Study
-//   // /////////////////////////////////*/
-//   // &.arrow-transition-in {
-//   //   position: fixed;
-//   //   transform: rotate(90deg);
-//   //   transition: transform 0.25s ease-in-out 0s;
-//   // }
-//   //
-//   // &.arrow-transition-in div {
-//   //   // width: 24px;
-//   //
-//   //   transition: width 0.125s ease-in-out 0s,
-//   //     top 0.2s ease-in-out 0.05s,
-//   //     transform 0.25s ease-out 0s,
-//   //     background-color 0.25s linear;
-//   // }
-//   //
-//   // &.arrow-transition-in div:nth-child(1) {
-//   //   top: 32px;
-//   //   transform: rotate(-45deg);
-//   //   width: 11px;
-//   //   left: 22px;
-//   // }
-//   //
-//   // &.arrow-transition-in div:nth-child(2) {
-//   //   width: 28px;
-//   // }
-//   //
-//   // &.arrow-transition-in div:nth-child(3) {
-//   //   top: 38px;
-//   //   transform: rotate(45deg);
-//   //   width: 11px;
-//   //   left: 22px;
-//   // }
-//   // &.arrow-transition-out {
-//   //   position: fixed;
-//   //   transform: rotate(0);
-//   //   transition: transform 0.25s ease-in-out 0s;
-//   // }
-//   // &.arrow-transition-out div {
-//   //   transition:
-//   //     width 0.125s ease-in-out 0.1s,
-//   //     top 0.125s ease-in-out 0s,
-//   //     transform 0.125s ease-out 0s
-//   // }
-//   // &.arrow-transition-out div {
-//   //   position: absolute;
-//   //   left: 24px;
-//   //   width: 16px;
-//   //   height: 2px;
-//   // }
-//   //
-//   // &.arrow-transition-out div:nth-child(1), &.arrow-transition-out div:nth-child(2) {
-//   //   width: 24px;
-//   // }
-//   //
-//   // &.arrow-transition-out div:nth-child(1) {
-//   //   top: 29px;
-//   // }
-//   //
-//   // &.arrow-transition-out div:nth-child(2) {
-//   //   top: 35px;
-//   // }
-//   //
-//   // &.arrow-transition-out div:nth-child(3) {
-//   //   top: 41px;
-//   // }
-//
-//   // .bar {
-//   //   width: 100%;
-//   //   height: 2px;
-//   //   display: block;
-//   //   position: relative;
-//   //   background: $white;
-//   //   // background: $black;
-//   //   transition: all 0.5s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-//   //   transition-delay: 0s;
-//   // }
-//
-//   // &.active {
-//     // -webkit-transform: rotate(90deg);
-//     //         transform: rotate(90deg);
-//     // transition-delay: 0s;
-//     //
-//     // .bar {
-//     //   transition: all 0.4s cubic-bezier(0.4, 0.01, 0.165, 0.99);
-//     //   transition-delay: 0.5s;
-//     // }
-//     // .feature1, .feature2, .feature3 {
-//     //   background: $white;
-//     // }
-//     // .feature1 {
-//     //   -webkit-transform: translateY(5px) rotate(45deg);
-//     //           transform: translateY(5px) rotate(45deg);
-//     // }
-//     // .feature2 {
-//     //   -webkit-transform: translateY(3px) rotate(-45deg);
-//     //           transform: translateY(3px) rotate(-45deg);
-//     // }
-//     // .feature3 {
-//     //   -webkit-transform: translateY(13px) rotate(-45deg);
-//     //           transform: translateY(13px) rotate(-45deg);
-//     // }
-//   // }
-// }
-// .burger {
-//   // width: 20px;
-//   // height: 8px;
-//   // display: block;
-//   // position: relative;
-//   // margin: -4px auto 0;
-//   // top: 50%;
-//
-//   // width: 18px;
-//   // height: 8px;
-//   // position: relative;
-//   // display: block;
-//   // margin: -4px auto 0;
-//   // top: 50%;
-//
-//   // position: absolute;
-//   // top: calc(7vw - 6px);
-//   // right: calc(7vw - 6px);
-//   // font: 400 normal 13px/13px $graphik;
-//   // line-height: 0px;
-//   // // position: absolute;
-//   // cursor: pointer;
-//   // padding: 14px 6px 14px 6px;
-//   // @include font($graphik, 400, 13px, 13px, false, false, 0px);
-// }
+@media (max-width: 414px) {
+  #main {
+    #next_proj {
+      > div {
+        width: 85%;
+
+        a {
+          // font: 500 normal 9vw/13vw $italiana;
+
+          span {
+            font: 500 normal 55px/65px $italiana, serif;
+          }
+        }
+      }
+    }
+  }
+}

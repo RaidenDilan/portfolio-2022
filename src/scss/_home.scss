@@ -12,7 +12,13 @@
   z-index: 1000;
   opacity: 0.3;
   display: none;
-  transition: width 0.2s ease, left 0.2s ease, top 0.2s ease, height 0.2s ease, opacity 0.2s ease-in, background-color 0.5s;
+  transition:
+    width 0.2s ease,
+    left 0.2s ease,
+    top 0.2s ease,
+    height 0.2s ease,
+    opacity 0.2s ease-in,
+    background-color 0.5s;
 
   // &:before {
   //   content: '.';
@@ -180,7 +186,7 @@ svg.svg-circle {
   width: 100%;
   height: 100%;
   // z-index: -10;
-  padding: 0 !important;
+  // padding: 0 !important;
   // padding: calc(6vw - 1rem);
 }
 
@@ -254,7 +260,7 @@ svg.svg-circle {
         bottom: -3px;
         width: 100%;
         text-align: center;
-        -webkit-transform: rotate(-50deg) translate(-94%, -111%); // translate(-100%, -100%);
+        // -webkit-transform: rotate(-50deg) translate(-94%, -111%); // translate(-100%, -100%);
                 transform: rotate(-50deg) translate(-94%, -111%); // translate(-100%, -100%);
         height: 22px;
         padding-top: 3px;
@@ -270,7 +276,7 @@ svg.svg-circle {
         position: absolute;
         bottom: 6px;
         left: 9px;
-        -webkit-transition: 0.2s;
+        // -webkit-transition: 0.2s;
                 transition: 0.2s;
       }
       &::after {
@@ -281,25 +287,25 @@ svg.svg-circle {
         position: absolute;
         bottom: 22px;
         left: 10px;
-        -webkit-transform: scaleY(0);
+        // -webkit-transform: scaleY(0);
                 transform: scaleY(0);
-        -webkit-transition: 1.2s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
+        // -webkit-transition: 1.2s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
                 transition: 1.2s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
-        -webkit-transform-origin: 0 0;
+        // -webkit-transform-origin: 0 0;
                 transform-origin: 0 0;
       }
       &.current {
         .letter {
-          -webkit-transform: rotate(-45deg) translate(0%, 0%);
+          // -webkit-transform: rotate(-45deg) translate(0%, 0%);
                   transform: rotate(-45deg) translate(0%, 0%);
         }
         &::before {
           opacity: 0;
         }
         &::after {
-          -webkit-transition: 0.7s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
+          // -webkit-transition: 0.7s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
                   transition: 0.7s cubic-bezier(0.17, 0.67, 0, 0.99); // OR 2.2s
-          -webkit-transform: scaleY(1);
+          // -webkit-transform: scaleY(1);
                   transform: scaleY(1);
         }
         &.first {
@@ -307,28 +313,28 @@ svg.svg-circle {
             opacity: 0.66;
           }
           &::after {
-            -webkit-transform: scaleY(0);
+            // -webkit-transform: scaleY(0);
                     transform: scaleY(0);
           }
           .letter {
-            -webkit-transform: rotate(-45deg) translate(-94%, -111%) !important; // 100%, -100%
+            // -webkit-transform: rotate(-45deg) translate(-94%, -111%) !important; // 100%, -100%
                     transform: rotate(-45deg) translate(-94%, -111%) !important; // 100%, -100%
           }
         }
         &.after::after {
-          -webkit-transform: scaleY(0);
+          // -webkit-transform: scaleY(0);
                   transform: scaleY(0);
         }
       }
       &.temp::after {
-        -webkit-transform: scaleY(0);
+        // -webkit-transform: scaleY(0);
                 transform: scaleY(0);
       }
       &.before::before {
         opacity: 0;
       }
       &.feature::after {
-        -webkit-transform: scaleY(1);
+        // -webkit-transform: scaleY(1);
                 transform: scaleY(1);
       }
     }
@@ -362,8 +368,8 @@ svg.svg-circle {
     position: relative;
     // line-height: 0;
     height: 100vh;
-    -webkit-box-flex: 0;
-            -ms-flex: 0 1 27%;
+    // -webkit-box-flex: 0;
+    //         -ms-flex: 0 1 27%;
                 flex: 0 1 27%;
     // z-index: 2;
 
@@ -389,7 +395,7 @@ svg.svg-circle {
         // font: 600 normal 25px/15px $financierDisplay;
         // -webkit-transform: scaleY(0.8) translateY(-1px);
                 // transform: scaleY(0.8) translateY(-1px);
-                -webkit-transform: scaleY(1) translateY(0);
+        // -webkit-transform: scaleY(1) translateY(0);
                 transform: scaleY(1) translateY(0);
         display: inline-block;
         margin-right: 2px;
@@ -422,7 +428,7 @@ svg.svg-circle {
         font: 400 normal 15px/14px $financierDisplay;
         // font: 400 normal 11px/11px $graphik;
         margin-left: 5px;
-        -webkit-transform: translateY(-2px);
+        // -webkit-transform: translateY(-2px);
                 transform: translateY(-2px);
         display: inline-block;
 
@@ -453,8 +459,8 @@ svg.svg-circle {
     vertical-align: top;
     position: relative;
     height: 100vh;
-    -webkit-box-flex: 0;
-            -ms-flex: 0 1 73%;
+    // -webkit-box-flex: 0;
+    //         -ms-flex: 0 1 73%;
                 flex: 0 1 73%;
     z-index: 2;
 
@@ -492,7 +498,7 @@ svg.svg-circle {
         }
       }
       div#next {
-        -webkit-transform: rotate(180deg);
+        // -webkit-transform: rotate(180deg);
                 transform: rotate(180deg);
       }
     }
@@ -501,8 +507,10 @@ svg.svg-circle {
       // font: 600 normal 15px/15px $graphik;
       font: 600 normal 20px/15px $financierDisplay;
       position: absolute;
-      bottom: calc(20vw - 10px);
-      left: calc(52vw - 5px);
+      bottom: calc(15vw - 10px);
+      right: calc(10vw - 5px);
+      // left: calc(52vw - 5px);
+
       // left: calc(35vw - 62px + 5vw);
       // left: 28vw;
       // left: 24vw;
@@ -511,7 +519,7 @@ svg.svg-circle {
         // font: 600 normal 25px/15px $financierDisplay;
         // -webkit-transform: scaleY(0.8) translateY(-1px);
                 // transform: scaleY(0.8) translateY(-1px);
-                -webkit-transform: scaleY(1) translateY(0);
+        // -webkit-transform: scaleY(1) translateY(0);
                 transform: scaleY(1) translateY(0);
         display: inline-block;
         margin-right: 2px;
@@ -520,7 +528,7 @@ svg.svg-circle {
         font: 400 normal 16px/15px $financierDisplay;
         // font: 400 normal 11px/11px $graphik;
         margin-left: 5px;
-        -webkit-transform: translateY(-2px);
+        // -webkit-transform: translateY(-2px);
                 transform: translateY(-2px);
         display: inline-block;
       }
@@ -558,8 +566,8 @@ svg.svg-circle {
   }
   #inner_col {
     font-size: 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
+    // display: -webkit-box;
+    // display: -ms-flexbox;
     display: flex;
 
     .first_line, .second_line, .third_line {
@@ -667,15 +675,28 @@ svg.svg-circle {
 
 .triger {
   opacity: 0.8;
-  -webkit-transition: 0.5s ease-in-out;
-       -o-transition: 0.5s ease-in-out;
+  // -webkit-transition: 0.5s ease-in-out;
+  //      -o-transition: 0.5s ease-in-out;
           transition: 0.5s ease-in-out;
 }
+
+// // Apple iMac 5K Retina Display
+// @media (max-width: 2880px) {
+//   .home {
+//     #svg-circle {
+//       svg {
+//         padding: 7vh;
+//       }
+//     }
+//   }
+// }
 
 @media (min-width: 1440px) {
   .home {
     #col1 {
-      padding: calc(35vh - 34px) 0 0 18%;
+      flex: 0 1 25%;
+      padding: calc(35vh - 34px) 0 0 12%;
+      // padding: calc(35vh - 34px) 0 0 18%;
 
       // > div {
       //   margin-left: -6px;
@@ -689,17 +710,20 @@ svg.svg-circle {
       }
     }
     #col2 {
+      flex: 0 1 75%;
+
       h2 {
         font: 300 normal 90px/90px 'MullerLight', Arial, Helvetica, sans-serif;
         // font: 300 normal 160px/160px 'Adelon';
       }
       #num {
         bottom: calc(25vw - 10px);
-        left: calc(54vw - 5px);
+        left: calc(61vw - 5px);
+        // left: calc(54vw - 5px);
       }
       #prev_next {
         bottom: calc(8vw - 17px);
-        left: calc(20vw - 4px);
+        left: calc(22vw - 4px);
       }
     }
   }
@@ -710,8 +734,18 @@ svg.svg-circle {
     // top: calc(5vw - 6px);
   }
   .home {
+    #svg-circle {
+      svg {
+        padding: 10vh;
+      }
+    //   width: calc(100% - 7rem);
+    //   height: calc(100% - 7rem);
+    //   top: 8%;
+    //   left: 7%;
+    }
     #col1 {
-      padding: calc(35vh - 50px + 1.44vw) 0 0 calc(6% + 5px);
+      flex: 0 1 21%;
+      padding: 22vh 0 0 8vw;
 
       > div {
         margin-left: -6px;
@@ -728,13 +762,16 @@ svg.svg-circle {
       }
     }
     #col2 {
+      flex: 0 1 79%;
+
       h2 {
-        font: 300 normal 5.5vw/6.5vw 'MullerLight', Arial, Helvetica, sans-serif;
-        // font: 300 normal 8.5vw/8.5vw 'Adelon';
+        font: 300 normal 6vw/7vw 'MullerLight', Arial, Helvetica, sans-serif;
+        // font: 300 normal 6vw/7vw $italiana, sans-serif;
+        // font: 300 normal 6vw/7vw 'Adelon';
       }
       #num {
-        bottom: calc(32vw - 10px);
-        left: calc(61vw - 50px + 2vw);
+        bottom: calc(35vw + 20px);
+        // right: calc(15vw - 40px);
       }
       #prev_next {
         // left: 159px;
@@ -748,9 +785,15 @@ svg.svg-circle {
 
 @media (max-width: 767px) {
   .cursor_main, .cursor_junior {
-    display: none;
+    display: none !important;
   }
   .home {
+    #svg-circle {
+      // width: 100%;
+      // height: 100%;
+      // top: 0;
+      // left: 0;
+    }
     #num_letter {
       bottom: 35px;
       left: 30px;
@@ -760,8 +803,8 @@ svg.svg-circle {
       padding: 55vh 0 0 0;
       // padding: 60vh 0 0 0;
       // padding: calc(36vh - 50px + 1.44vw) 0 0 calc(5% + 5px);
-      -webkit-box-flex: 0;
-              -ms-flex: 0 1 44%;
+      // -webkit-box-flex: 0;
+      //         -ms-flex: 0 1 44%;
                   flex: 0 1 44%;
 
       // #white_circle {
@@ -800,20 +843,22 @@ svg.svg-circle {
     #col2 {
       display: block;
       width: 100%;
-      padding: 30% 0 0 8%;
+      padding: 25vh 0 0 8vw;
+      // padding: 30% 0 0 8%;
+      // padding: 30% 0 0 25%;
       // padding: 35vh 0 0 80px;
       // padding: 45% 0 0 10%;
       // padding: 20vh 0 0 30px;
       // padding: 25vh 0 0 80px;
       // padding: 18vh 0 0 80px;
       // padding: calc(35vh - 5px + 1.44vw) 0 0 13%;
-      -webkit-box-flex: 0;
-              -ms-flex: none;
-                  flex: none;
+      flex: none;
 
       h2 {
         // font: 300 normal 18vw/20vw  'MullerLight', Arial, Helvetica, sans-serif;
-        font: 900 normal 12vw/14vw $italiana;
+        font: 900 normal 9vw/12vw $italiana;
+        // font: 900 normal 5.5vw/12vw $italiana;
+        // font: 900 normal 5.5vw/6vw $italiana;
         // font: 900 normal 15vw/15vw $italiana;
         // font: 300 normal 13vw/13vw  'MullerLight', Arial, Helvetica, sans-serif;
         // font: 300 normal 14vw/14vw  'MullerLight', Arial, Helvetica, sans-serif;
@@ -821,7 +866,7 @@ svg.svg-circle {
         // width: 199px;
         // font: 300 normal 18vw/20vw 'Adelon';
         overflow-wrap: break-word;
-        width: 325px;
+        width: 625px;
 
         span:nth-child(2) {
           margin-left: 15px;
@@ -836,6 +881,7 @@ svg.svg-circle {
         font: 500 normal 13px/13px $financierDisplay;
       }
       #prev_next {
+        display: none;
         bottom: 21px;
         left: auto;
         right: 30px;
@@ -845,15 +891,16 @@ svg.svg-circle {
         // display: none;
         font: 600 normal 16px/16px $financierDisplay;
         letter-spacing: 1px;
-        bottom: calc(20% - 10px);
+        bottom: calc(30vh - 10px);
         // bottom: calc(65vw - 10px);
         // bottom: calc(32vw - 10px);
-        left: calc(70vw - 5px);
+        // left: calc(70vw - 5px);
+        // right: calc(19vw - 40px);
 
         #work {
           margin-left: 0;
           // font: 500 normal 12px/12px $graphik;
-          -webkit-transform: translateY(-1px);
+          // -webkit-transform: translateY(-1px);
                   transform: translateY(-1px);
         }
       }
@@ -864,10 +911,50 @@ svg.svg-circle {
   }
 }
 
-@media (min-height: 812px) {
+@media (max-width: 414px) {
   .home {
-    #col2 {
-      padding: 45% 0 0 10%;
+    #svg-circle {
+      svg {
+        padding: 7vh;
+      }
     }
   }
 }
+
+@media (max-width: 375px) {
+  .home {
+    #svg-circle {
+      svg {
+        padding: 7vh;
+      }
+    }
+  }
+}
+
+@media (max-width: 320px) {
+  .home {
+    #svg-circle {
+      svg {
+        padding: 0;
+      }
+    }
+    #col2 {
+      .inner_h2 {
+        h2 {
+          font: 900 normal 11vw/12vw $italiana;
+        }
+      }
+      #prev_next {
+        display: none;
+      }
+    }
+  }
+}
+
+// @media (min-height: 812px) {
+//   .home {
+//     #col2 {
+//       padding: 45% 0 0 10%;
+//     }
+//   }
+// }

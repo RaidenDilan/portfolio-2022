@@ -1,6 +1,8 @@
-bower_components
-node_modules
-public
-archive
-vendor
-coming-soon.html
+/bower_components
+/node_modules
+/public
+/archive
+/vendor
+/coming-soon.html
+/404.html
+/500.html

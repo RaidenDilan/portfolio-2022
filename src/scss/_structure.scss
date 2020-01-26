@@ -6,9 +6,9 @@
   display: inline-block !important;
   margin-left: 40px;
   top: -2px;
-  -webkit-transform: rotate(90deg);
+  // -webkit-transform: rotate(90deg);
           transform: rotate(90deg);
-  -webkit-transition: width 0.5s cubic-bezier(0.215, 0.61, 0.355,1);
+  // -webkit-transition: width 0.5s cubic-bezier(0.215, 0.61, 0.355,1);
           transition: width 0.5s cubic-bezier(0.215, 0.61, 0.355,1);
 }
 
@@ -45,19 +45,25 @@
 }
 
 @media (max-width: 1024px) {
-  .single-works h1 {
-    padding: 15vw 0 0 18vw;
+  .single-works {
+    h1 {
+      padding: 15vw 0 0 18vw;
+      font: 500 normal 11vw/12vw $italiana, serif;
+      margin: 0;
+    }
   }
 }
+
 @media (max-width: 767px) {
   .single-works {
     h1 {
       // font: 500 normal 15vw/16vw 'Adelon';
-      font: 500 normal 5vh/14vw $italiana;
+      // font: 500 normal 12vh/20vw $italiana;
+      font: 500 normal 12vh/15vw $italiana;
       // overflow-wrap: break-word;
       word-wrap: break-word;
-      width: 93%;
-      padding: calc(18vh - 3vw) 0 0 11%;
+      width: 85%;
+      padding: calc(25vh - 10px) 0 0 15vw;
       // padding: calc(18vh - 3vw) 0 0 15%;
     }
     .cover {
@@ -66,6 +72,16 @@
   }
 }
 
+@media (max-width: 414px) {
+  .single-works {
+    h1 {
+      width: 90%;
+      font: 900 normal 7.5vh/15vw $italiana;
+      // font: 900 normal 4vh/10vw $italiana;
+      // font: 500 normal 7vh/18vw $italiana;
+    }
+  }
+}
 svg.svg_menu {
   position: absolute;
   bottom: 16px;
@@ -89,7 +105,7 @@ svg.svg_underline {
 
 .point {
   color: $white;
-  -webkit-transition: color 1s;
+  // -webkit-transition: color 1s;
           transition: color 1s;
 
   &.black {
@@ -136,17 +152,17 @@ svg.svg_underline {
     left: 7px;
     pointer-events: none;
     opacity: 0;
-    -webkit-transform-origin: 0 100%;
+    // -webkit-transform-origin: 0 100%;
             transform-origin: 0 100%;
-    -webkit-transform: scaleY(5);
+    // -webkit-transform: scaleY(5);
             transform: scaleY(5);
-    -webkit-transition: 0.1s;
+    // -webkit-transition: 0.1s;
             transition: 0.1s;
   }
   &:hover {
     &::after {
       opacity: 1;
-      -webkit-transform: scaleY(1);
+      // -webkit-transform: scaleY(1);
               transform: scaleY(1);
     }
   }
@@ -154,7 +170,7 @@ svg.svg_underline {
 
 .point3 {
   color: $white;
-  -webkit-transition: color 1s;
+  // -webkit-transition: color 1s;
           transition: color 1s;
   // &::before {
   //   content: '';
@@ -257,7 +273,7 @@ svg.svg_underline {
 
 .point4 {
   color: $white;
-  -webkit-transition: color 1s;
+  // -webkit-transition: color 1s;
           transition: color 1s;
 
   &.black {

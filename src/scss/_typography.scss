@@ -3,8 +3,10 @@
   -moz-osx-font-smoothing: grayscale;
   font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+
   -webkit-appearance: none;
      -moz-appearance: none;
           appearance: none;
@@ -26,7 +28,7 @@ body {
   position: relative;
 
   &.is-loading * {
-    -webkit-transition: all 0ms 0ms linear !important;
+    // -webkit-transition: all 0ms 0ms linear !important;
             transition: all 0ms 0ms linear !important;
   }
   &.desktop {
@@ -54,8 +56,17 @@ a {
   text-decoration: none;
 }
 
-@media (max-width: 767px) {
+@media (max-width: 1024px) {
+  * {
+    // cursor: default !important;
+  //   overflow-y: scroll; /* has to be scroll, not auto */
+  //   -webkit-overflow-scrolling: touch;
+  }
+  // html {
+  //   scroll-behavior: smooth;
+  // }
   html, body {
     height: auto;
+    // height: 100%;
   }
 }
