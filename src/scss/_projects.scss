@@ -18,6 +18,8 @@ header {
     z-index: 100;
     transform: rotate(0deg);
     transition: transform 0.5s ease-in-out 0.125s;
+    // transition: transform 0.5s ease-in-out 0.375s;
+    // transform: 500ms ease-in-out 375ms, -webkit-transform 500ms ease-in-out 375ms;
 
     * {
       pointer-events: none;
@@ -41,6 +43,13 @@ header {
         opacity 0.001s linear 0.5s,
         background-color 0.25s linear;
 
+        // transition:
+        //   width 125ms ease-in-out 875ms
+        //   top 250ms ease-in-out 250ms
+        //   transform .25s ease-out 500ms
+        //   opacity 1ms linear 500ms,
+        //   -webkit-transform 250ms ease-out 500ms;
+
       &:nth-child(1) {
         width: 24px;
         top: 29px;
@@ -56,16 +65,28 @@ header {
 
     &.opened {
       transform: rotate(90deg);
-      transition: transform 0.5s ease-in-out 0.375s;
+      // transition: 500ms ease-in-out 375ms !important;
+      transition: transform 500ms ease-in-out 375ms !important;
+      // transition: transform 500ms ease-in-out 375ms, -webkit-transform 500ms ease-in-out 375ms !important;
+      // transition: transform 0.5s ease-in-out 0.750s;
+      // transition: transform 0.5s ease-in-out 0.125s;
 
       div {
         width: 24px;
+        // transition:
+        //   width 125ms ease-in-out 10ms,
+        //   top 250ms ease-in-out 250ms,
+        //   transform 250ms ease-out 500ms,
+        //   opacity 1ms linear 500ms,
+        //   -webkit-transform 250ms ease-out 500ms !important;
+
         transition:
-          width 0.125s ease-in-out 0.875s,
-          top 0.25s ease-in-out 0.25s,
+          width 0.125s ease-in-out 0.1s,
+          // width 0.125s ease-in-out 0.875s,
+          top 0.25s ease-in-out 0.1s,
           transform 0.25s ease-out 0.5s,
           opacity 0.001s linear 0.5s,
-          background-color 0.25s linear;
+          background-color 0.25s linear !important;
 
         &:nth-child(1) {
           top: 35px;
@@ -79,6 +100,14 @@ header {
           transform: rotate(-45deg);
         }
       }
+
+      // &:hover {
+      //   div {
+      //     &:nth-child(3) {
+      //       width: 24px;
+      //     }
+      //   }
+      // }
     }
 
     // animating class is currently disabled in app.js
@@ -94,6 +123,7 @@ header {
 
     &.closing {
       transition: transform 0.5s ease-in-out 0.125s;
+      // transition: transform 0.5s ease-in-out 0.375s;
 
       div {
         width: 24px;
@@ -104,6 +134,14 @@ header {
           opacity 0.001s linear 0.5s,
           background-color 0.25s linear;
       }
+
+      // &:hover {
+      //   div {
+      //     &:nth-child(3) {
+      //       width: 24px;
+      //     }
+      //   }
+      // }
     }
 
     &.arrow-transition-in {

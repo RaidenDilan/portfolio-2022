@@ -33,3 +33,26 @@
 	height: 100vh; /* Use vh as a fallback for browsers that do not support Custom Properties */
 	height: calc(var(--vh, 1vh) * 100);
 }
+
+@mixin font-smoothing($value: on) {
+  @if $value == on {
+    -moz-osx-font-smoothing: grayscale;
+     -webkit-font-smoothing: antialiased;
+             // font-smoothing: antialiased;
+  }
+  @else {
+    -moz-osx-font-smoothing: auto;
+      -webkit-font-smoothing: subpixel-antialiased;
+  }
+}
+
+
+/* USAGE */
+
+// .dark-on-light {
+//   @include font-smoothing(off);
+// }
+//
+// .light-on-dark {
+//   @include font-smoothing(on);
+// }

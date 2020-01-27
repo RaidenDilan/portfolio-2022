@@ -730,6 +730,9 @@ svg.svg-circle {
 }
 
 @media (max-width: 1024px) {
+  .cursor_main, .cursor_junior {
+    display: none !important;
+  }
   #social {
     // top: calc(5vw - 6px);
   }
@@ -784,9 +787,6 @@ svg.svg-circle {
 }
 
 @media (max-width: 767px) {
-  .cursor_main, .cursor_junior {
-    display: none !important;
-  }
   .home {
     #svg-circle {
       // width: 100%;

@@ -1,21 +1,14 @@
 * {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-smoothing: antialiased;
+  box-sizing: border-box;
+  @include no-select();
+  @include font-smoothing(on);
   text-rendering: optimizeLegibility;
-
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
+  appearance: none;
   outline: 0;
   margin: 0;
   padding: 0;
   border: 0;
   cursor: none !important;
-  @include no-select();
 }
 
 html, body {
@@ -58,7 +51,7 @@ a {
 
 @media (max-width: 1024px) {
   * {
-    // cursor: default !important;
+    cursor: none !important;
   //   overflow-y: scroll; /* has to be scroll, not auto */
   //   -webkit-overflow-scrolling: touch;
   }
