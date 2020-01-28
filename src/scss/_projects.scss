@@ -8,7 +8,7 @@ header {
   }
 
   .projects {
-    // pointer-events: bounding-box;
+    pointer-events: bounding-box;
     position: fixed;
     display: block;
     width: 72px;
@@ -16,17 +16,8 @@ header {
     right: calc(5.75% - 24px);
     top: 13px;
     z-index: 100;
-    transform: rotate(0deg);
+    transform: rotate(0);
     transition: transform 0.5s ease-in-out 0.125s;
-    // transition: transform 0.5s ease-in-out 0.375s;
-    // transform: 500ms ease-in-out 375ms, -webkit-transform 500ms ease-in-out 375ms;
-
-    * {
-      pointer-events: none;
-    }
-    span {
-      padding-right: 30px;
-    }
 
     div {
       position: absolute;
@@ -37,89 +28,66 @@ header {
       background: var(--button-color, $white); // not yet implemented with JS
 
       transition:
-        width 0.125s ease-in-out 0.1s,
+        width 0.125s ease-in-out,
         top 0.25s ease-in-out 0.5s,
         transform 0.25s ease-out 0.25s,
         opacity 0.001s linear 0.5s,
         background-color 0.25s linear;
-
-        // transition:
-        //   width 125ms ease-in-out 875ms
-        //   top 250ms ease-in-out 250ms
-        //   transform .25s ease-out 500ms
-        //   opacity 1ms linear 500ms,
-        //   -webkit-transform 250ms ease-out 500ms;
-
-      &:nth-child(1) {
-        width: 24px;
-        top: 29px;
-      }
-      &:nth-child(2) {
-        width: 24px;
-        top: 35px;
-      }
-      &:nth-child(3) {
-        top: 41px;
-      }
+    }
+    div:nth-child(1) {
+      width: 24px;
+      top: 29px;
+    }
+    div:nth-child(2) {
+      width: 24px;
+      top: 35px;
+    }
+    div:nth-child(3) {
+      top: 41px;
     }
 
     &.opened {
       transform: rotate(90deg);
-      // transition: 500ms ease-in-out 375ms !important;
-      transition: transform 500ms ease-in-out 375ms !important;
-      // transition: transform 500ms ease-in-out 375ms, -webkit-transform 500ms ease-in-out 375ms !important;
-      // transition: transform 0.5s ease-in-out 0.750s;
-      // transition: transform 0.5s ease-in-out 0.125s;
+      transition: transform 0.5s ease-in-out 0.375s;
 
       div {
         width: 24px;
-        // transition:
-        //   width 125ms ease-in-out 10ms,
-        //   top 250ms ease-in-out 250ms,
-        //   transform 250ms ease-out 500ms,
-        //   opacity 1ms linear 500ms,
-        //   -webkit-transform 250ms ease-out 500ms !important;
-
         transition:
-          width 0.125s ease-in-out 0.1s,
-          // width 0.125s ease-in-out 0.875s,
-          top 0.25s ease-in-out 0.1s,
+          width 0.125s ease-in-out 0.875s,
+          top 0.25s ease-in-out 0.25s,
           transform 0.25s ease-out 0.5s,
           opacity 0.001s linear 0.5s,
-          background-color 0.25s linear !important;
-
-        &:nth-child(1) {
-          top: 35px;
-          transform: rotate(45deg);
-        }
-        &:nth-child(2) {
-          opacity: 0;
-        }
-        &:nth-child(3) {
-          top: 35px;
-          transform: rotate(-45deg);
-        }
+          background-color 0.25s linear;
+      }
+      div:nth-child(1) {
+        top: 35px;
+        transform: rotate(45deg);
+      }
+      div:nth-child(2) {
+        opacity: 0;
+      }
+      div:nth-child(3) {
+        top: 35px;
+        transform: rotate(-45deg);
       }
 
-      // &:hover {
-      //   div {
-      //     &:nth-child(3) {
-      //       width: 24px;
-      //     }
-      //   }
-      // }
-    }
-
-    // animating class is currently disabled in app.js
-    &.animating {
-      div {
-        transition:
-          width 0.125s ease-in-out,
-          top 0.25s ease-in-out 0.5s,
-          transform 0.25s ease-out 0.25s,
-          opacity 0.001s linear 0.5s;
+      &:hover {
+        div:nth-child(3) {
+          width: 24px;
+        }
       }
     }
+
+    // // animating class is currently disabled in app.js
+    // &.animating {
+    //   div {
+    //     transition:
+    //       width 0.125s ease-in-out,
+    //       top 0.25s ease-in-out 0.5s,
+    //       transform 0.25s ease-out 0.25s,
+    //       opacity 0.001s linear 0.5s;
+    //   }
+    // }
 
     &.closing {
       transition: transform 0.5s ease-in-out 0.125s;
@@ -145,6 +113,7 @@ header {
     }
 
     &.arrow-transition-in {
+      position: fixed;
       transform: rotate(90deg);
       transition: transform 0.25s ease-in-out 0s;
 
@@ -154,32 +123,30 @@ header {
           top 0.2s ease-in-out 0.05s,
           transform 0.25s ease-out 0s,
           background-color 0.25s linear;
-
-        &:nth-child(1) {
-          top: 32px;
-          transform: rotate(-45deg);
-          width: 11px;
-          left: 22px;
-        }
-        &:nth-child(2) {
-          width: 28px;
-        }
-        &:nth-child(3) {
-          top: 38px;
-          transform: rotate(45deg);
-          width: 11px;
-          left: 22px;
-        }
+      }
+      div:nth-child(1) {
+        top: 32px;
+        transform: rotate(-45deg);
+        width: 11px;
+        left: 22px;
+      }
+      div:nth-child(2) {
+        width: 28px;
+      }
+      div:nth-child(3) {
+        top: 38px;
+        transform: rotate(45deg);
+        width: 11px;
+        left: 22px;
       }
 
       &:hover {
-        div {
-          &:nth-child(3) {
-            width: 11px;
-          }
+        div:nth-child(3) {
+          width: 11px;
         }
       }
     }
+
     &.arrow-transition-out {
       transform: rotate(0);
       transition: transform 0.25s ease-in-out 0s;
@@ -193,20 +160,18 @@ header {
         transition:
           width 0.125s ease-in-out 0.1s,
           top 0.125s ease-in-out 0s,
-          transform 0.125s ease-out 0s,
-          background-color 0.25s linear;
-
-        &:nth-child(1) {
-          top: 29px;
-          width: 24px;
-        }
-        &:nth-child(2) {
-          top: 35px;
-          width: 24px;
-        }
-        &:nth-child(3) {
-          top: 41px;
-        }
+          transform 0.125s ease-out 0s;
+      }
+      div:nth-child(1) {
+        width: 24px;
+        top: 29px;
+      }
+      div:nth-child(2) {
+        width: 24px;
+        top: 35px;
+      }
+      div:nth-child(3) {
+        top: 41px;
       }
     }
 
@@ -217,22 +182,8 @@ header {
     }
 
     &:hover {
-      // &.arrow-transition-in {
-      //   div {
-      //     &:nth-child(3) {
-      //       width: 11px;
-      //     }
-      //   }
-      // }
       div {
-        // transition:
-        //   width 0.125s ease-in-out 0.1s,
-        //   top 0.125s ease-in-out 0s,
-        //   transform 0.125s ease-out 0s;
-
-        &:nth-child(3) {
-          width: 24px;
-        }
+        width: 24px;
       }
     }
   }

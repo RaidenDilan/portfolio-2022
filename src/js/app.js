@@ -2,6 +2,20 @@
 
 PIXI.utils.skipHello();
 
+var BreakPoints = BreakPoints || {};
+
+BreakPoints = {
+  MajorBreakPoints: {
+    A: 0,
+    B: 1,
+    C: 2,
+    D: 3
+  },
+  currentMajorBreakPoint: function() {
+    return 580 >= innerWidth ? BreakPoints.MajorBreakPoints.A : 768 >= innerWidth ? BreakPoints.MajorBreakPoints.B : 1280 >= innerWidth ? BreakPoints.MajorBreakPoints.C : BreakPoints.MajorBreakPoints.D;
+  }
+};
+
 var UserAgent = UserAgent || {};
 
 UserAgent = {
@@ -24,6 +38,9 @@ UserAgent = {
       )
     );
   }
+  // isMobile: () => {
+  //   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  // }
 };
 
 var AboutRAFs = AboutRAFs || {};
@@ -130,6 +147,84 @@ AboutRAFs = {
   }
 };
 
+var Throttle = Throttle || {};
+
+Throttle = {
+  /*
+   * Generates an event listener wrapper function
+   * that will only run the main listener
+   * if there has been a given delay (in ms)
+   * since the last time the event was triggered.
+   */
+  throttleEvents: function throttleEvents(listener, delay) {
+    var timeout;
+    return function(event) {
+      if (timeout) cancelAnimationFrame(timeout);
+      timeout = requestAnimationFrame(listener, delay, event);
+    };
+  },
+  /*
+   * Generates an event listener wrapper function
+   * that will prevent the main listener from running
+   * if it has previously run within the given delay (in ms).
+   */
+  actThenThrottleEvents: function actThenThrottleEvents(listener, delay) {
+    var timeout;
+    return function(event) {
+      if (!timeout) { // no timer running
+        listener(event); // run the function
+        timeout = requestAnimationFrame(() => timeout = null, delay); // start a timer that turns itself off when it's done
+      }
+      // else, do nothing (we're in a throttling stage)
+    };
+  }
+};
+
+var MenuPixi = MenuPixi || {};
+
+MenuPixi = {
+  rafPixiMenu: void 0,
+  init: function menuPixi() {
+    MenuPixi.rafPixiMenu = requestAnimationFrame(MenuPixi.init);
+
+    Site.rendererMenu.render(Site.stageMenu);
+    Site.displacementSprite3.x += 2;
+
+    if (!UserAgent.iOS) {
+      Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100)/100;
+      Site.theDeltaMenu     = Site.currentMousePos.y;
+    } else {
+      Site.cursorPercentage = window.pageYOffset * 100 / (Site.heightMenu - window.innerHeight);
+      Site.theDeltaMenu     = window.pageYOffset;
+    }
+
+    if (Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8) Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1);
+    else Site.intensity = 1.8;
+
+    /* displacement menu */
+    if (!UserAgent.iOS) {
+      let expression = -1 * (Site.heightMenu - window.innerHeight) / window.innerHeight * Site.currentMousePos.y;
+      TweenMax.to('#the_menu', 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
+    }
+    else TweenMax.to('#the_menu', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
+
+    if (window.innerWidth > 767) {
+      if (Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin)) document.querySelectorAll('#the_menu li').forEach(Site.checkMenu);
+
+      Site.displace.intensity = Site.displacementFilter3.scale.x;
+
+      TweenMax.to(Site.displace, 0.3, {
+        intensity: 4 * (Site.theDeltaMenu - Site.deltaMenu),
+        onUpdate: function event() {
+          Site.displacementFilter3.scale.x = Site.displace.intensity;
+        },
+        ease: Linear.easeNone
+      });
+    }
+    Site.deltaMenu = Site.theDeltaMenu;
+  }
+};
+
 var Site = Site || {};
 
 Site.setup = function setup() {
@@ -211,6 +306,10 @@ Site.init = function init() {
   this.links           = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
   this.isDown          = false; /* DRAG VARIABLES */
 
+  this.arrowHidingTimeout = void 0;
+  this.projMenu.isArrow   = !1;
+  this.isOpen             = !1;
+
   TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
   TweenMax.set('#main', { display: 'block', clearProps: 'y' });
   // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
@@ -219,16 +318,8 @@ Site.init = function init() {
   // Resets header menu elements back to their defaults states/classes.
   Site.menu.style.display = 'none';
 
-  /* Update and Animate '.projects' menu from arrow/Close(X) */
-  if (Site.projMenu.classList.contains('arrow-transition-in')) {
-    Site.projMenu.classList.remove('arrow-transition-in');
-    Site.projMenu.classList.add('arrow-transition-out');
-  }
-
-  /* Remove arrow-transition-out class after switching states */
-  setTimeout(() => Site.projMenu.classList.remove('arrow-transition-out'), 200);
-
-  // console.log('Site', Site);
+  /* Update and Animate projMenu from arrow/Close(X) */
+  if (Site.projMenu.classList.contains('arrow-transition-in')) Site.hideArrow();
 
   /* close Nav Menu when anchor click events */
   Site.projMenu.classList.remove('opened');
@@ -288,13 +379,13 @@ Site.init = function init() {
   //   return a - b;
   // };
 
-  window.addEventListener('resize', Site.actThenThrottleEvents(Site.resize, 500));
+  window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.resize, 500));
 
   // if (!UserAgent.iOS) {
   // if (window.innerWidth >= 1024) {
   if (!UserAgent.iOS) {
     // console.log('!UserAgent.iOS :: if');
-    window.addEventListener('mousemove', Site.actThenThrottleEvents(Site.handlerMouseMove, 500));
+    window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500));
   }
   else {
     // console.log('!UserAgent.iOS :: else');
@@ -305,7 +396,7 @@ Site.init = function init() {
   }
 
   /* device giroscope event */
-  if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Site.actThenThrottleEvents(Site.handleCircle, 500));
+  if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.handleCircle, 500));
 
   // /* Mouse events */
   // /* Add these events to document element */
@@ -317,29 +408,38 @@ Site.init = function init() {
   window.onmousedown = Site.showHideArrow;
 
   /* Add the event listeners for each event. */
-  window.addEventListener('mousemove', Site.actThenThrottleEvents(Site.mousePosition, 500));
+  window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePosition, 500));
   window.addEventListener(Site.clickEvent, Site.changeProject, false);
   // window.addEventListener('click', Site.changeProject, false);
   // window.addEventListener('touchend', Site.changeProject, false);
 
+  // Site.projMenu.onclick = (event) => {
+  //   event.preventDefault();
+  //   Site.projMenu.isArrow ? Site.smoothScroll.scrollToY(0, !0) : Site.isOpen ? Site.close() : Site.open();
+  //
+  //   // if (Site.projMenu.isArrow) Site.smoothScroll.scrollToY(0, !0);
+  //   // else if (Site.isOpen) Site.close();
+  //   // else Site.open();
+  // };
+
   /* scroll event */
-  window.addEventListener('wheel', Site.actThenThrottleEvents(Site.scrollEvent, 500));
-  window.addEventListener('mousewheel', Site.actThenThrottleEvents(Site.scrollEvent, 500));
-  window.addEventListener('DOMMouseScroll', Site.actThenThrottleEvents(Site.scrollEvent, 500));
+  window.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEvent, 500));
+  window.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEvent, 500));
+  window.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEvent, 500));
 
   /* swipe event */
-  window.addEventListener('touchstart', Site.actThenThrottleEvents(Site.handleTouchStart, 500));
-  window.addEventListener('touchmove', Site.actThenThrottleEvents(Site.handleTouchMove, 500));
+  window.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.handleTouchStart, 500));
+  window.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.handleTouchMove, 500));
 
   /* Show Hide Menu Arrow events */
   // window.addEventListener('scroll', Site.showHideArrow, false); // shows/hides menu arrow when scrolling on mobile devices
-  window.addEventListener('touchmove', Site.actThenThrottleEvents(Site.showHideArrow, 500)); // shows/hides menu arrow when scrolling on mobile devices
-  window.addEventListener('wheel', Site.actThenThrottleEvents(Site.showHideArrow, 500));
-  window.addEventListener('mousewheel', Site.actThenThrottleEvents(Site.showHideArrow, 500));
-  window.addEventListener('DOMMouseScroll', Site.actThenThrottleEvents(Site.showHideArrow, 500));
+  window.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.showHideArrow, 500)); // shows/hides menu arrow when scrolling on mobile devices
+  window.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.showHideArrow, 500));
+  window.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.showHideArrow, 500));
+  window.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.showHideArrow, 500));
 
   // window.addEventListener('scroll', () => Site.aboutRafs());
-  // window.addEventListener('scroll', Site.actThenThrottleEvents(Site.aboutRafs), 1000);
+  // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs), 1000);
 
   // let root = document.documentElement;
   // root.addEventListener("mousemove", e => {
@@ -350,8 +450,8 @@ Site.init = function init() {
   if (!UserAgent.iOS) {
     // console.log('YUP <===');
     /* adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
-    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Site.actThenThrottleEvents(Site.handleMouseOver, 500)));
-    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Site.actThenThrottleEvents(Site.handleMouseOut, 500)));
+    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500)));
+    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500)));
 
     if (Site.body.classList.contains('home')) {
       Site.cursorMain.classList.remove('vertical_scroll');
@@ -368,9 +468,9 @@ Site.init = function init() {
       // document.onmousedown = Site.dragEnd;
 
       /* drag event */
-      window.addEventListener('mousedown', Site.actThenThrottleEvents(Site.dragStart, 500)); // touchStart
-      window.addEventListener('mousemove', Site.actThenThrottleEvents(Site.dragMove, 500)); // touchMove
-      window.addEventListener('mouseup', Site.actThenThrottleEvents(Site.dragEnd, 500)); // touchEnd
+      window.addEventListener('mousedown', Throttle.actThenThrottleEvents(Site.dragStart, 500)); // touchStart
+      window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.dragMove, 500)); // touchMove
+      window.addEventListener('mouseup', Throttle.actThenThrottleEvents(Site.dragEnd, 500)); // touchEnd
     }
     else {
       Site.cursorMain.classList.remove('mainDrag');
@@ -481,8 +581,6 @@ Site.animations = function animations() {
       document.getElementById('progress').style.display = 'none';
     });
   }
-  else if (Site.body.classList.contains('notFound')) document.getElementById('progress').style.display = 'none';
-  else if (Site.body.classList.contains('internalServerError')) document.getElementById('progress').style.display = 'none';
   else if (Site.body.classList.contains('about')) {
     document.getElementById('progress').style.display = 'none';
     document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
@@ -519,7 +617,7 @@ Site.animations = function animations() {
         // Site.aboutRafs();
         AboutRAFs.init();
         // Site.theRafAbout = requestAnimationFrame(Site.aboutRafs);
-        // window.addEventListener('scroll', Site.actThenThrottleEvents(Site.aboutRafs()), 1000);
+        // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs()), 1000);
 
         console.log('Site.aboutRafs :: initiated');
 
@@ -674,6 +772,8 @@ Site.animations = function animations() {
       Site.ladderScale = parseFloat(Math.round(Site.ladderScale * 100) / 100).toFixed(2);
     });
   }
+  else if (Site.body.classList.contains('notFound')) document.getElementById('progress').style.display = 'none';
+  else if (Site.body.classList.contains('internalServerError')) document.getElementById('progress').style.display = 'none';
 
   // TweenMax.to('body', 1, { opacity: 1, onComplete: function event() {
   //   scroll.init();
@@ -892,6 +992,52 @@ Site.initMenuPixi = function initMenuPixi() {
   Site.displacementSprite3.scale.x = 0.4;
 };
 
+Site.openMenu = function openMenu() {
+  Site.isOpen = !0;
+  // Site.pageContent = document.getElementsByClassName('page-content')[0];
+  // Site.currentPage.menuWillAppear && Site.currentPage.menuWillAppear();
+  // var a = Color.stringToRgb(Site.menu.style.background);
+
+  // a && fastdom.measure(function() {
+  //   79 < Color.rgbToCIELab(a).l ?
+  //   fastdom.mutate(function() {
+  //     Site.menu.classList.add('reversed');
+  //     Site.projMenu.classList.add('reversed');
+  //   }) :
+  //   fastdom.mutate(function() {
+  //     Site.menu.classList.remove("reversed");
+  //     Site.projMenu.classList.remove("reversed");
+  //   });
+  // });
+  //
+  // fastdom.mutate(function() {
+  //   Site.pageContent.style.transformOrigin = 'center ' + (pageYOffset + Site.height / 2) + 'px';
+  //   Site.projMenu.classList.add('opened');
+  //   Site.projMenu.classList.remove('closing');
+  // });
+
+  // Site.smoothScroll.disableScrolling();
+  // Site.animateSite(0, 1);
+
+  // Site.logo.firstElementChild.onclick = function(a) {
+  //   a.preventDefault();
+  //   Site.close();
+  // };
+};
+
+Site.closeMenu = function close(event) {
+  Site.isOpen = !1;
+
+  // Site.animateSite(1, 0, function() {
+  //   Site.smoothScroll.enableScrolling();
+  //   Site.currentPage.menuDidDisappear && Site.currentPage.menuDidDisappear();
+  // }, event);
+
+  Site.projMenu.classList.remove('opened');
+  Site.projMenu.classList.add('closing');
+  // Site.logo.firstElementChild.onclick = Site.logoClicked;
+};
+
 Site.changeProject = function changeProject(event) {
   if (event.target.classList.contains('change_project')) Site.changePagination(event.target);
   else if (event.target.classList.contains('arrow-transition-in')) {
@@ -904,13 +1050,28 @@ Site.changeProject = function changeProject(event) {
   else if (event.target.classList.contains('to_next') && Site.blockedAction === false) Site.nextSlide();
   else if (event.target.classList.contains('to_prev') && Site.blockedAction === false) Site.prevSlide();
   else if (event.target.classList.contains('projects')) {
+    // event.preventDefault();
+    // Site.projMenu.isArrow ? Site.smoothScroll.scrollToY(0, !0) : Site.isOpen ? Site.close() : Site.open();
+    //
+    // if (Site.projMenu.isArrow) {
+    //   // Site.smoothScroll.scrollToY(0, !0);
+    //   console.log('Make sure client is at top of screen || smoothScroll.scrollToY(0, !0)');
+    // }
+    // else if (Site.isOpen) {
+    //   Site.closeMenu();
+    //   console.log('Close Menu');
+    // } else {
+    //   Site.openMenu();
+    //   console.log('Open Menu');
+    // }
+
     // document.querySelectorAll('.projects').forEach((obj) => obj.classList.toggle('opened')); // Takes a second argument => true || false |\ Condition
     document.querySelector('.projects').classList.toggle('opened');
 
-    if (!Site.projMenu.classList.contains('opened')) {
-      Site.projMenu.classList.add('closing');
-      setTimeout(() => Site.projMenu.classList.remove('closing'), 1250); // delay is unusally long
-    }
+    // if (!Site.projMenu.classList.contains('opened')) {
+    //   Site.projMenu.classList.add('closing');
+    //   setTimeout(() => Site.projMenu.classList.remove('closing'), 1250); // delay is unusally long
+    // }
 
     if (Site.projMenu.classList.contains('opened')) {
       Site.projMenu.classList.remove('closing');
@@ -957,9 +1118,13 @@ Site.changeProject = function changeProject(event) {
       cancelAnimationFrame(Site.rafPixiHome);
       cancelAnimationFrame(Site.rafPixiSingle);
 
-      Site.menuPixi();
+      // Site.menuPixi();
+      MenuPixi.init();
     }
     else {
+      Site.projMenu.classList.add('closing');
+      setTimeout(() => Site.projMenu.classList.remove('closing'), 1250); // delay is unusally long
+
       if (Site.scrolling !== null) Site.scrolling.on();
       if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
 
@@ -986,36 +1151,6 @@ Site.changeProject = function changeProject(event) {
       else if (Site.body.classList.contains('single')) Site.singlePixi();
     }
   }
-};
-
-/*
- * Generates an event listener wrapper function
- * that will only run the main listener
- * if there has been a given delay (in ms)
- * since the last time the event was triggered.
- */
-Site.throttleEvents = function throttleEvents(listener, delay) {
-  var timeout;
-  return function(event) {
-    if (timeout) cancelAnimationFrame(timeout);
-    timeout = requestAnimationFrame(listener, delay, event);
-  };
-};
-
-/*
- * Generates an event listener wrapper function
- * that will prevent the main listener from running
- * if it has previously run within the given delay (in ms).
- */
-Site.actThenThrottleEvents = function actThenThrottleEvents(listener, delay) {
-  var timeout;
-  return function(event) {
-    if (!timeout) { // no timer running
-      listener(event); // run the function
-      timeout = requestAnimationFrame(() => timeout = null, delay); // start a timer that turns itself off when it's done
-    }
-    // else, do nothing (we're in a throttling stage)
-  };
 };
 
 Site.nextSlide = function nextSlide() {
@@ -1499,28 +1634,29 @@ Site.scrollEvent = function scrollEvent(event) {
 /*----------------------------------------------------------------------------*/
 
 Site.showArrow = function showArrow() {
-  // Site.showArrowRaf = requestAnimationFrame(Site.hideArrow);
-
   Site.projMenu.classList.remove('arrow-transition-out');
   Site.projMenu.classList.add('arrow-transition-in');
 
-  // cancelAnimationFrame(Site.hideArrowRaf);
-  // cancelAnimationFrame(Site.showArrowRaf);
+  if (Site.arrowHidingTimeout) {
+    clearTimeout(Site.arrowHidingTimeout);
+    Site.arrowHidingTimeout = null;
+  }
 };
 
 Site.hideArrow = function hideArrow() {
-  // Site.hideArrowRaf = requestAnimationFrame(Site.hideArrow);
-
-  Site.projMenu.classList.remove('arrow-transition-in');
-  Site.projMenu.classList.add('arrow-transition-out');
-  setTimeout(() => Site.projMenu.classList.remove('arrow-transition-out'), 300);
-
-  // cancelAnimationFrame(Site.showArrowRaf);
-  // cancelAnimationFrame(Site.hideArrowRaf);
+  if (Site.projMenu.classList.contains('arrow-transition-in')) {
+    Site.projMenu.classList.remove('arrow-transition-in');
+    Site.projMenu.classList.add('arrow-transition-out');
+    Site.arrowHidingTimeout = setTimeout(() => {
+      Site.projMenu.classList.remove('arrow-transition-out');
+      Site.arrowHidingTimeout = void 0;
+    }, 500);
+  }
 };
 
 Site.changeArrow = function changeArrow() {
-  return Site.scrolling && Site.scrolling.vars.target >= 50 ? Site.showArrow() : Site.hideArrow();
+  // return Site.scrolling && Site.scrolling.vars.target >= 10 ? Site.showArrow() : Site.hideArrow();
+  return Site.scrolling && Site.scrolling.vars.target >= 10 ? Site.showArrow() : Site.scrolling.vars.target <= 10 ? Site.hideArrow() : false;
 };
 
 Site.showHideArrow = function showHideArrow() {
@@ -1533,13 +1669,14 @@ Site.showHideArrow = function showHideArrow() {
       else if (Site.body.classList.contains('about')) Site.changeArrow();
     } else {
       if (Site.body.classList.contains('single')) {
-        if (window.pageYOffset >= 50) Site.showArrow();
-        else Site.hideArrow();
+        if (window.pageYOffset >= 10) Site.showArrow();
+        else if (window.pageYOffset <= 10) Site.hideArrow();
+        // else Site.hideArrow();
 
         if (window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34)) Site.showLightButtonStyle();
         else Site.showDarkButtonStyle();
       } else if (Site.body.classList.contains('about')) {
-        if (window.pageYOffset >= 50) Site.showArrow();
+        if (window.pageYOffset >= 10) Site.showArrow();
         else Site.hideArrow();
       }
     }
@@ -1650,46 +1787,6 @@ Site.homePixi = function homePixi() {
 
   Site.formerDelta = Site.currentMousePos.x;
   Site.deltaGamma  = Site.gamma * 20;
-};
-
-Site.menuPixi = function menuPixi() {
-  Site.rafPixiMenu = requestAnimationFrame(Site.menuPixi);
-
-  Site.rendererMenu.render(Site.stageMenu);
-  Site.displacementSprite3.x += 2;
-
-  if (!UserAgent.iOS) {
-    Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100)/100;
-    Site.theDeltaMenu     = Site.currentMousePos.y;
-  } else {
-    Site.cursorPercentage = window.pageYOffset * 100 / (Site.heightMenu - window.innerHeight);
-    Site.theDeltaMenu     = window.pageYOffset;
-  }
-
-  if (Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8) Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1);
-  else Site.intensity = 1.8;
-
-  /* displacement menu */
-  if (!UserAgent.iOS) {
-    let expression = -1 * (Site.heightMenu - window.innerHeight) / window.innerHeight * Site.currentMousePos.y;
-    TweenMax.to('#the_menu', 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
-  }
-  else TweenMax.to('#the_menu', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
-
-  if (window.innerWidth > 767) {
-    if (Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin)) document.querySelectorAll('#the_menu li').forEach(Site.checkMenu);
-
-    Site.displace.intensity = Site.displacementFilter3.scale.x;
-
-    TweenMax.to(Site.displace, 0.3, {
-      intensity: 4 * (Site.theDeltaMenu - Site.deltaMenu),
-      onUpdate: function event() {
-        Site.displacementFilter3.scale.x = Site.displace.intensity;
-      },
-      ease: Linear.easeNone
-    });
-  }
-  Site.deltaMenu = Site.theDeltaMenu;
 };
 
 Site.singlePixi = function singlePixi() {
@@ -2097,10 +2194,6 @@ Site.animateRandom = function animateRandom(element) {
 Site.addRandom = function addRandom(item, index) {
   item.classList.add('random');
 };
-
-// Site.isMobile = function isMobile() {
-//   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-// };
 
 Site.mousePosition = function mousePosition(event) {
   Site.currentMousePos.x = event.pageX;
