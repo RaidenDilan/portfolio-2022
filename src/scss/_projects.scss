@@ -401,9 +401,14 @@ header {
             font: 500 normal 80px/90px $italiana, serif;
           }
         }
-      }
-      div {
-        padding-top: 7vw;
+        div {
+          width: 85%;
+          // padding-top: 7vw;
+
+          span {
+            position: initial;
+          }
+        }
       }
     }
     .datas {
