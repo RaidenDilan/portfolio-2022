@@ -406,7 +406,11 @@ header {
           // padding-top: 7vw;
 
           span {
-            position: initial;
+            position: unset;
+
+            &:last-child {
+              padding-right: 3px;
+            }
           }
         }
       }
