@@ -44,44 +44,6 @@
   }
 }
 
-@media (max-width: 1024px) {
-  .single-works {
-    h1 {
-      padding: 15vw 0 0 18vw;
-      font: 500 normal 11vw/12vw $italiana, serif;
-      margin: 0;
-    }
-  }
-}
-
-@media (max-width: 767px) {
-  .single-works {
-    h1 {
-      // font: 500 normal 15vw/16vw 'Adelon';
-      // font: 500 normal 12vh/20vw $italiana;
-      font: 500 normal 12vh/15vw $italiana;
-      // overflow-wrap: break-word;
-      word-wrap: break-word;
-      width: 85%;
-      padding: calc(25vh - 10px) 0 0 15vw;
-      // padding: calc(18vh - 3vw) 0 0 15%;
-    }
-    .cover {
-      height: 100vw;
-    }
-  }
-}
-
-@media (max-width: 414px) {
-  .single-works {
-    h1 {
-      width: 90%;
-      font: 900 normal 7.5vh/15vw $italiana;
-      // font: 900 normal 4vh/10vw $italiana;
-      // font: 500 normal 7vh/18vw $italiana;
-    }
-  }
-}
 svg.svg_menu {
   position: absolute;
   bottom: 16px;
@@ -333,5 +295,45 @@ svg.svg_underline {
 @keyframes dash4 {
   100% {
     stroke-dashoffset: 700;
+  }
+}
+
+@media (max-width: 1024px) {
+  .single-works {
+    h1 {
+      padding: 15vw 0 0 18vw;
+      font: 500 normal 11vw/12vw $italiana, serif;
+      margin: 0;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .single-works {
+    h1 {
+      // font: 500 normal 15vw/16vw 'Adelon';
+      // font: 500 normal 12vh/20vw $italiana;
+      font: 500 normal 12vh/15vw $italiana;
+      // overflow-wrap: break-word;
+      word-wrap: break-word;
+      width: 85%;
+      padding: calc(25vh - 10px) 0 0 15vw;
+      // padding: calc(18vh - 3vw) 0 0 15%;
+    }
+    .cover {
+      height: 100vw;
+    }
+  }
+}
+
+@media (max-width: 414px) {
+  .single-works {
+    h1 {
+      padding: calc(25vh - 10px) 0 0 16vw;
+      width: 90%;
+      font: 900 normal 7vh/15vw $italiana;
+      // font: 900 normal 4vh/10vw $italiana;
+      // font: 500 normal 7vh/18vw $italiana;
+    }
   }
 }

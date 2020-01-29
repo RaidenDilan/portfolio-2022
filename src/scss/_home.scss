@@ -40,7 +40,7 @@
   // }
 
   &.visible {
-    display: block
+    display: block;
   }
 
   &.vertical_scroll {
@@ -106,7 +106,7 @@
   // }
 
   &.visible {
-    display: block
+    display: block;
   }
 
   &.vertical_scroll {
@@ -915,7 +915,15 @@ svg.svg-circle {
   .home {
     #svg-circle {
       svg {
-        padding: 7vh;
+        // padding: 7vh;
+        padding: 1vh;
+      }
+    }
+    #col2 {
+      padding: 25vh 0 0 12vw;
+      #num {
+        bottom: calc(18vh + 10px)
+        // bottom: calc(20vh + 50px)
       }
     }
   }
@@ -925,7 +933,13 @@ svg.svg-circle {
   .home {
     #svg-circle {
       svg {
-        padding: 7vh;
+        // padding: 7vh;
+        padding: 1vw;
+      }
+    }
+    #col2 {
+      #num {
+        bottom: calc(18vh + 10px);
       }
     }
   }
@@ -938,14 +952,22 @@ svg.svg-circle {
         padding: 0;
       }
     }
+    #col1 {
+
+    }
     #col2 {
+      padding: 23vh 0 0 12vw;
+
       .inner_h2 {
         h2 {
-          font: 900 normal 11vw/12vw $italiana;
+          font: 900 normal 8vw/12vw $italiana;
         }
       }
       #prev_next {
         display: none;
+      }
+      #num {
+        bottom: calc(20vh + 10px);
       }
     }
   }

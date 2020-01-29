@@ -19,6 +19,10 @@ header {
     transform: rotate(0);
     transition: transform 0.5s ease-in-out 0.125s;
 
+    * {
+      pointer-events: none;
+    }
+
     div {
       position: absolute;
       left: 24px;
@@ -230,6 +234,7 @@ header {
       display: block;
       width: 80%;
       margin-left: 10%;
+      // margin: 0 auto;
       text-align: center;
       position: relative;
       top: 50%;
@@ -384,7 +389,8 @@ header {
   #main {
     #next_proj {
       > div {
-        margin-left: 5%;
+        // margin-left: 5%;
+        margin: 0 auto;
         width: 90%;
 
         a {
@@ -424,7 +430,7 @@ header {
   #main {
     #next_proj {
       > div {
-        width: 85%;
+        width: 90%;
 
         a {
           // font: 500 normal 9vw/13vw $italiana;
@@ -435,5 +441,11 @@ header {
         }
       }
     }
+  }
+}
+
+@media (max-width: 320px) {
+  #main #next_proj > div a span {
+    font: 500 normal 40px/50px $italiana, serif;
   }
 }
