@@ -1,26 +1,39 @@
 const router = require('express').Router();
-const pages  = require('../controllers/pages');
 
 router.route('/')
-  .get(pages.index);
+  .get((req, res) => {
+    return res.render('index');
+  });
 
 router.route('/about')
-  .get(pages.about);
+  .get((req, res) => {
+    return res.render('about');
+  });
 
 router.route('/resorts')
-  .get(pages.resorts);
+  .get((req, res) => {
+    return res.render('resorts');
+  });
 
 router.route('/grouparty')
-  .get(pages.grouparty);
+  .get((req, res) => {
+    return res.render('grouparty');
+  });
 
 router.route('/palm-trees')
-  .get(pages.palmtrees);
+  .get((req, res) => {
+    return res.render('palm-trees');
+  });
 
 router.route('/rdt')
-  .get(pages.rdt);
+  .get((req, res) => {
+    return res.render('rdt');
+  });
 
 router.route('/ads')
-  .get(pages.ads);
+  .get((req, res) => {
+    return res.render('ads');
+  });
 
 router.all('*', (req, res) => res.notFound());
 

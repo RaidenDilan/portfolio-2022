@@ -1,5 +1,5 @@
-const gulp    = require('gulp');
-const notify  = require('gulp-notify');
+const gulp = require('gulp');
+const notify = require('gulp-notify');
 const plumber = require('gulp-plumber');
 
 const onError = function(err) {
@@ -18,5 +18,5 @@ gulp.src = function() {
   return gulpSrc
     .apply(gulp, arguments)
     .pipe(plumber({ errorHandler: onError })
-  );
+    );
 };

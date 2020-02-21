@@ -836,6 +836,19 @@ Site.animations = function animations() {
       Site.blockedAction = false;
       if (!Menu.button.classList.contains('opened')) Site.homePixi();
       Site.nextSlide();
+
+      // DISABLE elements with class of update_link (<a>) in home pixi slider
+
+      // if (Site.currentSlide === 0) {
+      //   console.log('Site.currentSlide', Site.currentSlide);
+      //   document.querySelectorAll('.update_link').forEach((obj) => {
+      //     // console.log('obj >>>', obj);
+      //     obj
+      //       .setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide]
+      //       .getAttribute('data-params'));
+      //   });
+      // }
+
       document.getElementById('progress').style.display = 'none';
     });
   }
@@ -1942,53 +1955,65 @@ Site.updatePagination = function updatePagination(direction) {
 
 Site.scrollablePagination = function scrollablePagination() {
   document.querySelectorAll('.random.first').forEach((obj) => obj.classList.remove('first'));
-  document.querySelector('#num_letter .current').classList.add('after');
+
+  // Added to prevent classList of null.
+  if (document.querySelector('#num_letter .current')) {
+    document.querySelector('#num_letter .current').classList.add('after');
+  }
 
   if (Site.multiplier === 1) {
-    if (document.querySelector('#num_letter .current').nextElementSibling !== null) {
-      document.querySelector('#num_letter .current').nextElementSibling.classList.add('before');
-      var next = document.querySelector('#num_letter .current').nextElementSibling;
+    // Added to prevent classList of null.
+    if (document.querySelector('#num_letter .current')) {
+      if (document.querySelector('#num_letter .current').nextElementSibling !== null) {
+        document.querySelector('#num_letter .current').nextElementSibling.classList.add('before');
+        var next = document.querySelector('#num_letter .current').nextElementSibling;
 
-      TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
-      TweenMax.to(document.querySelector('#num_letter .current').nextElementSibling.querySelector('div'), 0.4, {
-        x: '0%',
-        clearProps: 'x',
-        ease: Power4.easeInOut,
-        onComplete: function event() {
-          document.querySelector('#num_letter .current').classList.remove('current','after');
-          next.classList.add('current');
-          next.classList.remove('before');
-        }
-      });
-    } else {
-      var first = document.querySelector('#num_letter div');
-      first.classList.add('before');
+        TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
+        TweenMax.to(document.querySelector('#num_letter .current').nextElementSibling.querySelector('div'), 0.4, {
+          x: '0%',
+          clearProps: 'x',
+          ease: Power4.easeInOut,
+          onComplete: function event() {
+            document.querySelector('#num_letter .current').classList.remove('current','after');
+            next.classList.add('current');
+            next.classList.remove('before');
+          }
+        });
+      } else {
+        var first = document.querySelector('#num_letter div');
+        first.classList.add('before');
 
-      TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
-      TweenMax.to(first.querySelector('div'), 0.4, {
-        x: '0%',
-        clearProps: 'x',
-        ease: Power4.easeInOut,
-        onComplete: function event() {
-          if (document.querySelectorAll('.change_project')[Site.totalSlides - 1].classList.contains('first')) document.querySelectorAll('.change_project')[Site.totalSlides - 1].classList.remove('first');
-          document.querySelector('#num_letter .current').classList.remove('current','after');
-          first.classList.add('current');
-          first.classList.remove('before');
-        }
+        TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
+        TweenMax.to(first.querySelector('div'), 0.4, {
+          x: '0%',
+          clearProps: 'x',
+          ease: Power4.easeInOut,
+          onComplete: function event() {
+            if (document.querySelectorAll('.change_project')[Site.totalSlides - 1].classList.contains('first')) document.querySelectorAll('.change_project')[Site.totalSlides - 1].classList.remove('first');
+            document.querySelector('#num_letter .current').classList.remove('current','after');
+            first.classList.add('current');
+            first.classList.remove('before');
+          }
+        });
+      }
+
+      document.getElementById('num_project').innerHTML = Site.currentSlide + 1;
+      document.getElementById('title_h2').innerHTML    = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-title');
+      document.getElementById('type').innerHTML        = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-cap');
+      document.getElementById('year').innerHTML        = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-year');
+
+      // if(UserAgent.iOS) {
+      //   if (document.querySelectorAll('#title_h2 span').length <= 2) document.getElementById('title_h2').style.fontSize = '14vw';
+      //   else document.getElementById('title_h2').style.fontSize = '11vw';
+      // }
+
+      document.querySelectorAll('.update_link').forEach((obj) => {
+        // console.log('obj >>>', obj);
+        obj
+          .setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide]
+          .getAttribute('data-params'));
       });
     }
-
-    document.getElementById('num_project').innerHTML = Site.currentSlide + 1;
-    document.getElementById('title_h2').innerHTML    = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-title');
-    document.getElementById('type').innerHTML        = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-cap');
-    document.getElementById('year').innerHTML        = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-year');
-
-    // if(UserAgent.iOS) {
-    //   if (document.querySelectorAll('#title_h2 span').length <= 2) document.getElementById('title_h2').style.fontSize = '14vw';
-    //   else document.getElementById('title_h2').style.fontSize = '11vw';
-    // }
-
-    document.querySelectorAll('.update_link').forEach((obj) => obj.setAttribute('href',document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-params')));
   } else {
     if (document.querySelector('#num_letter .current').previousElementSibling !== null) {
       document.querySelector('#num_letter .current').previousElementSibling.classList.add('before');
@@ -2026,26 +2051,42 @@ Site.scrollablePagination = function scrollablePagination() {
     }
 
     if (Site.currentSlide === 1) {
+      // console.log('1 ===>', Site.currentSlide === 1);
       document.getElementById('num_project').innerHTML = Site.totalSlides;
       document.getElementById('title_h2').innerHTML    = document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-title');
       document.getElementById('type').innerHTML        = document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-cap');
       document.getElementById('year').innerHTML        = document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-year');
 
-      document.querySelectorAll('.update_link').forEach((obj) => obj.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-params')));
+      document.querySelectorAll('.update_link').forEach((x) => {
+        // console.log('x - 1 =>', x);
+        x.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-params'));
+      });
     } else if (Site.currentSlide === 0) {
+      // console.log('2 ===>', Site.currentSlide === 0);
       document.getElementById('num_project').innerHTML = Site.totalSlides - 1;
       document.getElementById('title_h2').innerHTML    = document.querySelectorAll('#images div')[Site.totalSlides - 2].getAttribute('data-title');
       document.getElementById('type').innerHTML        = document.querySelectorAll('#images div')[Site.totalSlides - 2].getAttribute('data-cap');
       document.getElementById('year').innerHTML        = document.querySelectorAll('#images div')[Site.totalSlides - 2].getAttribute('data-year');
 
-      document.querySelectorAll('.update_link').forEach(x=> x.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 2].getAttribute('data-params')));
-    } else {
+      document.querySelectorAll('.update_link').forEach((x) => {
+        // console.log('x - 2 =>', x);
+        x.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 2].getAttribute('data-params'));
+      });
+    }
+    // else if (Site.currentSlide === 2) {
+    //   console.log('3 ===>', Site.currentSlide === 2);
+    // }
+    else {
+      // console.log('4 ===>');
       document.getElementById('num_project').innerHTML = Site.currentSlide - 1;
       document.getElementById('title_h2').innerHTML    = document.querySelectorAll('#images div')[Site.currentSlide - 2].getAttribute('data-title');
       document.getElementById('type').innerHTML        = document.querySelectorAll('#images div')[Site.currentSlide - 2].getAttribute('data-cap');
       document.getElementById('year').innerHTML        = document.querySelectorAll('#images div')[Site.currentSlide - 2].getAttribute('data-year');
 
-      document.querySelectorAll('.update_link').forEach((obj) => obj.setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide - 2].getAttribute('data-params')));
+      document.querySelectorAll('.update_link').forEach((x) => {
+        console.log('x ===>', x);
+        x.setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide - 2].getAttribute('data-params'));
+      });
     }
   }
 
@@ -2096,7 +2137,10 @@ Site.clickablePagination = function clickablePagination() {
   document.getElementById('year').innerHTML        = document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-year');
 
   /* NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach; */
-  document.querySelectorAll('.update_link').forEach((obj) => obj.setAttribute('href', document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-params')));
+  document.querySelectorAll('.update_link').forEach((obj) => {
+    console.log('obj -->', obj);
+    obj.setAttribute('href', document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-params'));
+  });
   document.querySelectorAll('#title_h2 span').forEach(Site.addRandom);
 
   Site.animateRandom('.random');

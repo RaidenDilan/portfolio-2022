@@ -1,12 +1,12 @@
-const express                      = require('express');
+const express = require('express');
 // const morgan                       = require('morgan');
 // const session                      = require('express-session');
 // const bodyParser                   = require('body-parser');
 // const methodOverride               = require('method-override');
 const { port, env, sessionSecret } = require('./config/environment');
-// const errorHandler                 = require('./lib/errorHandler');
-const customResponses              = require('./lib/customResponses');
-const routes                       = require('./config/routes');
+const errorHandler = require('./lib/errorHandler');
+const customResponses = require('./lib/customResponses');
+const routes = require('./config/routes');
 
 const app = express();
 
@@ -36,5 +36,5 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use(customResponses);
 app.use(routes);
-// app.use(errorHandler);
+app.use(errorHandler);
 app.listen(port, () => console.log(`Express has started on port: ${port}`));

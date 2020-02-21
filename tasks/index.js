@@ -1,10 +1,10 @@
-const gulp        = require('gulp');
-const gulpIf      = require('gulp-if');
-const htmlhint    = require('gulp-htmlhint');
-const htmlmin     = require('gulp-htmlmin');
-const inject      = require('gulp-inject');
+const gulp = require('gulp');
+const gulpIf = require('gulp-if');
+const htmlhint = require('gulp-htmlhint');
+const htmlmin = require('gulp-htmlmin');
+const inject = require('gulp-inject');
 const browserSync = require('browser-sync');
-const config      = require('../package').gulp;
+const config = require('../package').gulp;
 
 const validateIndex = () => {
   return gulp
@@ -14,7 +14,7 @@ const validateIndex = () => {
 };
 
 const buildIndex = () => {
-  const js  = require('./js')();
+  const js = require('./js')();
   const css = require('./css')();
 
   return validateIndex()

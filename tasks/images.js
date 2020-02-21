@@ -1,10 +1,10 @@
-const gulp        = require('gulp');
-const gulpIf      = require('gulp-if');
-const clean       = require('gulp-clean');
+const gulp = require('gulp');
+const gulpIf = require('gulp-if');
+const clean = require('gulp-clean');
 const eventStream = require('event-stream');
-const imagemin    = require('gulp-imagemin');
+const imagemin = require('gulp-imagemin');
 const browserSync = require('browser-sync');
-const config      = require('../package').gulp;
+const config = require('../package').gulp;
 
 const cleanImages = () => {
   return gulp
@@ -24,7 +24,7 @@ const buildImages = () => {
     cleanImages(),
     copyImages()
   )
-  .pipe(browserSync.stream());
+    .pipe(browserSync.stream());
 };
 
 gulp.task('build-images', buildImages);

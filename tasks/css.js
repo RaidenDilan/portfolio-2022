@@ -1,17 +1,17 @@
-const gulp             = require('gulp');
-const sass             = require('gulp-sass');
-const autoprefixer     = require('gulp-autoprefixer');
+const gulp = require('gulp');
+const sass = require('gulp-sass');
+const autoprefixer = require('gulp-autoprefixer');
 const stripCssComments = require('gulp-strip-css-comments');
-const minifycss        = require('gulp-clean-css');
-const bowerFiles       = require('main-bower-files');
-const concat           = require('gulp-concat');
-const eventStream      = require('event-stream');
-const order            = require('gulp-order');
-const sourcemaps       = require('gulp-sourcemaps');
-const rename           = require('gulp-rename');
-const gulpIf           = require('gulp-if');
-const browserSync      = require('browser-sync');
-const config           = require('../package').gulp;
+const minifycss = require('gulp-clean-css');
+const bowerFiles = require('main-bower-files');
+const concat = require('gulp-concat');
+const eventStream = require('event-stream');
+const order = require('gulp-order');
+const sourcemaps = require('gulp-sourcemaps');
+const rename = require('gulp-rename');
+const gulpIf = require('gulp-if');
+const browserSync = require('browser-sync');
+const config = require('../package').gulp;
 
 const fetchVendorCss = () => {
   return gulp
@@ -35,11 +35,11 @@ const fetchLocalCss = () => {
 
 const buildCss = () => {
   const vendorCss = fetchVendorCss();
-  const localCss  = fetchLocalCss();
+  const localCss = fetchLocalCss();
 
   return eventStream
     .merge(vendorCss, localCss)
-    .pipe(order([config.vendor.css,config.output.css]))
+    .pipe(order([config.vendor.css, config.output.css]))
     .pipe(concat(config.output.css))
     .pipe(sourcemaps.init())
     .pipe(gulpIf(global.production, minifycss()))
