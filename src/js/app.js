@@ -336,7 +336,10 @@ Menu = {
     cancelAnimationFrame(Site.rafPixiMenu);
 
     if (Site.body.classList.contains('home')) Site.homePixi();
-    else if (Site.body.classList.contains('single')) Site.singlePixi();
+    else if (Site.body.classList.contains('single')) {
+      Site.singlePixi();
+      // if (Site.scrolling !== null) Site.singlePixi();
+    }
   },
   showArrow: () => {
     Menu.button.isArrow || (Menu.button.isArrow = !0);
@@ -535,7 +538,9 @@ Site.init = function init() {
   this.displace        = {};
   this.displace2       = {};
   this.tempImageNumber = -1;
+
   this.speed           = 0;
+
   this.currentSlide    = 0;
   this.formerDelta     = 0;
   this.deltaMenu       = 0;
@@ -558,6 +563,7 @@ Site.init = function init() {
   this.bottomLink      = false;
   this.playOnce        = false;
   this.scrollMenuOpen  = 0;
+  this.state           = 0; // BUG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   this.clickEvent      = ('ontouchstart' in window ? 'touchend' : 'click');
   this.vsSection       = document.querySelector('.vs-section');
   this.vsDivs          = document.querySelectorAll('.vs-div');
@@ -586,7 +592,7 @@ Site.init = function init() {
   TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
   TweenMax.set('#main', { display: 'block', clearProps: 'y' });
   // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
-  // Site.resize();
+  // Site.onResize();
 
   // Resets header menu elements back to their defaults states/classes.
   Site.menu.style.display = 'none';
@@ -656,8 +662,8 @@ Site.init = function init() {
   //   return a - b;
   // };
 
-  window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.resize, 500));
-  window.addEventListener('keydown', Throttle.actThenThrottleEvents(Site.keydown, 500));
+  window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResize, 500));
+  window.addEventListener('keydown', Throttle.actThenThrottleEvents(Site.onKeydown, 500));
 
   // if (!UserAgent.iOS) {
   // if (window.innerWidth >= 1024) {
@@ -671,7 +677,7 @@ Site.init = function init() {
   // /* Mouse events */
   // /* Add these events to document element */
   window.onmousedown = Site.mousePosition;
-  window.onmousedown = Site.changeProject;
+  window.onmousedown = Site.onChangeProject;
   window.onmousedown = Site.scrollEvent;
   window.onmousedown = Site.handleTouchStart;
   window.onmousedown = Site.handleTouchMove;
@@ -679,9 +685,9 @@ Site.init = function init() {
 
   /* Add the event listeners for each event. */
   window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePosition, 500));
-  window.addEventListener(Site.clickEvent, Site.changeProject, false);
-  // window.addEventListener('click', Site.changeProject, false);
-  // window.addEventListener('touchend', Site.changeProject, false);
+  window.addEventListener(Site.clickEvent, Site.onChangeProject, false);
+  // window.addEventListener('click', Site.onChangeProject, false);
+  // window.addEventListener('touchend', Site.onChangeProject, false);
 
   // Menu.button.onclick = (event) => {
   //   event.preventDefault();
@@ -728,7 +734,7 @@ Site.init = function init() {
   }
 };
 
-Site.keydown = function keydown(event) {
+Site.onKeydown = function onKeydown(event) {
   if (event.key === 'Escape' || event.keyCode === 27) {
     if (Menu.button.classList.contains('opened')) {
       Menu.init();
@@ -753,8 +759,8 @@ Site.onClick = function onClick(event) {
       }
 
       history.pushState({}, '', href);
-      Site.loadPage(href);
-      Site.theRafLoading();
+      Site.onLoadPage(href);
+      Site.onRafLoading();
 
       return false;
     }
@@ -763,7 +769,7 @@ Site.onClick = function onClick(event) {
 };
 
 /* when get() completed */
-Site.ajaxLoad = function ajaxLoad(html) {
+Site.onAjaxLoad = function onAjaxLoad(html) {
   Site.newPageContent = html;
   Site.ajaxOk         = true;
 };
@@ -1004,6 +1010,7 @@ Site.animations = function animations() {
     Site.displacementSprite2.scale.x = 0.8; // 0.8
 
     Site.stage.addChild(Site.displacementSprite2);
+    // console.log('image', image);
     Site.stage.addChild(image);
 
     // Site.stage.hitArea     = Site.renderer.screen;
@@ -1029,7 +1036,12 @@ Site.animations = function animations() {
 
     Site.loader.load((loader, resources) => {
       Site.blockedAction = false;
-      if (!Menu.button.classList.contains('opened')) Site.singlePixi();
+
+      if (!Menu.button.classList.contains('opened')) {
+        console.log('BreakPoint =>');
+        Site.singlePixi();
+        // if (Site.scrolling !== null) Site.singlePixi();
+      }
 
       Site.animateRandom('.random');
 
@@ -1048,14 +1060,14 @@ Site.animations = function animations() {
 
   // TweenMax.to('body', 1, { opacity: 1, onComplete: function event() {
   //   scroll.init();
-  //   scroll.Site.resize();
+  //   scroll.Site.onResize();
   // }});
   //
   // if ($('event')[0]) {}
 };
 
 /* animations output outputs */
-Site.loadPage = function loadPage(href) {
+Site.onLoadPage = function onLoadPage(href) {
   document.getElementById('progress').style.display = 'block';
 
   if (Site.scrolling !== null) Site.scrolling.off();
@@ -1069,7 +1081,7 @@ Site.loadPage = function loadPage(href) {
   // xhr.onreadystatechange = callback
   // callback is the function to be executed when the readyState changes.
   xhr.onreadystatechange = function() {
-    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) Site.ajaxLoad(xhr.responseText);
+    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) Site.onAjaxLoad(xhr.responseText);
   };
 
   xhr.send();
@@ -1092,7 +1104,7 @@ Site.loadPage = function loadPage(href) {
     });
   }
   else if (Site.body.classList.contains('home')) {
-    // speed = 4;
+    // Site.speed = 4;
     Site.listenCursor  = false;
     Site.blockedAction = true;
 
@@ -1192,7 +1204,7 @@ Site.loadPage = function loadPage(href) {
 };
 
 /* updating the data of the page */
-Site.updatePage = function updatePage(html) {
+Site.onUpdatePage = function onUpdatePage(html) {
   var parser    = new DOMParser();
   var doc       = parser.parseFromString(html, 'text/html');
   var classList = doc.querySelectorAll('body')[0].getAttribute('class');
@@ -1216,8 +1228,8 @@ Site.updatePage = function updatePage(html) {
 };
 
 /* RAFs loading screen */
-Site.theRafLoading = function theRafLoading() {
-  Site.rafLoading = requestAnimationFrame(Site.theRafLoading);
+Site.onRafLoading = function onRafLoading() {
+  Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
 
   if (Site.exitOk === true && Site.ajaxOk === true) {
     cancelAnimationFrame(Site.rafPixiHome);
@@ -1228,7 +1240,7 @@ Site.theRafLoading = function theRafLoading() {
       Site.renderer.destroy();
     }
 
-    Site.updatePage(Site.newPageContent);
+    Site.onUpdatePage(Site.newPageContent);
     cancelAnimationFrame(Site.rafLoading);
   }
 };
@@ -1263,7 +1275,7 @@ Site.initMenuPixi = function initMenuPixi() {
   Site.displacementSprite3.scale.x = 0.4;
 };
 
-Site.changeProject = function changeProject(event) {
+Site.onChangeProject = function onChangeProject(event) {
   if (event.target.classList.contains('change_project')) Site.changePagination(event.target);
   else if (event.target.classList.contains('arrow-transition-in')) {
     Site.scrollBackUp(event.target);
@@ -1462,6 +1474,8 @@ Site.commonTransition = function commonTransition() {
 
   Site.displacementSprite2.x = 0;
   Site.attributes2.intensity = Site.displacementFilter2.scale.x;
+  // console.log('Site.attributes2.x --->', Site.attributes2.x);
+  // console.log('Site.speed --->', Site.speed);
   Site.attributes2.x         = Site.speed;
   Site.attributes2.width     = Site.displacementSprite2.scale.x;
   Site.attributes3.opacity   = 0;
@@ -1709,7 +1723,7 @@ Site.offHover = function offHover(event) {
   document.querySelector('.change_project.current').classList.remove('temp');
 };
 
-Site.resize = function resize() {
+Site.onResize = function onResize() {
   if (!UserAgent.iOS && Site.scrolling !== null) {
     Site.scrolling.resize();
     // console.log('Resized');
@@ -1803,16 +1817,21 @@ Site.homePixi = function homePixi() {
 
       // document.getElementById('title_h2').innerHTML = gamma;
     }
-    else Site.displacementSprite2.x += 10;
+    else {
+      Site.displacementSprite2.x += 10;
+      // console.log('Site.displacementSprite2.x => 000', Site.displacementSprite2.x);
+    }
   }
-  else Site.displacementSprite2.x += Site.speed;
+  else {
+    Site.displacementSprite2.x += Site.speed;
+    // console.log('Site.displacementSprite2.x => 111', Site.displacementSprite2.x);
+  }
 
   Site.formerDelta = Site.currentMousePos.x;
   Site.deltaGamma  = Site.gamma * 20;
 };
 
 Site.singlePixi = function singlePixi() {
-  // if (!UserAgent.iOS && Site.vsSection.clientHeight !== Site.formerHeight) {
   if (!UserAgent.iOS) {
     if (Site.vsSection.clientHeight !== Site.formerHeight) {
       Site.scrolling.resize();
@@ -1822,13 +1841,13 @@ Site.singlePixi = function singlePixi() {
 
   Site.rafPixiSingle = requestAnimationFrame(Site.singlePixi);
 
-  /* ladderScale = parseFloat(Math.round((document.getElementById('the_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight * 100) / 100).toFixed(2); */
-  /* ladderScale = (document.getElementById('the_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight; */
-  /* ladderScale = parseFloat(Math.round(ladderScale * 100) / 100).toFixed(2); */
+  // Site.ladderScale = parseFloat(Math.round((document.getElementById('the_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight * 100) / 100).toFixed(2);
+  // Site.ladderScale = (document.getElementById('the_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight;
+  // Site.ladderScale = parseFloat(Math.round(Site.ladderScale * 100) / 100).toFixed(2);
 
   Site.renderer.render(Site.stage);
-  Site.displacementSprite2.x += Site.speed;
-
+  Site.displacementSprite2.x += Site.speed; // BUG !!!!!!!!!!!!!!!!!!!!!!!!!
+  console.log('Site.displacementSprite2.x ------>', Site.displacementSprite2.x);
   if (Site.scrolling !== null) {
     if (Site.scrolling.vars.target !== 0 && Site.passOnce === false) {
       Site.passOnce = true;
@@ -2225,8 +2244,8 @@ Site.animateNextInnerBtn = function animateNextInnerBtn() {
 
 Site.onPopState = function onPopState(event) {
   if (event.state !== null) {
-    Site.loadPage(location.href);
-    Site.theRafLoading();
+    Site.onLoadPage(location.href);
+    Site.onRafLoading();
   }
 };
 

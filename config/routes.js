@@ -1,40 +1,33 @@
 const router = require('express').Router();
 
-router.route('/')
-  .get((req, res) => {
-    return res.render('index');
-  });
+router
+  .route('/')
+  .get((req, res) => res.render('index.html'));
 
-router.route('/about')
-  .get((req, res) => {
-    return res.render('about');
-  });
+router
+  .route('/about')
+  .get((req, res) => res.render('about.html'));
 
-router.route('/resorts')
-  .get((req, res) => {
-    return res.render('resorts');
-  });
+router
+  .route('/resorts')
+  .get((req, res) => res.render('resorts.html'));
 
-router.route('/grouparty')
-  .get((req, res) => {
-    return res.render('grouparty');
-  });
+router
+  .route('/grouparty')
+  .get((req, res) => res.render('grouparty.html'));
 
-router.route('/palm-trees')
-  .get((req, res) => {
-    return res.render('palm-trees');
-  });
+router
+  .route('/palm-trees')
+  .get((req, res) => res.render('palm-trees.html'));
 
-router.route('/rdt')
-  .get((req, res) => {
-    return res.render('rdt');
-  });
+router
+  .route('/rdt')
+  .get((req, res) => res.render('rdt.html'));
 
-router.route('/ads')
-  .get((req, res) => {
-    return res.render('ads');
-  });
+router
+  .route('/ads')
+  .get((req, res) => res.render('ads.html'));
 
-router.all('*', (req, res) => res.notFound());
+// router.all('*', (req, res) => res.render('404'));
 
 module.exports = router;
