@@ -9,7 +9,7 @@ BreakPoints = {
     C: 2,
     D: 3
   },
-  currentMajorBreakPoint: function() {
+  currentMajorBreakPoint: () => {
     return window.innerWidth <= 580 ?
       BreakPoints.MajorBreakPoints.A :
       window.innerWidth <= 768 ?
@@ -53,8 +53,8 @@ var Theme = Theme || {};
 Theme = {
   showLightButtonStyle: () => {
     Menu.button.classList.add('light');
-    Site.social.classList.add('light');
-    Site.logo.classList.add('light');
+    Menu.social.classList.add('light');
+    Menu.logo.classList.add('light');
     // Site.about.classList.add('light');
     // Site.contact.classList.add('light');
     // Site.about.style.display   = 'none';
@@ -64,8 +64,8 @@ Theme = {
   },
   showDarkButtonStyle: () => {
     Menu.button.classList.remove('light');
-    Site.social.classList.remove('light');
-    Site.logo.classList.remove('light');
+    Menu.social.classList.remove('light');
+    Menu.logo.classList.remove('light');
     // Site.about.classList.remove('light');
     // Site.contact.classList.remove('light');
     // Site.about.style.display   = 'block';
@@ -109,7 +109,7 @@ AboutRAFs = {
       TweenMax.to('.scaleA', 1.4, {
         scaleX: Site.intensity,
         ease: Power2.easeOut,
-        onUpdate: function() {
+        onUpdate: () => {
           // cancelAnimationFrame(Site.theRafAbout);
           // console.log('onUpdate :: cancelAnimationFrame(Site.theRafAbout) --->');
         },
@@ -210,39 +210,56 @@ MenuPixi = {
     Site.rendererMenu.render(Site.stageMenu);
     Site.displacementSprite3.x += 2;
 
-    if (!UserAgent.iOS) {
-      Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100) / 100;
-      Site.theDeltaMenu = Site.currentMousePos.y;
+    if (Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8) {
+      Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1);
+      // console.log('1 if ->');
     }
     else {
-      Site.cursorPercentage = window.pageYOffset * 100 / (Site.heightMenu - window.innerHeight);
-      Site.theDeltaMenu = window.pageYOffset;
+      Site.intensity = 1.8;
+      // console.log('1 else ->');
     }
-
-    if (Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8) Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1);
-    else Site.intensity = 1.8;
 
     /* displacement menu */
     if (!UserAgent.iOS) {
-      let expression = -1 * (Site.heightMenu - window.innerHeight) / window.innerHeight * Site.currentMousePos.y;
+      Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100) / 100;
+      Site.theDeltaMenu = Site.currentMousePos.y;
+
+      let expression = -1 * (Site.menuHeight - window.innerHeight) / window.innerHeight * Site.currentMousePos.y;
 
       TweenMax.to('#the_menu', 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
+      // console.log('2 if ->');
     }
-    else TweenMax.to('#the_menu', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
+    else {
+      Site.cursorPercentage = window.pageYOffset * 100 / (Site.menuHeight - window.innerHeight);
+      Site.theDeltaMenu = window.pageYOffset;
+
+      TweenMax.to('#the_menu', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
+      // console.log('2 else ->');
+    }
 
     if (window.innerWidth > 767) {
-      if (Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin)) document.querySelectorAll('#the_menu li').forEach(Site.checkMenu);
+      // console.log('3 if ->');
+
+      if (Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin)) {
+        // console.log('4 if ->');
+        document.querySelectorAll('#the_menu li').forEach(Site.checkMenu);
+      }
+
+      // console.log('4 else ->');
 
       Site.displace.intensity = Site.displacementFilter3.scale.x;
 
       TweenMax.to(Site.displace, 0.3, {
         intensity: 4 * (Site.theDeltaMenu - Site.deltaMenu),
-        onUpdate: function() {
+        onUpdate: () => {
+          // console.log('5 Site.displace ->');
           Site.displacementFilter3.scale.x = Site.displace.intensity;
         },
         ease: Linear.easeNone
       });
     }
+
+    // console.log('3 else ->');
 
     Site.deltaMenu = Site.theDeltaMenu;
   }
@@ -256,15 +273,20 @@ Menu = {
   arrowHidingTimeout: void 0,
   init: () => {
     Menu.button = document.querySelector('.projects');
+    Menu.logo = document.querySelector('.projects');
+    Menu.navMenu = document.getElementById('menu');
+    Menu.social = document.getElementById('social');
     // Menu.button.classList.toggle('opened');
     Menu.button.isArrow = !1;
+
+    cancelAnimationFrame(MenuPixi.rafPixiMenu); // Fixes issue where when click on nav menu links when it is opened, pixi repple efffect doesn't intitiate due to bollean property set on INIT();
   },
   open: () => {
-    Menu.isOpen = !0;
+    Menu.isOpen = !0; // true
     Menu.button.classList.remove('closing');
 
-    Drag.cursorMain.classList.remove('vertical_scroll'); //////----------//////
-    Drag.cursorJunior.classList.remove('vertical_scroll'); //////----------//////
+    Drag.cursorMain.classList.remove('vertical_scroll');
+    Drag.cursorJunior.classList.remove('vertical_scroll');
 
     if (Site.scrolling !== null) Site.scrolling.off();
     else Site.scrollMenuOpen = window.pageYOffset;
@@ -288,11 +310,11 @@ Menu = {
     });
     TweenMax.to('#menu', 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
 
-    Site.heightMenu = document.getElementById('the_menu').clientHeight;
+    Site.menuHeight = document.getElementById('the_menu').clientHeight;
     Site.margins = window.innerHeight / 2 - 70;
-    Site.heightMargin = Math.round((100 - (Site.heightMenu - 2 * Site.margins) * 100 / Site.heightMenu) / 2 * 100) / 100;
-    Site.entranceMenu = document.getElementById('the_menu').querySelectorAll('li').length;
-    Site.entranceHeight = Math.round((100 - 2 * Site.heightMargin) / Site.entranceMenu * 100) / 100;
+    Site.heightMargin = Math.round((100 - (Site.menuHeight - 2 * Site.margins) * 100 / Site.menuHeight) / 2 * 100) / 100;
+    Site.menuEntrance = document.getElementById('the_menu').querySelectorAll('li').length;
+    Site.entranceHeight = Math.round((100 - 2 * Site.heightMargin) / Site.menuEntrance * 100) / 100;
 
     Site.stageMenu.addChild(Site.displacementSprite3);
 
@@ -309,13 +331,17 @@ Menu = {
     MenuPixi.init();
   },
   close: () => {
-    Menu.isOpen = !1;
+    Menu.isOpen = !1; // false
     Menu.button.classList.add('closing');
 
     setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
 
-    if (Site.scrolling !== null) Site.scrolling.on();
-    if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
+    if (Site.scrolling !== null) {
+      Site.scrolling.on();
+    }
+    if (Site.body.classList.contains('home')) {
+      document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
+    }
 
     TweenMax.to('#menu', 0.2, {
       opacity: 0,
@@ -326,7 +352,7 @@ Menu = {
         if (UserAgent.iOS) {
           document.getElementById('main').classList.remove('black');
           Site.body.classList.remove('temp');
-          window.scrollTo(Site.scrollMenuOpen, 0); // OR equivalent of => window.scrollTo({ top: Site.scrollMenuOpen, left: 0});
+          window.scrollTo(Site.scrollMenuOpen, 0); // --- OR --- equivalent of => window.scrollTo({ top: Site.scrollMenuOpen, left: 0});
         }
       }
     });
@@ -338,14 +364,10 @@ Menu = {
 
     if (document.querySelector('body').classList.contains('home')) Site.homePixi();
     else if (document.querySelector('body').classList.contains('single')) Site.singlePixi();
-
     // if (Site.body.classList.contains('home')) Site.homePixi();
-    // else if (Site.body.classList.contains('single')) {
-    //   Site.singlePixi();
-    //   // if (Site.scrolling !== null) Site.singlePixi();
-    // }
+    // else if (Site.body.classList.contains('single')) Site.singlePixi();
 
-    cancelAnimationFrame(MenuPixi.rafPixiMenu);
+    cancelAnimationFrame(MenuPixi.rafPixiMenu); // do not remove
   },
   showArrow: () => {
     Menu.button.isArrow || (Menu.button.isArrow = !0);
@@ -370,7 +392,7 @@ Menu = {
       }, 500);
     }
   },
-  changeArrow: () => {
+  arrowUpdateHandler: () => {
     // return Site.scrolling && Site.scrolling.vars.target >= 10 ? Menu.showArrow() : Menu.hideArrow();
     return Site.scrolling && Site.scrolling.vars.target >= 10 ? Menu.showArrow() : Site.scrolling.vars.target <= 10 ? Menu.hideArrow() : false;
   },
@@ -378,10 +400,10 @@ Menu = {
     if (!Menu.button.classList.contains('opened')) {
       if (!UserAgent.iOS) {
         if (Site.body.classList.contains('single')) {
-          Menu.changeArrow();
+          Menu.arrowUpdateHandler();
           Site.footerInView();
         }
-        else if (Site.body.classList.contains('about')) Menu.changeArrow();
+        else if (Site.body.classList.contains('about')) Menu.arrowUpdateHandler();
       }
       else {
         if (Site.body.classList.contains('single')) {
@@ -514,65 +536,716 @@ Drag = {
 var Site = Site || {};
 
 Site.setup = function setup() {
+  /* DOMContentLoaded */
   this.directoryUri = './';
-  this.preload = new createjs.LoadQueue(true);
-  this.lethargy = new Lethargy();
   this.scrolling = null;
-  this.xDown = null;
-  this.yDown = null;
-  this.blockedAction = !0;
-  this.listenCursor = !1;
-  this.supportsWheel = !1;
-  this.passOnce = false;
+  this.preload = new createjs.LoadQueue(true);
+  this.newPageContent = void 0;
+  // linkInProgress
+  this.rafPixiHome = void 0;
+  this.rafPixiMenu = void 0;
+  this.rafPixiSingle = void 0;
+  this.rafLoading = void 0;
   this.mousePos = {};
+  this.formerDelta = 0;
+  this.displacementSprite = void 0;
+  this.displacementSprite2 = void 0;
+  this.stage = void 0;
+  this.displacementFilter = void 0;
+  this.displacementFilter2 = void 0;
+  this.renderer = void 0;
+  this.links = void 0;
+  this.hovers = void 0;
+  this.bottomLink = !1;
+  this.ladderScale = void 0;
+  // this.deltaMenu = void 0;
+  // this.deltaScroll = void 0;
+  this.scrollMenuOpen = void 0;
+  this.rendererMenu = void 0;
+  this.displacementFilter3 = void 0;
+  this.displacementSprite3 = void 0;
+  this.stageMenu = void 0;
+  this.currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+  this.loader = void 0;
+  this.listenCursor = !1;
+  this.speed = 0;
+  this.totalSlides = void 0;
+  this.currentSlide = 0;
+  this.lethargy = new Lethargy();
+  this.blockedAction = !0;
   this.attributes = {};
   this.attributes2 = {};
   this.attributes3 = {};
+  this.deltaMenu = void 0;
+  this.deltaScroll = void 0;
+  this.intensity = void 0;
+  this.menuHeight = void 0;
+  this.margins = void 0;
+  this.expression = void 0;
+  this.heightMargin = void 0;
+  this.cursorPercentage = void 0;
+  this.menuEntrance = void 0;
+  this.entranceHeight = void 0;
+
+  /** init() */
+
+  this.supportsWheel = !1;
+  this.random = void 0;
+  this.multiplier = void 0;
+  this.imageNumber = void 0;
+  this.tempImageNumber = -1;
+  this.delayx = void 0;
+  this.passOnce = false;
+  this.formerHeight = 0;
   this.displace = {};
   this.displace2 = {};
-  this.tempImageNumber = -1;
-  this.speed = 0;
-  this.currentSlide = 0;
-  this.formerDelta = 0;
-  this.deltaMenu = 0;
-  this.deltaScroll = 0;
-  this.formerHeight = 0;
-  this.lastAdds = 0;
-  this.currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-  // this.windowOffset = window.pageYOffset;
-  this.lFollowX = 0;
-  this.lFollowY = 0;
-  this.x = 0;
-  this.y = 0;
-  this.friction = 1 / 30;
-  this.scrollMenuOpen = 0;
-  // this.state = 0; // BUG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  this.lindex = void 0;
+  this.playOnce = !1;
+
+  /* More variables */
+  this.xDown = null;
+  this.yDown = null;
+  this.gamma = void 0;
+  this.deltaGamma = void 0;
   this.clickEvent = ('ontouchstart' in window ? 'touchend' : 'click');
+  // this.addedLast = 0;
+  // this.friction = 1 / 30;
 
-  // this.arrowHidingTimeout = void 0;
-  // this.projMenu.isArrow   = !1;
-  // this.isOpen             = !1;
+  /* RAFs loading screen */
+  Site.onRafLoading = function onRafLoading() {
+    Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
 
-  // UserAgent.init();
-  // Drag.init();
-  // Menu.init();
+    if (Site.exitOk === !0 && Site.ajaxOk === !0) {
+      cancelAnimationFrame(Site.rafPixiHome);
+      cancelAnimationFrame(Site.rafPixiSingle);
+
+      if (Site.body.classList.contains('single') || Site.body.classList.contains('home')) {
+        Site.stage.destroy();
+        Site.renderer.destroy();
+      }
+
+      Site.onUpdatePage(Site.newPageContent);
+      cancelAnimationFrame(Site.rafLoading);
+    }
+  };
 
   // ----------------------------- PRELOAD PART ----------------------------- //
-  Site.preload.on('progress', handleOverallProgress);
-  Site.preload.on('complete', handleComplete);
+  // Site.preload.on('progress', Site.handleOverallProgress);
+  // Site.preload.on('complete', Site.handleComplete);
+  //
+  // Site.handleOverallProgress = function handleOverallProgress(event) {
+  //   console.log('handleOverallProgress', 1 - event.progress);
+  // };
+  // Site.handleComplete = function handleComplete(event) {
+  //   console.log('handleComplete', event.complete);
+  // };
 
-  function handleOverallProgress(event) {
-    console.log('handleOverallProgress', 1 - event.progress);
-  }
+  /* called each time a page is launched */
+  Site.init = function init() {
+    UserAgent.init();
+    Drag.init();
+    Menu.init();
 
-  function handleComplete(event) {
-    console.log('handleComplete', event.complete);
-  }
+    /* anchor click events */
+    Site.onClickHandler = function onClickHandler(event) {
+      // console.log('event', event);
+      if (!event.target.classList.contains('external')) {
+        event.preventDefault();
+
+        if (Site.linkInProgress === !1) {
+          Site.linkInProgress = !0;
+          var href = this.getAttribute('href');
+
+          // if (event.target.matches('.link_hover')) {
+          //   console.log('this', this);
+          //   console.log('event', event.target);
+          //   console.log('href', href);
+          // }
+
+          if (event.target.classList.contains('bottom_link')) {
+            Site.bottomLink = !0;
+            event.target.classList.add('changing');
+          }
+
+          history.pushState({}, '', href);
+          Site.onLoadPage(href);
+          Site.onRafLoading();
+
+          !1; /* ---OR --- return false; */
+        }
+        // return false;
+      }
+    };
+
+    this.exitOk = !1;
+    this.ajaxOk = !1;
+    this.linkInProgress = !1;
+    this.deltaMenu = 0;
+    this.deltaScroll = 0;
+    this.speed = 0;
+
+    this.body = document.querySelector('body');
+    this.vsSection = document.querySelector('.vs-section');
+    this.vsDivs = document.querySelectorAll('.vs-div');
+    this.innerH2 = document.getElementsByClassName('inner_h2');
+    this.homeCanvas = document.getElementsByClassName('inner_h2')[0];
+    this.mouseOverLinks = document.querySelectorAll('.link');
+    // this.social = document.getElementById('social');
+    this.about = document.getElementById('about');
+    this.contact = document.getElementById('contact');
+    this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
+
+    TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
+    TweenMax.set('#main', { display: 'block', clearProps: 'y' });
+    // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
+    // Site.onResizeHandler();
+
+    // Resets header menu elements back to their defaults states/classes.
+    Menu.navMenu.style.display = 'none';
+
+    /* Update and Animate projMenu from arrow/Close(X) */
+    if (Menu.button.classList.contains('arrow-transition-in')) Menu.hideArrow();
+    // if (Menu.button.classList.contains('arrow-transition-in')) Menu.hideArrow();
+
+    /* close Nav Menu when anchor click events */
+    Menu.button.classList.remove('opened');
+    // Menu.button.classList.remove('opened');
+
+    /* Reset lightButtonStyles */
+    Menu.button.classList.remove('light');
+    // Menu.button.classList.remove('light');
+
+    Menu.social.classList.remove('light');
+    Menu.logo.classList.remove('light');
+    Drag.cursorMain.classList.remove('menu_opened');
+
+    Site.about.style.display = 'block';
+    Site.contact.style.display = 'block';
+
+    // if (!Menu.button.classList.contains('.point3.black')) {
+    //   // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
+    //   Menu.button.style.setProperty('--button-color', 'blue');
+    // } else {
+    //   // Menu.button.childNodes.forEach((obj) => obj.style.setProperty('--button-color'));
+    //   Menu.button.style.setProperty('--button-color', 'red');
+    // }
+
+    // Site.about.classList.remove('light');
+    // Site.contact.classList.remove('light');
+
+    /* classList of undefined when going from state to another => BUG!!! */
+    if (Site.body.classList.contains('is-loading')) setTimeout(() => document.querySelector('.is-loading').classList.remove('is-loading'), 1000, false);
+
+    // when click on link
+    // Site.links = document.querySelectorAll('a');
+
+    /* removes event listeners from elements with 'link' class before adding click events to each element */
+    Site.links.forEach((link) => link.removeEventListener('click', Site.onClickHandler, false));
+    Site.links.forEach((link) => link.addEventListener('click', Site.onClickHandler, false));
+
+    // Site.preloadImages();
+    // Menu.button.onclick = (event) => {
+    //   event.preventDefault();
+    //   Menu.button.isArrow ? Site.smoothScroll.scrollToY(0, !0) : Site.isOpen ? Site.close() : Site.open();
+    //
+    //   // if (Menu.button.isArrow) Site.smoothScroll.scrollToY(0, !0);
+    //   // else if (Site.isOpen) Site.close();
+    //   // else Site.open();
+    // };
+    // let root = document.documentElement;
+    // root.addEventListener("mousemove", e => {
+    //   root.style.setProperty('--mouse-x', e.clientX + "px");
+    //   root.style.setProperty('--mouse-y', e.clientY + "px");
+    // });
+
+    if (!UserAgent.iOS) {
+      /* adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
+      Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500)));
+      Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500)));
+
+      if (Site.body.classList.contains('home')) Drag.show();
+      else Drag.hide();
+    }
+    Site.animations();
+  };
+  /* when get() completed */
+  Site.onAjaxLoad = function onAjaxLoad(html) {
+    Site.newPageContent = html;
+    Site.ajaxOk = !0;
+  };
+  /* animations input */
+  Site.animations = function animations() {
+    if (window.innerWidth < 768) {
+      document.querySelectorAll('#the_menu li').forEach((obj) => obj.classList.remove('active'));
+    }
+    if (UserAgent.iOS) {
+      window.scrollTo(Site.scrollMenuOpen, 0);
+      document.getElementById('main').classList.remove('black');
+    }
+
+    else if (Site.body.classList.contains('home')) {
+      document.querySelectorAll('.point3').forEach((obj) => obj.classList.remove('black'));
+
+      Site.hovers = document.querySelectorAll('.change_project');
+
+      Site.hovers.forEach((hover) => hover.addEventListener('mouseenter', Site.onHover, false));
+      Site.hovers.forEach((hover) => hover.addEventListener('mouseleave', Site.offHover, false));
+
+      Site.currentSlide = 0;
+      Site.totalSlides = 0;
+      Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
+
+      document.getElementById('inner_canvas').appendChild(Site.renderer.view);
+
+      Site.renderer.view.width = window.innerWidth;
+      Site.renderer.view.height = window.innerHeight;
+
+      Site.stage = new PIXI.Container();
+      Site.loader = new PIXI.Loader();
+      // Site.ticker = new PIXI.Ticker();
+
+      document.querySelectorAll('#images div').forEach(Site.setDimensions);
+
+      /* displacement 1 */
+      Site.displacementSprite = PIXI.Sprite.from(Site.directoryUri + 'images/gradient4.png');
+      Site.displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.CLAMP; // options: REPEAT, MIRRORED_REPEAT, CLAMP
+      Site.displacementFilter = new PIXI.filters.DisplacementFilter(Site.displacementSprite);
+
+      /* displacement 2 */
+      Site.displacementSprite2 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
+      Site.displacementSprite2.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+      Site.displacementFilter2 = new PIXI.filters.DisplacementFilter(Site.displacementSprite2);
+
+      /* settings displacement1 - intensity */
+      Site.displacementFilter.scale.x = 50;
+      Site.displacementFilter.scale.y = 0;
+
+      /* center for slider */
+      Site.displacementSprite.pivot.x = 256;
+      Site.displacementSprite.pivot.y = 256;
+
+      /* ladder x/y */
+      Site.displacementSprite.scale.x = 0.2;
+
+      /* settings displacement2 - intensity */
+      Site.displacementFilter2.scale.x = 0;
+      Site.displacementFilter2.scale.y = 0;
+
+      /* ladder x/y */
+      Site.displacementSprite2.scale.x = 0.8;
+      // displacementSprite2.anchor.x = 1;
+
+      Site.stage.addChild(Site.displacementSprite);
+
+      Site.stage.filters = [Site.displacementFilter, Site.displacementFilter2];
+
+      Site.loader.load((loader, resources) => {
+        Site.blockedAction = false;
+        if (!Menu.button.classList.contains('opened')) Site.homePixi();
+        Site.nextSlide();
+
+        // DISABLE elements with class of update_link (<a>) in home pixi slider
+
+        // if (Site.currentSlide === 0) {
+        //   document.querySelectorAll('.update_link').forEach((obj) => {
+        //     obj
+        //       .setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide]
+        //       .getAttribute('data-params'));
+        //   });
+        // }
+
+        document.getElementById('progress').style.display = 'none';
+      });
+    }
+    else if (Site.body.classList.contains('about')) {
+      document.getElementById('progress').style.display = 'none';
+      document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
+
+      // document.getElementById('shutter1').classList.add('open');
+      // document.querySelector('.intro').classList.add('open');
+
+      TweenMax.to('.background_intro', 1.4, { scale: 1, ease: Power4.easeOut });
+      Site.animateRandomElements('.random');
+      TweenMax.staggerFromTo(Site.random, 1, { x: '-24px' }, { x: '0px', opacity: 1, delay: 0.6, ease: Power2.easeOut }, 0.1);
+
+      if (!UserAgent.iOS) {
+        if (Site.scrolling !== null) Site.scrolling.destroy();
+
+        Site.scrolling = null;
+
+        Site.scrolling = new Smooth({
+          preload: !0,
+          native: !1,
+          section: Site.vsSection,
+          divs: Site.vsDivs,
+          vs: { mouseMultiplier: 0.4 }
+        });
+
+        Site.scrolling.init();
+      }
+
+      // TweenMax.to('#main', 0.4, { backgroundColor: '#EFEFEF', ease: Power2.easeInOut });
+      TweenMax.to('#inner_svg', 1, { opacity: 1, ease: Power2.easeIn });
+      TweenMax.fromTo('#inner_svg', 2, { rotation: 140 }, { rotation: 0, ease: Power2.easeOut });
+      TweenMax.fromTo('#inner_svg img', 2, { rotation: -140 }, {
+        rotation: 0,
+        ease: Power2.easeOut,
+        onComplete: () => {
+          // Site.aboutRafs();
+          AboutRAFs.init();
+          // Site.theRafAbout = requestAnimationFrame(Site.aboutRafs);
+          // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs()), 1000);
+          // if (Site.theRafAbout !== null) Site.aboutRafs();
+          // else {}
+        }
+      });
+
+      // Site.aboutSkills();
+    }
+    else if (Site.body.classList.contains('single')) {
+      if (window.innerWidth < 768) {
+        document.querySelectorAll('#the_menu li').forEach((obj) => {
+          if (Site.body.classList.contains(obj.getAttribute('data-id'))) obj.classList.add('active');
+        });
+      }
+
+      document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
+
+      if (!UserAgent.iOS) {
+        Drag.cursorMain.classList.add('vertical_scroll');
+        Drag.cursorJunior.classList.add('vertical_scroll');
+
+        document.getElementById('to_next_project').addEventListener('mouseover', Site.onHoverNext, false);
+        document.getElementById('to_next_project').addEventListener('mouseout', Site.offHoverNext, false);
+
+        if (Site.scrolling !== null) Site.scrolling.destroy();
+        Site.scrolling = null;
+
+        Site.scrolling = new Smooth({
+          preload: !0,
+          native: !1,
+          section: Site.vsSection,
+          divs: Site.vsDivs,
+          vs: { mouseMultiplier: 0.4 }
+        });
+
+        Site.scrolling.init();
+      }
+      else {
+        document.getElementById('to_next_project').innerHTML = document.getElementById('to_next_project').getAttribute('data-next');
+        TweenMax.set('#inner_project_name', { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px' });
+        TweenMax.set('#project_name .stag', { opacity: 1 });
+      }
+
+      if (window.innerWidth > 767) {
+        height = 0.57 * window.innerWidth + 20;
+        Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, (0.57 * window.innerWidth + 20), { transparent: !0 });
+        Site.renderer.view.width = window.innerWidth;
+        // Site.renderer.view.height = window.innerHeight;
+      }
+      else {
+        height = window.innerWidth + 20;
+        Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, (window.innerWidth + 20), { transparent: !0 });
+        Site.renderer.view.width = window.innerWidth;
+        // Site.renderer.view.height = window.innerHeight;
+      }
+
+      document.getElementById('cover').appendChild(Site.renderer.view);
+
+      Site.stage = new PIXI.Container();
+      Site.loader = new PIXI.Loader();
+      // Site.ticker = new PIXI.Ticker();
+
+      // document.querySelectorAll('#images div').forEach(Site.setDimensions);
+      var image = new PIXI.Sprite(PIXI.Texture.from(document.getElementById('cover').getAttribute('data-img')));
+
+      // DISABLED - Because PixiJS doesn't like duplicate resources saved into TextureCache. Therefore, we access our assets with Site.loader.resources
+      // Site.loader.add('image', document.getElementById('cover').getAttribute('data-img'));
+
+      var img = new Image();
+
+      img.src = document.getElementById('cover').getAttribute('data-img');
+      img.onload = function() {
+        // console.log('this 1', this);
+
+        var width = this.width;
+        var height = this.height;
+        var imageRatio = width / height;
+        var windowRatio = window.innerWidth / window.innerHeight;
+
+        // +10 and - 5 values to avoid white edges
+        if (windowRatio >= imageRatio) {
+          image.width = window.innerWidth + 10;
+          image.height = height * (window.innerWidth + 10) / width;
+          image.x = -5;
+          image.y = window.innerHeight / 2 - image.height / 2;
+        }
+        else {
+          image.height = height;
+          image.width = (width * window.innerHeight / height) + 10;
+          // image.x      = (window.innerWidth / 2 - image.width / 2) - 5;
+          image.y = height / 6 - image.height / 2; // ADDED BY ME
+        }
+      };
+
+      // /* center the sprite's anchor point */
+      // image.anchor = 0.5;
+      // /* move the sprite to the center of the screen */
+      // image.x = Site.renderer.width / 2;
+      // image.y = Site.renderer.height / 2;
+
+      /* displacement 2 */
+      Site.displacementSprite2 = PIXI.Sprite.from(`${Site.directoryUri}images/gradient_large.png`);
+      Site.displacementSprite2.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
+      Site.displacementFilter2 = new PIXI.filters.DisplacementFilter(Site.displacementSprite2);
+
+      // /* settings displacement2 - intensity */
+      Site.displacementFilter2.scale.x = 0; // 150
+      Site.displacementFilter2.scale.y = 0;
+
+      /* ladder x/y */
+      Site.displacementSprite2.scale.x = 0.8; // 0.8
+
+      Site.stage.addChild(Site.displacementSprite2);
+      Site.stage.addChild(image);
+
+      // console.log('single - img -)->', img);
+      // console.log('single - image -)->', image);
+
+      // Site.stage.hitArea = Site.renderer.screen;
+      // Site.stage.interactive = true;
+
+      // Site.stage.on('mousemove', function(event) {
+      //   const x = event.data.global.x;
+      //   const y = event.data.global.y;
+      //   image.rotation = Math.atan2(y - image.y, x - image.x);
+      // });
+
+      // // Listen for animate update
+      // Site.ticker.add(function(delta) {
+      //   // just for fun, let's rotate mr rabbit a little
+      //   // delta is 1 if running at 100% performance
+      //   // creates frame-independent tranformation
+      //   image.x += Math.cos(image.rotation) * delta;
+      //   image.y += Math.sin(image.rotation) * delta;
+
+      // });
+
+      Site.stage.filters = [Site.displacementFilter2];
+
+      Site.loader.load((loader, resources) => {
+        Site.blockedAction = false;
+
+        if (!Menu.button.classList.contains('opened')) Site.singlePixi();
+
+        Site.animateRandomElements('.random');
+
+        TweenMax.staggerFromTo(Site.random, 1, { x: '-24px' }, { x: '0px', opacity: 1, ease: Power2.easeOut }, 0.1);
+        TweenMax.to('#cover', 1, { opacity: 1, delay: 0.4, ease: Power2.easeOut });
+
+        Site.speed = 4;
+        document.getElementById('progress').style.display = 'none';
+
+        // REPLACE: the_imgs with a new class that iss more specific
+        Site.ladderScale = (document.getElementById('the_imgs').clientHeight + (0.28 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight;
+        Site.ladderScale = parseFloat(Math.round(Site.ladderScale * 100) / 100).toFixed(2);
+
+        // console.log('Site.ladderScale -------------->', Site.ladderScale);
+
+        // console.log('loader, resources', loader, resources);
+      });
+    }
+    else if (Site.body.classList.contains('notFound')) {
+      document.getElementById('progress').style.display = 'none';
+    }
+    else if (Site.body.classList.contains('internalServerError')) {
+      document.getElementById('progress').style.display = 'none';
+    }
+
+    // TweenMax.to('body', 1, { opacity: 1, onComplete: () => {
+    //   scroll.init();
+    //   scroll.Site.onResizeHandler();
+    // }});
+    //
+    // if ($('event')[0]) {}
+  };
+  /* animations output outputs */
+  Site.onLoadPage = function onLoadPage(href) {
+    document.getElementById('progress').style.display = 'block';
+
+    if (Site.scrolling !== null) {
+      Site.scrolling.off();
+    }
+
+    Site.sendHttpRequest(href);
+
+    if (Menu.button.classList.contains('opened')) {
+      // console.log('Menu button has classed of "opened"', Menu.button.classList.contains('opened'));
+      cancelAnimationFrame(Site.rafPixiMenu);
+
+      /* reset projMenu when changing states/clicking on anchor elements */
+      Menu.button.classList.add('closing');
+      setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
+
+      TweenMax.to('#the_menu, #pixi_menu', 0.4, {
+        opacity: 0,
+        ease: Power2.easeInOut,
+        onComplete: () => {
+          Site.stageMenu.removeChildren();
+          Site.exitOk = true;
+          TweenMax.set('#main', { clearProps: 'backgroundColor' });
+        }
+      });
+    }
+    else if (Site.body.classList.contains('home')) {
+      // Site.speed = 4;
+      Site.listenCursor = !1;
+      Site.blockedAction = !0;
+
+      // Site.stage.removeChild(displacementSprite);
+      // Site.stage.addChild(Site.displacementSprite2);
+
+      Site.animateRandomElements('.random');
+      TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1);
+
+      // TweenMax.to(attributes2, 0.9, {
+      //   intensity: 150,
+      //   x: 10,
+      //   ease: Power2.easeIn,
+      //   onUpdate: () => {
+      //     Site.displacementFilter2.scale.x = attributes2.intensity;
+      //     speed = attributes2.x;
+      //   },
+      //   onComplete: () => {}
+      // });
+
+      TweenMax.to('#main', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = true });
+      Site.hovers = document.querySelectorAll('.change_project');
+
+      Site.hovers.forEach((hover) => {
+        hover.removeEventListener('mouseenter', Site.onHover);
+        hover.removeEventListener('mouseleave', Site.offHover);
+      });
+    }
+    else if (Site.body.classList.contains('single')) {
+      document.getElementById('to_next_project').removeEventListener('mouseover', Site.onHoverNext);
+      document.getElementById('to_next_project').removeEventListener('mouseout', Site.offHoverNext);
+
+      if (Site.bottomLink) {
+        var diff;
+
+        if (Site.scrolling !== null) {
+          diff = document.getElementById('main').clientHeight - (Site.scrolling.vars.current + window.innerHeight);
+
+          TweenMax.to('#main', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+
+          TweenMax.to('#next_proj > div', 1.2, {
+            y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
+            ease: Power2.easeInOut,
+            onComplete: () => {
+              TweenMax.to('#next_proj > div', 0.4, {
+                opacity: 0,
+                ease: Power2.easeInOut,
+                onComplete: () => {
+                  Site.exitOk = true;
+                }
+              });
+            } });
+        }
+        else {
+          diff = document.getElementById('main').clientHeight - (window.pageYOffset + window.innerHeight);
+
+          TweenMax.to('#next_proj, .inner_img', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+
+          TweenMax.to('#next_proj > div', 1.2, {
+            y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
+            ease: Power2.easeInOut,
+            onComplete: () => {
+              TweenMax.to('#next_proj > div', 0.4, {
+                opacity: 0,
+                ease: Power2.easeInOut,
+                onComplete: () => {
+                  // TweenMax.set('#main', { clearProps: 'y' });
+                  Site.exitOk = true;
+                  window.scrollTo(Site.scrollMenuOpen, 0);
+                }
+              });
+            }
+          });
+        }
+      }
+      else {
+        TweenMax.to('#main', 0.4, {
+          opacity: 0,
+          ease: Power2.easeInOut,
+          onComplete: () => {
+            Site.exitOk = true;
+          }
+        });
+      }
+    }
+    else if (Site.body.classList.contains('about')) {
+      TweenMax.to('#main', 0.4, {
+        opacity: 0,
+        clearProps: 'backgroundColor',
+        ease: Power2.easeInOut,
+        onComplete: () => {
+          Site.exitOk = true;
+        }
+      });
+    }
+    else Site.exitOk = true;
+  };
+  /* updating the data of the page */
+  Site.onUpdatePage = function onUpdatePage(html) {
+    var parser = new DOMParser();
+    var doc = parser.parseFromString(html, 'text/html');
+    var classList = doc.querySelectorAll('body')[0].getAttribute('class');
+
+    /* main title of the page */
+    document.title = doc.querySelector('title').innerHTML;
+
+    /* main class of body */
+    var res = classList.replace('is-loading', '');
+
+    document.querySelectorAll('body')[0].setAttribute('class', res);
+
+    if (!UserAgent.iOS) document.querySelectorAll('body')[0].classList.add('desktop');
+    else document.querySelectorAll('body')[0].classList.add('mobile');
+
+    /* main content #main */
+    document.getElementById('main').innerHTML = doc.getElementById('main').innerHTML;
+
+    /* launches the new page */
+    Site.init();
+  };
+
+  /* State Change Events */
+  Site.onPopStateHandler = function onPopStateHandler(event) {
+    if (event.state !== null) {
+      // console.log('onPopStateHandler() =>', location.href);
+      Site.onLoadPage(location.href);
+      Site.onRafLoading();
+    }
+  };
+  Site.onUnloadHandler = function onUnloadHandler(event) {
+    window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
+    // if (Site.scrolling) {
+    //   console.log('Site.scrolling', Site.scrolling);
+    //   Site.scrolling.scrollTo(0, 0);
+    // }
+  };
+
+  /* Add these events to window element */
+  window.onpopstate = Site.onPopStateHandler;
+  window.onunload = Site.onUnloadHandler;
 
   history.pushState({}, '', location);
   Site.init();
 
-  if (!UserAgent.iOS) document.querySelectorAll('body')[0].classList.add('desktop');
+  if (!UserAgent.iOS) {
+    document.querySelectorAll('body')[0].classList.add('desktop');
+  }
   else {
     document.querySelectorAll('body')[0].classList.add('mobile');
     Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
@@ -580,13 +1253,14 @@ Site.setup = function setup() {
   }
 
   /* pixi menu statement */
-  // Site.rendererMenu = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
-
   Site.rendererMenu = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
   // Site.rendererMenu = PIXI.autoDetectRenderer(0.24 * window.innerWidth, window.innerHeight - 0.074 * window.innerWidth, { transparent: !0 });
 
-  document.getElementById('pixi_menu').appendChild(Site.rendererMenu.view);
+  if (document.getElementById('pixi_menu')) {
+    document.getElementById('pixi_menu').appendChild(Site.rendererMenu.view);
+  }
 
+  /* RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
   Site.rendererMenu.view.width = window.innerWidth;
   Site.rendererMenu.view.height = window.innerHeight;
 
@@ -628,156 +1302,8 @@ Site.setup = function setup() {
   // if (!UserAgent.iOS) {
   // if (window.innerWidth >= 1024) {
 
-  if (!UserAgent.iOS) window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
-  else Drag.toggleHidden();
-
-  /* Mouse events */
-  /* Add these events to document element */
-  window.onmousedown = Site.mousePosition;
-  window.onmousedown = Site.onChangeProject;
-  window.onmousedown = Site.scrollEvent;
-  window.onmousedown = Site.handleTouchStart;
-  window.onmousedown = Site.handleTouchMove;
-  window.onmousedown = Site.showHideArrow;
-  /* State Change Events */
-  /* Add these events to window element */
-  window.onpopstate = Site.onPopState;
-  window.onunload = Site.onUnload;
-
-  /* management button - prev / next browser */
-  window.addEventListener('onpopstate', Site.onPopState);
-  window.addEventListener('onunload', Site.onUnload);
-  window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResize, 500));
-  window.addEventListener('keydown', Throttle.actThenThrottleEvents(Site.onKeydown, 500));
-  // window.addEventListener('scroll', Site.showHideArrow, false); // shows/hides menu arrow when scrolling on mobile devices
-  /* device giroscope event */
-  if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.handleCircle, 500), !1);
-
-  // window.addEventListener('scroll', () => Site.aboutRafs());
-  // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs), 1000);
-
-  /* scroll event */
-  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEvent, 500));
-  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEvent, 500));
-  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEvent, 500));
-  /* swipe event */
-  document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.handleTouchStart, 500), !1);
-  document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.handleTouchMove, 500), !1);
-  /* Show Hide Menu Arrow events */
-  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
-  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
-  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
-  document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500)); // shows/hides menu arrow when scrolling on mobile devices
-  /* Add the event listeners for each event. */
-  document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePosition, 500));
-  document.addEventListener(Site.clickEvent, Site.onChangeProject);
-  // document.addEventListener('click', Site.onChangeProject, false);
-  // document.addEventListener('touchend', Site.onChangeProject, false);
-};
-
-Site.onPopState = function onPopState(event) {
-  if (event.state !== null) {
-    Site.onLoadPage(location.href);
-    Site.onRafLoading();
-  }
-};
-
-/* called each time a page is launched */
-Site.init = function init() {
-  UserAgent.init();
-  Drag.init();
-  Menu.init();
-
-  this.exitOk = !1;
-  this.ajaxOk = !1;
-  this.linkInProgress = !1;
-  this.deltaMenu = 0;
-  this.deltaScroll = 0;
-  this.speed = 0;
-  this.bottomLink = !1;
-  this.playOnce = !1;
-
-  this.vsSection = document.querySelector('.vs-section');
-  this.vsDivs = document.querySelectorAll('.vs-div');
-  this.cursorMain = document.getElementsByClassName('cursor_main')[0];
-  this.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
-  this.innerH2 = document.getElementsByClassName('inner_h2');
-  this.body = document.querySelector('body');
-  this.homeCanvas = document.getElementsByClassName('inner_h2')[0];
-  this.mouseOverLinks = document.querySelectorAll('.link');
-  this.logo = document.querySelector('.logo');
-  this.projMenu = document.querySelector('.projects');
-  this.social = document.getElementById('social');
-  this.menu = document.getElementById('menu');
-  this.about = document.getElementById('about');
-  this.contact = document.getElementById('contact');
-  this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
-
-  TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
-  TweenMax.set('#main', { display: 'block', clearProps: 'y' });
-  // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
-  // Site.onResize();
-
-  // Resets header menu elements back to their defaults states/classes.
-  Site.menu.style.display = 'none';
-
-  /* Update and Animate projMenu from arrow/Close(X) */
-  if (Menu.button.classList.contains('arrow-transition-in')) Menu.hideArrow();
-  // if (Menu.button.classList.contains('arrow-transition-in')) Menu.hideArrow();
-
-  /* close Nav Menu when anchor click events */
-  Menu.button.classList.remove('opened');
-  // Menu.button.classList.remove('opened');
-
-  /* Reset lightButtonStyles */
-  Menu.button.classList.remove('light');
-  // Menu.button.classList.remove('light');
-
-  Site.social.classList.remove('light');
-  Site.logo.classList.remove('light');
-  Drag.cursorMain.classList.remove('menu_opened');
-
-  Site.about.style.display = 'block';
-  Site.contact.style.display = 'block';
-
-  // if (!Menu.button.classList.contains('.point3.black')) {
-  //   // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
-  //   Menu.button.style.setProperty('--button-color', 'blue');
-  // } else {
-  //   // Menu.button.childNodes.forEach((obj) => obj.style.setProperty('--button-color'));
-  //   Menu.button.style.setProperty('--button-color', 'red');
-  // }
-
-  // Site.about.classList.remove('light');
-  // Site.contact.classList.remove('light');
-
-  /* classList of undefined when going from state to another => BUG!!! */
-  if (Site.body.classList.contains('is-loading')) setTimeout(() => document.querySelector('.is-loading').classList.remove('is-loading'), 1000, false);
-
-  // when click on link
-  // Site.links = document.querySelectorAll('a');
-
-  /* removes event listeners from elements with 'link' class before adding click events to each element */
-  Site.links.forEach((link) => link.removeEventListener('click', Site.onClick, false));
-  Site.links.forEach((link) => link.addEventListener('click', Site.onClick, false));
-
-  Site.animations();
-  // Site.preloadImages();
-  // Menu.button.onclick = (event) => {
-  //   event.preventDefault();
-  //   Menu.button.isArrow ? Site.smoothScroll.scrollToY(0, !0) : Site.isOpen ? Site.close() : Site.open();
-  //
-  //   // if (Menu.button.isArrow) Site.smoothScroll.scrollToY(0, !0);
-  //   // else if (Site.isOpen) Site.close();
-  //   // else Site.open();
-  // };
-  // let root = document.documentElement;
-  // root.addEventListener("mousemove", e => {
-  //   root.style.setProperty('--mouse-x', e.clientX + "px");
-  //   root.style.setProperty('--mouse-y', e.clientY + "px");
-  // });
-
   if (!UserAgent.iOS) {
+    window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
     /* adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
     Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500)));
     Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500)));
@@ -785,500 +1311,125 @@ Site.init = function init() {
     if (Site.body.classList.contains('home')) Drag.show();
     else Drag.hide();
   }
+  else Drag.toggleHidden();
+
+  /* Mouse events */
+  /* Add these events to document element */
+  window.onmousedown = Site.mousePositionHandler;
+  window.onmousedown = Site.projectChangedHandler;
+  window.onmousedown = Site.scrollEventHandler;
+  window.onmousedown = Site.touchStartHandler;
+  window.onmousedown = Site.touchMoveHandler;
+  window.onmousedown = Site.showHideArrow;
+  // /* State Change Events */
+  // /* Add these events to window element */
+  // window.onpopstate = Site.onPopStateHandler;
+  // window.onunload = Site.onUnloadHandler;
+
+  /* management button - prev / next browser */
+  window.addEventListener('onpopstate', Site.onPopStateHandler);
+  window.addEventListener('onunload', Site.onUnloadHandler);
+  window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500));
+  window.addEventListener('keydown', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500));
+  // window.addEventListener('scroll', Site.showHideArrow, false); // shows/hides menu arrow when scrolling on mobile devices
+  /* device giroscope event */
+  if (window.DeviceOrientationEvent) {
+    window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1);
+  }
+
+  // window.addEventListener('scroll', () => Site.aboutRafs());
+  // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs), 1000);
+
+  /* scroll event */
+  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500));
+  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500));
+  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500));
+  /* swipe event */
+  document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
+  document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
+  /* Show Hide Menu Arrow events */
+  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
+  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
+  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
+  document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500)); // shows/hides menu arrow when scrolling on mobile devices
+  /* Add the event listeners for each event. */
+  document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500));
+  document.addEventListener(Site.clickEvent, Site.projectChangedHandler);
+  // document.addEventListener('click', Site.projectChangedHandler, false);
+  // document.addEventListener('touchend', Site.projectChangedHandler, false);
 };
 
-/* anchor click events */
-Site.onClick = function onClick(event) {
-  // console.log('event', event);
-  if (!event.target.classList.contains('external')) {
-    event.preventDefault();
 
-    if (Site.linkInProgress === !1) {
-      Site.linkInProgress = !0;
-      var href = this.getAttribute('href');
+Site.sendHttpRequest = function sendHttpRequest(url) {
+  const xhr = new XMLHttpRequest();
+  const method = 'GET';
 
-      if (event.target.classList.contains('bottom_link')) {
-        Site.bottomLink = !0;
-        event.target.classList.add('changing');
-      }
-
-      history.pushState({}, '', href);
-      Site.onLoadPage(href);
-      Site.onRafLoading();
-
-      return false;
-    }
-
-    return false;
-  }
-};
-
-/* when get() completed */
-Site.onAjaxLoad = function onAjaxLoad(html) {
-  Site.newPageContent = html;
-  Site.ajaxOk = !0;
-};
-/* animations input */
-Site.animations = function animations() {
-  if (window.innerWidth < 768) document.querySelectorAll('#the_menu li').forEach((obj) => obj.classList.remove('active'));
-  if (UserAgent.iOS) {
-    window.scrollTo(Site.scrollMenuOpen, 0);
-    document.getElementById('main').classList.remove('black');
-  }
-
-  if (Site.body.classList.contains('home')) {
-    document.querySelectorAll('.point3').forEach((obj) => obj.classList.remove('black'));
-
-    Site.hovers = document.querySelectorAll('.change_project');
-
-    Site.hovers.forEach((hover) => hover.addEventListener('mouseenter', Site.onHover, false));
-    Site.hovers.forEach((hover) => hover.addEventListener('mouseleave', Site.offHover, false));
-
-    Site.currentSlide = 0;
-    Site.totalSlides = 0;
-    Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
-
-    document.getElementById('inner_canvas').appendChild(Site.renderer.view);
-
-    Site.renderer.view.width = window.innerWidth;
-    Site.renderer.view.height = window.innerHeight;
-
-    Site.stage = new PIXI.Container();
-    Site.loader = new PIXI.Loader();
-    // Site.ticker = new PIXI.Ticker();
-
-    document.querySelectorAll('#images div').forEach(Site.setDimensions);
-
-    /* displacement 1 */
-    Site.displacementSprite = PIXI.Sprite.from(Site.directoryUri + 'images/gradient4.png');
-    Site.displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.CLAMP; // options: REPEAT, MIRRORED_REPEAT, CLAMP
-    Site.displacementFilter = new PIXI.filters.DisplacementFilter(Site.displacementSprite);
-
-    /* displacement 2 */
-    Site.displacementSprite2 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
-    Site.displacementSprite2.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-    Site.displacementFilter2 = new PIXI.filters.DisplacementFilter(Site.displacementSprite2);
-
-    /* settings displacement1 - intensity */
-    Site.displacementFilter.scale.x = 50;
-    Site.displacementFilter.scale.y = 0;
-
-    /* center for slider */
-    Site.displacementSprite.pivot.x = 256;
-    Site.displacementSprite.pivot.y = 256;
-
-    /* ladder x/y */
-    Site.displacementSprite.scale.x = 0.2;
-
-    /* settings displacement2 - intensity */
-    Site.displacementFilter2.scale.x = 0;
-    Site.displacementFilter2.scale.y = 0;
-
-    /* ladder x/y */
-    Site.displacementSprite2.scale.x = 0.8;
-    // displacementSprite2.anchor.x = 1;
-
-    Site.stage.addChild(Site.displacementSprite);
-
-    Site.stage.filters = [Site.displacementFilter, Site.displacementFilter2];
-
-    Site.loader.load((loader, resources) => {
-      Site.blockedAction = false;
-      if (!Menu.button.classList.contains('opened')) Site.homePixi();
-      Site.nextSlide();
-
-      // DISABLE elements with class of update_link (<a>) in home pixi slider
-
-      // if (Site.currentSlide === 0) {
-      //   document.querySelectorAll('.update_link').forEach((obj) => {
-      //     obj
-      //       .setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide]
-      //       .getAttribute('data-params'));
-      //   });
-      // }
-
-      document.getElementById('progress').style.display = 'none';
-    });
-  }
-  else if (Site.body.classList.contains('about')) {
-    document.getElementById('progress').style.display = 'none';
-    document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
-
-    // document.getElementById('shutter1').classList.add('open');
-    // document.querySelector('.intro').classList.add('open');
-
-    TweenMax.to('.background_intro', 1.4, { scale: 1, ease: Power4.easeOut });
-    Site.animateRandom('.random');
-    TweenMax.staggerFromTo(Site.random, 1, { x: '-24px' }, { x: '0px', opacity: 1, delay: 0.6, ease: Power2.easeOut }, 0.1);
-
-    if (!UserAgent.iOS) {
-      if (Site.scrolling !== null) Site.scrolling.destroy();
-
-      Site.scrolling = null;
-
-      Site.scrolling = new Smooth({
-        preload: !0,
-        native: !1,
-        section: Site.vsSection,
-        divs: Site.vsDivs,
-        vs: { mouseMultiplier: 0.4 }
-      });
-
-      Site.scrolling.init();
-    }
-
-    // TweenMax.to('#main', 0.4, { backgroundColor: '#EFEFEF', ease: Power2.easeInOut });
-    TweenMax.to('#inner_svg', 1, { opacity: 1, ease: Power2.easeIn });
-    TweenMax.fromTo('#inner_svg', 2, { rotation: 140 }, { rotation: 0, ease: Power2.easeOut });
-    TweenMax.fromTo('#inner_svg img', 2, { rotation: -140 }, {
-      rotation: 0,
-      ease: Power2.easeOut,
-      onComplete: () => {
-        // Site.aboutRafs();
-        AboutRAFs.init();
-        // Site.theRafAbout = requestAnimationFrame(Site.aboutRafs);
-        // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs()), 1000);
-        // if (Site.theRafAbout !== null) Site.aboutRafs();
-        // else {}
-      }
-    });
-
-    // Site.aboutSkills();
-  }
-  else if (Site.body.classList.contains('single')) {
-    if (window.innerWidth < 768) {
-      document.querySelectorAll('#the_menu li').forEach((obj) => {
-        if (Site.body.classList.contains(obj.getAttribute('data-id'))) obj.classList.add('active');
-      });
-    }
-
-    document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
-
-    if (!UserAgent.iOS) {
-      Drag.cursorMain.classList.add('vertical_scroll'); //////----------//////
-      Drag.cursorJunior.classList.add('vertical_scroll'); //////----------//////
-
-      document.getElementById('to_next_project').addEventListener('mouseover', Site.onHoverNext, false);
-      document.getElementById('to_next_project').addEventListener('mouseout', Site.offHoverNext, false);
-
-      if (Site.scrolling !== null) Site.scrolling.destroy();
-      Site.scrolling = null;
-
-      Site.scrolling = new Smooth({
-        preload: !0,
-        native: !1,
-        section: Site.vsSection,
-        divs: Site.vsDivs,
-        vs: { mouseMultiplier: 0.4 }
-      });
-
-      Site.scrolling.init();
+  // progress on transfers from the server to the client (downloads)
+  function updateProgress(oEvent) {
+    console.log('oEvent', oEvent);
+    if (oEvent.lengthComputable) {
+      var percentComplete = oEvent.loaded / oEvent.total * 100;
     }
     else {
-      document.getElementById('to_next_project').innerHTML = document.getElementById('to_next_project').getAttribute('data-next');
-      TweenMax.set('#inner_project_name', { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px' });
-      TweenMax.set('#project_name .stag', { opacity: 1 });
+      // Unable to compute progress information since the total size is unknown
     }
-
-    // var height;
-
-    if (window.innerWidth > 767) {
-      height = 0.57 * window.innerWidth + 20;
-      Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, (0.57 * window.innerWidth + 20), { transparent: !0 });
-      Site.renderer.view.width = window.innerWidth;
-      // Site.renderer.view.height = window.innerHeight;
-    }
-    else {
-      height = window.innerWidth + 20;
-      Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, (window.innerWidth + 20), { transparent: !0 });
-      Site.renderer.view.width = window.innerWidth;
-      // Site.renderer.view.height = window.innerHeight;
-    }
-
-    document.getElementById('cover').appendChild(Site.renderer.view);
-
-    Site.stage = new PIXI.Container();
-    Site.loader = new PIXI.Loader();
-    // Site.ticker = new PIXI.Ticker();
-
-    // document.querySelectorAll('#images div').forEach(Site.setDimensions);
-    var image = new PIXI.Sprite(PIXI.Texture.from(document.getElementById('cover').getAttribute('data-img')));
-
-    // DISABLED - Because PixiJS doesn't like duplicate resources saved into TextureCache. Therefore, we access our assets with Site.loader.resources
-    // Site.loader.add('image', document.getElementById('cover').getAttribute('data-img'));
-
-    var img = new Image();
-
-    img.src = document.getElementById('cover').getAttribute('data-img');
-    img.onload = function() {
-      var width = this.width;
-      var height = this.height;
-      var ratioImg = width / height;
-      var ratioFenetre = window.innerWidth / window.innerHeight;
-
-      // +10 and - 5 values to avoid white edges
-      if (ratioFenetre >= ratioImg) {
-        image.width = window.innerWidth + 10;
-        image.height = height * (window.innerWidth + 10) / width;
-        image.x = -5;
-        image.y = window.innerHeight / 2 - image.height / 2;
-      }
-      else {
-        image.height = height;
-        image.width = (width * window.innerHeight / height) + 10;
-        // image.x      = (window.innerWidth / 2 - image.width / 2) - 5;
-        image.y = height / 6 - image.height / 2; // ADDED BY ME
-      }
-    };
-
-    // /* center the sprite's anchor point */
-    // image.anchor = 0.5;
-    // /* move the sprite to the center of the screen */
-    // image.x = Site.renderer.width / 2;
-    // image.y = Site.renderer.height / 2;
-
-    /* displacement 2 */
-    Site.displacementSprite2 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
-    Site.displacementSprite2.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
-    Site.displacementFilter2 = new PIXI.filters.DisplacementFilter(Site.displacementSprite2);
-
-    // /* settings displacement2 - intensity */
-    Site.displacementFilter2.scale.x = 0; // 150
-    Site.displacementFilter2.scale.y = 0;
-
-    /* ladder x/y */
-    Site.displacementSprite2.scale.x = 0.8; // 0.8
-
-    Site.stage.addChild(Site.displacementSprite2);
-    Site.stage.addChild(image);
-
-    // Site.stage.hitArea     = Site.renderer.screen;
-    // Site.stage.interactive = true;
-    //
-    // Site.stage.on('mousemove', function(event) {
-    //   const x = event.data.global.x;
-    //   const y = event.data.global.y;
-    //   image.rotation = Math.atan2(y - image.y, x - image.x);
-    // });
-    //
-    // // Listen for animate update
-    // Site.ticker.add(function(delta) {
-    //   // just for fun, let's rotate mr rabbit a little
-    //   // delta is 1 if running at 100% performance
-    //   // creates frame-independent tranformation
-    //   image.x += Math.cos(image.rotation) * delta;
-    //   image.y += Math.sin(image.rotation) * delta;
-    //
-    // });
-
-    Site.stage.filters = [Site.displacementFilter2];
-
-    Site.loader.load((loader, resources) => {
-      Site.blockedAction = false;
-
-      if (!Menu.button.classList.contains('opened')) Site.singlePixi();
-
-      Site.animateRandom('.random');
-
-      TweenMax.staggerFromTo(Site.random, 1, { x: '-24px' }, { x: '0px', opacity: 1, ease: Power2.easeOut }, 0.1);
-      TweenMax.to('#cover', 1, { opacity: 1, delay: 0.4, ease: Power2.easeOut });
-
-      Site.speed = 4;
-      document.getElementById('progress').style.display = 'none';
-
-      Site.ladderScale = (document.getElementById('the_imgs').clientHeight + (0.28 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight;
-      Site.ladderScale = parseFloat(Math.round(Site.ladderScale * 100) / 100).toFixed(2);
-    });
   }
-  else if (Site.body.classList.contains('notFound')) document.getElementById('progress').style.display = 'none';
-  else if (Site.body.classList.contains('internalServerError')) document.getElementById('progress').style.display = 'none';
+  function transferComplete(event) {
+    console.log('The transfer is complete.');
+  }
+  function transferFailed(event) {
+    console.log('An error occurred while transferring the file.');
+  }
+  function transferCanceled(event) {
+    console.log('The transfer has been canceled by the user.');
+  }
 
-  // TweenMax.to('body', 1, { opacity: 1, onComplete: () => {
-  //   scroll.init();
-  //   scroll.Site.onResize();
-  // }});
-  //
-  // if ($('event')[0]) {}
-};
-/* animations output outputs */
-Site.onLoadPage = function onLoadPage(href) {
-  document.getElementById('progress').style.display = 'block';
+  // xhr.onload = (event) => console.log('event => onload =>', event);
+  // xhr.onprogress = (event) => console.log('event => onprogress =>', event);
+  // xhr.onerror = (event) => console.log('event => onerror =>', event);
 
-  if (Site.scrolling !== null) Site.scrolling.off();
+  // xhr.upload.onprogress = (event) => {
+  //   updateProgress();
+  // };
 
-  var xhr = new XMLHttpRequest();
-  var method = 'GET';
-  var url = href;
+  // xhr.upload.onload = (event) => {
+  //   transferComplete();
+  // };
 
-  xhr.open(method, url, true);
+  // xhr.upload.onerror = (event) => {
+  //   transferFailed();
+  // };
 
-  // xhr.onreadystatechange = callback
-  // callback is the function to be executed when the readyState changes.
-  xhr.onreadystatechange = () => {
-    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) Site.onAjaxLoad(xhr.responseText);
+  // xhr.upload.onabort = (event) => {
+  //   transferCanceled();
+  // };
+
+  // Create and send a GET request
+  // The first argument is the post type (GET, POST, PUT, DELETE, etc.)
+  // The second argument is the endpoint URL
+  xhr.open(method, url, !0); // => !0 --> true
+
+  // Setup our listener to process completed requests
+  // xhr.onload = () => {
+  //   // Process our return data
+  //   if (xhr.status >= 200 && xhr.status < 300) Site.onAjaxLoad(xhr.responseText);
+  //   else console.log('The request failed!'); // What do when the request fails
+  // };
+
+  /*
+   * xhr.onreadystatechange = callback
+   * callback is the function to be executed when the readyState changes.
+   */
+  xhr.onreadystatechange = (event) => {
+    if (xhr.readyState === xhr.DONE && xhr.status === 200) Site.onAjaxLoad(xhr.responseText);
+    else if (xhr.status === 400) console.log('There was an error 400');
+    // else console.log('something else other than 200 was returned');
   };
 
   xhr.send();
-
-  if (Menu.button.classList.contains('opened')) {
-    cancelAnimationFrame(Site.rafPixiMenu);
-
-    /* reset projMenu when changing states/clicking on anchor elements */
-    Menu.button.classList.add('closing');
-    setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
-
-    TweenMax.to('#the_menu, #pixi_menu', 0.4, {
-      opacity: 0,
-      ease: Power2.easeInOut,
-      onComplete: () => {
-        Site.stageMenu.removeChildren();
-        Site.exitOk = true;
-        TweenMax.set('#main', { clearProps: 'backgroundColor' });
-      }
-    });
-  }
-  else if (Site.body.classList.contains('home')) {
-    // Site.speed = 4;
-    Site.listenCursor = !1;
-    Site.blockedAction = !0;
-
-    // Site.stage.removeChild(displacementSprite);
-    // Site.stage.addChild(Site.displacementSprite2);
-
-    Site.animateRandom('.random');
-    TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1);
-
-    // TweenMax.to(attributes2, 0.9, {
-    //   intensity: 150,
-    //   x: 10,
-    //   ease: Power2.easeIn,
-    //   onUpdate: function() {
-    //     Site.displacementFilter2.scale.x = attributes2.intensity;
-    //     speed = attributes2.x;
-    //   },
-    //   onComplete: () => {}
-    // });
-
-    TweenMax.to('#main', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = true });
-    Site.hovers = document.querySelectorAll('.change_project');
-
-    Site.hovers.forEach((hover) => {
-      hover.removeEventListener('mouseenter', Site.onHover);
-      hover.removeEventListener('mouseleave', Site.offHover);
-    });
-  }
-  else if (Site.body.classList.contains('single')) {
-    document.getElementById('to_next_project').removeEventListener('mouseover', Site.onHoverNext);
-    document.getElementById('to_next_project').removeEventListener('mouseout', Site.offHoverNext);
-
-    if (Site.bottomLink) {
-      var diff;
-
-      if (Site.scrolling !== null) {
-        diff = document.getElementById('main').clientHeight - (Site.scrolling.vars.current + window.innerHeight);
-
-        TweenMax.to('#main', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
-
-        TweenMax.to('#next_proj > div', 1.2, {
-          y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
-          ease: Power2.easeInOut,
-          onComplete: () => {
-            TweenMax.to('#next_proj > div', 0.4, {
-              opacity: 0,
-              ease: Power2.easeInOut,
-              onComplete: () => {
-                Site.exitOk = true;
-              }
-            });
-          } });
-      }
-      else {
-        diff = document.getElementById('main').clientHeight - (window.pageYOffset + window.innerHeight);
-
-        TweenMax.to('#next_proj, .inner_img', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
-
-        TweenMax.to('#next_proj > div', 1.2, {
-          y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
-          ease: Power2.easeInOut,
-          onComplete: () => {
-            TweenMax.to('#next_proj > div', 0.4, {
-              opacity: 0,
-              ease: Power2.easeInOut,
-              onComplete: () => {
-                // TweenMax.set('#main', { clearProps: 'y' });
-                Site.exitOk = true;
-                window.scrollTo(Site.scrollMenuOpen, 0);
-              }
-            });
-          }
-        });
-      }
-    }
-    else {
-      TweenMax.to('#main', 0.4, {
-        opacity: 0,
-        ease: Power2.easeInOut,
-        onComplete: () => {
-          Site.exitOk = true;
-        }
-      });
-    }
-  }
-  else if (Site.body.classList.contains('about')) {
-    TweenMax.to('#main', 0.4, {
-      opacity: 0,
-      clearProps: 'backgroundColor',
-      ease: Power2.easeInOut,
-      onComplete: () => {
-        Site.exitOk = true;
-      }
-    });
-  }
-  else Site.exitOk = true;
-};
-/* updating the data of the page */
-Site.onUpdatePage = function onUpdatePage(html) {
-  var parser = new DOMParser();
-  var doc = parser.parseFromString(html, 'text/html');
-  var classList = doc.querySelectorAll('body')[0].getAttribute('class');
-
-  /* main title of the page */
-  document.title = doc.querySelector('title').innerHTML;
-
-  /* main class of body */
-  var res = classList.replace('is-loading', '');
-
-  document.querySelectorAll('body')[0].setAttribute('class', res);
-
-  if (!UserAgent.iOS) document.querySelectorAll('body')[0].classList.add('desktop');
-  else document.querySelectorAll('body')[0].classList.add('mobile');
-
-  /* main content #main */
-  document.getElementById('main').innerHTML = doc.getElementById('main').innerHTML;
-
-  /* launches the new page */
-  Site.init();
-};
-/* RAFs loading screen */
-Site.onRafLoading = function onRafLoading() {
-  Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
-
-  if (Site.exitOk === !0 && Site.ajaxOk === !0) {
-    cancelAnimationFrame(Site.rafPixiHome);
-    cancelAnimationFrame(Site.rafPixiSingle);
-
-    if (Site.body.classList.contains('single') || Site.body.classList.contains('home')) {
-      Site.stage.destroy();
-      Site.renderer.destroy();
-    }
-
-    Site.onUpdatePage(Site.newPageContent);
-    cancelAnimationFrame(Site.rafLoading);
-  }
 };
 
-
-Site.onChangeProject = function onChangeProject(event) {
+Site.projectChangedHandler = function projectChangedHandler(event) {
   if (event.target.classList.contains('change_project')) Site.changePagination(event.target);
   else if (event.target.classList.contains('arrow-transition-in')) {
     Site.scrollBackUp(event.target);
@@ -1301,7 +1452,8 @@ Site.onChangeProject = function onChangeProject(event) {
         // console.log('Make sure client is at top of screen || smoothScroll.scrollToY(0, !0)');
       }
       else {
-        Site.scrollIt(Site.vsSection, 1000, 'easeOutQuad');
+        // Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad');
+        Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
       }
     }
 
@@ -1319,7 +1471,7 @@ Site.onChangeProject = function onChangeProject(event) {
   }
 };
 
-Site.onKeydown = function onKeydown(event) {
+Site.onKeydownHandler = function onKeydownHandler(event) {
   if (event.key === 'Escape' || event.keyCode === 27) {
     if (Menu.button.classList.contains('opened')) {
       Menu.init();
@@ -1327,6 +1479,7 @@ Site.onKeydown = function onKeydown(event) {
     }
   }
 };
+
 
 Site.setDimensions = function setDimensions(item, index) {
   Site.totalSlides++;
@@ -1343,13 +1496,15 @@ Site.setDimensions = function setDimensions(item, index) {
 
   img.src = item.getAttribute('data-url');
   img.onload = function() {
+    // console.log('this 2', this);
+
     var width = this.width;
     var height = this.height;
-    var ratioImg = width / height;
-    // var ratioFenetre = window.innerWidth / window.innerHeight;
+    var imageRatio = width / height;
+    // var windowRatio = window.innerWidth / window.innerHeight;
 
     // +10 and - 5 values to avoid white edges
-    if (window.innerWidth / window.innerHeight >= ratioImg) {
+    if (window.innerWidth / window.innerHeight >= imageRatio) {
       window['image' + index].width = window.innerWidth + 10;
       window['image' + index].height = height * (window.innerWidth + 10) / width;
       window['image' + index].x = -5;
@@ -1375,13 +1530,14 @@ Site.setMenuDimensions = function setMenuDimensions(item, index) {
 
   img.src = item.getAttribute('data-img');
   img.onload = function() {
+    // console.log('this 3', this);
     var width = this.width;
     var height = this.height;
-    var ratioImg = width / height;
-    var ratioFenetre = frameWidth / frameHeight;
+    var imageRatio = width / height;
+    var windowRatio = frameWidth / frameHeight;
 
     // +10 and - 5 values to avoid white edges
-    if (ratioFenetre >= ratioImg) {
+    if (windowRatio >= imageRatio) {
       window['image_menu' + index].width = frameWidth + 10;
       window['image_menu' + index].height = height * (frameWidth + 10) / width;
       window['image_menu' + index].x = -5;
@@ -1395,7 +1551,7 @@ Site.setMenuDimensions = function setMenuDimensions(item, index) {
     }
     // // ORIGINAL
     // // +10 and - 5 values to avoid white edges
-    // if (ratioFenetre >= ratioImg) {
+    // if (windowRatio >= imageRatio) {
     //   window['image_menu' + index].width  = frameWidth + 10;
     //   window['image_menu' + index].height = height * (frameWidth + 10) / width;
     //   window['image_menu' + index].x      = - 5;
@@ -1406,7 +1562,11 @@ Site.setMenuDimensions = function setMenuDimensions(item, index) {
     //   window['image_menu' + index].x      = (frameWidth / 2 - window['image_menu' + index].width / 2) - 5;
     // }
   };
+
+  // console.log('setMenuDimensions - item -)->', item);
+  // console.log('setMenuDimensions - img -)->', img);
 };
+
 
 Site.scrollBackUp = function scrollBackUp(target) {
   // Site.scrollingBackUpBtn = requestAnimationFrame(Site.scrollBackUp);
@@ -1426,11 +1586,13 @@ Site.scrollBackUp = function scrollBackUp(target) {
     }
   }
   else {
-    Site.scrollIt(Site.vsSection, 1000, 'easeOutQuad');
+    // Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad');
+    Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
+
     // setTimeout(() => window.scrollTo({ top: Site.scrollMenuOpen, left: 0, behavior: 'smooth' }), 1);
-    // Menu.button.addEventListener('click', () => Site.scrollIt(Site.vsSection, 300, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`)));
-    // Site.scrollIt(Site.vsSection, 1000, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`));
-    // Menu.button.addEventListener('click', () => scrollIt(50000));
+    // Menu.button.addEventListener('click', () => Site.scrollToTop(Site.vsSection, 300, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`)));
+    // Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`));
+    // Menu.button.addEventListener('click', () => scrollToTop(50000));
 
     // window.scrollTo({ top: Site.scrollMenuOpen, left: 0, behavior: 'smooth' });
 
@@ -1519,7 +1681,7 @@ Site.handlerMouseMove = function handlerMouseMove(event) {
   }
 };
 
-Site.handleCircle = function handleCircle(event) {
+Site.circleHandler = function circleHandler(event) {
   if (window.orientation === 0) Site.gamma = event.gamma;
   else if (window.orientation === 180) Site.gamma = -event.gamma;
   else if (window.orientation === -90) Site.gamma = -event.beta;
@@ -1529,12 +1691,12 @@ Site.handleCircle = function handleCircle(event) {
   // 0 === window.orientation ? gamma = e.gamma : 180 === window.orientation ? gamma = -e.gamma : -90 === window.orientation ? gamma = -e.beta : 90 === window.orientation && (gamma = e.beta)
 };
 
-Site.handleTouchStart = function handleTouchStart(event) {
+Site.touchStartHandler = function touchStartHandler(event) {
   Site.xDown = event.touches[0].clientX;
   Site.yDown = event.touches[0].clientY;
 };
 
-Site.handleTouchMove = function handleTouchMove(event) {
+Site.touchMoveHandler = function touchMoveHandler(event) {
   if (!Site.xDown || !Site.yDown) return;
 
   var xUp = event.touches[0].clientX;
@@ -1561,6 +1723,7 @@ Site.handleTouchMove = function handleTouchMove(event) {
   Site.yDown = null;
 };
 
+
 Site.onHover = function onHover(event) {
   event.target.classList.add('feature');
   document.querySelector('.change_project.current').classList.add('temp');
@@ -1572,7 +1735,7 @@ Site.offHover = function offHover(event) {
 };
 
 
-Site.scrollEvent = function scrollEvent(event) {
+Site.scrollEventHandler = function scrollEventHandler(event) {
   if (event.type === 'wheel') Site.supportsWheel = !0;
   else if (Site.supportsWheel) return;
 
@@ -1584,7 +1747,7 @@ Site.scrollEvent = function scrollEvent(event) {
   }
 };
 
-Site.onResize = function onResize() {
+Site.onResizeHandler = function onResizeHandler() {
   if (!UserAgent.iOS && Site.scrolling !== null) {
     Site.scrolling.resize();
   }
@@ -1610,7 +1773,7 @@ Site.nextSlide = function nextSlide() {
     intensity: 150,
     x: 20,
     ease: Power2.easeIn,
-    onUpdate: function() {
+    onUpdate: () => {
       Site.displacementFilter2.scale.x = Site.attributes2.intensity;
       Site.speed = Site.attributes2.x;
       // Site.displacementSprite2.scale.x = Site.attributes2.width;
@@ -1642,7 +1805,7 @@ Site.nextSlide = function nextSlide() {
     opacity: 1,
     delay: 0.6,
     ease: Linear.easeNone,
-    onUpdate: function() {
+    onUpdate: () => {
       window['image' + Site.currentSlide].alpha = Site.attributes3.opacity;
     }
   });
@@ -1678,7 +1841,7 @@ Site.prevSlide = function prevSlide() {
     // width: 0.8,
     // anchor: 1,
     ease: Power2.easeIn,
-    onUpdate: function() {
+    onUpdate: () => {
       Site.displacementFilter2.scale.x = Site.attributes2.intensity;
       Site.speed = Site.attributes2.x;
       // Site.displacementSprite2.scale.x = Site.attributes2.width;
@@ -1692,7 +1855,7 @@ Site.prevSlide = function prevSlide() {
       //     intensity: 0,
       //     x: 0,
       //     ease: Power1.easeOut,
-      //     onUpdate: function() {
+      //     onUpdate: () => {
       //         Site.displacementFilter2.scale.x = Site.attributes2.intensity;
       //         speed = Site.attributes2.x;
       //     }
@@ -1721,13 +1884,14 @@ Site.prevSlide = function prevSlide() {
     opacity: 1,
     delay: 0.6,
     ease: Linear.easeNone,
-    onUpdate: function() {
+    onUpdate: () => {
       if (Site.currentSlide === 0) window['image' + (Site.totalSlides - 2)].alpha = Site.attributes3.opacity;
       else if (Site.currentSlide === 1) window['image' + (Site.totalSlides - 1)].alpha = Site.attributes3.opacity;
       else window['image' + (Site.currentSlide - 2)].alpha = Site.attributes3.opacity;
     }
   });
 };
+
 
 Site.commonTransition = function commonTransition() {
   Site.listenCursor = !1;
@@ -1741,7 +1905,7 @@ Site.commonTransition = function commonTransition() {
   TweenMax.to(Site.attributes, 0.3, {
     intensity: 0,
     ease: Power2.easeOut,
-    onUpdate: function() {
+    onUpdate: () => {
       Site.displacementFilter.scale.x = Site.attributes.intensity;
     }
   });
@@ -1772,6 +1936,7 @@ Site.footerInView = function footerInView() {
   }
 };
 
+
 Site.homePixi = function homePixi() {
   Site.rafPixiHome = requestAnimationFrame(Site.homePixi);
   Site.renderer.render(Site.stage);
@@ -1800,7 +1965,7 @@ Site.homePixi = function homePixi() {
       intensity: 10 * (Site.currentMousePos.x - Site.formerDelta),
       width: Math.abs((Site.currentMousePos.x - Site.formerDelta) / 80 - 0.2),
       correction: (Site.currentMousePos.x - Site.formerDelta) / 40,
-      onUpdate: function() {
+      onUpdate: () => {
         Site.displacementSprite.x = Site.mousePos.x;
         // SitedisplacementSprite.y        = Site.mousePos.y;
         Site.displacementFilter.scale.x = Site.mousePos.intensity;
@@ -1817,7 +1982,7 @@ Site.homePixi = function homePixi() {
       TweenMax.to(Site.mousePos, 0.3, {
         penche: 20 * Site.gamma - Site.deltaGamma,
         // penche: (Site.gamma * 20 - Site.deltaGamma), // penche = 'looks' in english
-        onUpdate: function() {
+        onUpdate: () => {
           Site.displacementFilter2.scale.x = Site.mousePos.penche;
         },
         ease: Linear.easeNone
@@ -1883,6 +2048,7 @@ Site.singlePixi = function singlePixi() {
   // else {}
 };
 
+
 Site.checkMenu = function checkMenu(item, index) {
   if (Site.cursorPercentage > (Site.heightMargin + (index * Site.entranceHeight)) && Site.cursorPercentage < (Site.heightMargin + ((index + 1) * Site.entranceHeight)) && !item.classList.contains('active')) {
     document.querySelector('#the_menu .active').classList.remove('active');
@@ -1896,17 +2062,21 @@ Site.checkMenu = function checkMenu(item, index) {
 
     TweenMax.to(Site.displace2, 0.2, {
       alpha: 1,
-      onUpdate: function() {
+      onUpdate: () => {
         window['image_menu' + index].alpha = Site.displace2.alpha;
       },
-      // onComplete: () => {
+      onComplete: () => {
+        // console.log('Site.displace2 :: onComplete --->');
       //   // to do : management suppression former child
       //   // Site.stageMenu.removeChildren(2);
-      //   // lastAdds = index;
-      // },
+      //   // addedLast = index;
+      },
       ease: Linear.easeNone
     });
   }
+
+  // console.log('checkMenu :: item --->', item);
+  // console.log('checkMenu :: index --->', index);
 };
 
 /*----------------------------------------------------------------------------*/
@@ -1932,7 +2102,7 @@ Site.changePagination = function changePagination(element) {
     intensity: 150,
     x: 20,
     ease: Power2.easeIn,
-    onUpdate: function() {
+    onUpdate: () => {
       Site.displacementFilter2.scale.x = Site.attributes2.intensity;
       // console.log('changePagination : speed =>', Site.speed);
       Site.speed = Site.attributes2.x;
@@ -1959,13 +2129,13 @@ Site.changePagination = function changePagination(element) {
     opacity: 1,
     delay: 0.6,
     ease: Linear.easeNone,
-    onUpdate: function() {
+    onUpdate: () => {
       window['image' + Site.lindex].alpha = Site.attributes3.opacity;
     }
   });
 
   TweenMax.to('#white_circle', 0.9, { 'stroke-dashoffset': 1900 * (1 - 1 / Site.totalSlides - (Site.lindex * 1 / Site.totalSlides)), ease: Power4.easeInOut });
-  Site.animateRandom('.random');
+  Site.animateRandomElements('.random');
   TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.clickablePagination);
 
 };
@@ -1982,7 +2152,7 @@ Site.updatePagination = function updatePagination(direction) {
     else TweenMax.to('#white_circle', 0.9, { 'stroke-dashoffset': 1900 - (Site.currentSlide - 1) * 1900 / Site.totalSlides, ease: Power4.easeInOut });
   }
 
-  Site.animateRandom('.random');
+  Site.animateRandomElements('.random');
   TweenMax.staggerTo(Site.random, 0.4, { x: Site.multiplier * 24 + 'px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.scrollablePagination);
 };
 
@@ -2048,7 +2218,7 @@ Site.scrollablePagination = function scrollablePagination() {
       });
     }
   }
-  else {
+  else if (document.querySelector('#num_letter .current')) {
     if (document.querySelector('#num_letter .current').previousElementSibling !== null) {
       document.querySelector('#num_letter .current').previousElementSibling.classList.add('before');
       var prev = document.querySelector('#num_letter .current').previousElementSibling;
@@ -2128,8 +2298,8 @@ Site.scrollablePagination = function scrollablePagination() {
     }
   }
 
-  document.querySelectorAll('#title_h2 span').forEach(Site.addRandom);
-  Site.animateRandom('.random');
+  document.querySelectorAll('#title_h2 span').forEach(Site.addRandomClass);
+  Site.animateRandomElements('.random');
   TweenMax.staggerFromTo(Site.random, 1, { x: -Site.multiplier * 24 + 'px', opacity: 0 }, { x: '0px', opacity: 1, ease: Power2.easeOut }, 0.1);
 };
 
@@ -2175,13 +2345,10 @@ Site.clickablePagination = function clickablePagination() {
   document.getElementById('year').innerHTML = document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-year');
 
   /* NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach; */
-  document.querySelectorAll('.update_link').forEach((obj) => {
-    console.log('obj -->', obj);
-    obj.setAttribute('href', document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-params'));
-  });
-  document.querySelectorAll('#title_h2 span').forEach(Site.addRandom);
+  document.querySelectorAll('.update_link').forEach((obj) => obj.setAttribute('href', document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-params')));
+  document.querySelectorAll('#title_h2 span').forEach(Site.addRandomClass);
 
-  Site.animateRandom('.random');
+  Site.animateRandomElements('.random');
   TweenMax.staggerFromTo(Site.random, 1, { x: '-24px', opacity: 0 }, { x: '0px', opacity: 1, ease: Power2.easeOut }, 0.1);
 };
 
@@ -2197,7 +2364,7 @@ Site.increaseDisplacementIntensity = function increaseDisplacementIntensity() {
     intensity: 150,
     x: 6,
     ease: Power2.easeIn,
-    onUpdate: function() {
+    onUpdate: () => {
       Site.displacementFilter2.scale.x = options.intensity;
       Site.speed = options.x;
     }
@@ -2212,7 +2379,7 @@ Site.decreaseDisplacementIntensity = function decreaseDisplacementIntensity() {
     intensity: 0,
     x: 2,
     ease: Power2.easeOut,
-    onUpdate: function() {
+    onUpdate: () => {
       Site.displacementFilter2.scale.x = options.intensity;
       Site.speed = options.x;
     }
@@ -2226,7 +2393,7 @@ Site.decreaseDisplacementIntensity = function decreaseDisplacementIntensity() {
 Site.onHoverNext = function onHoverNext(event) {
   if (Site.playOnce === !1) {
     Site.playOnce = !0;
-    Site.animateRandom('#to_next_project span');
+    Site.animateRandomElements('#to_next_project span');
     TweenMax.staggerTo(Site.random, 0.4, { opacity: 0, ease: Power2.easeIn }, 0.05, Site.animateNextBtn);
     TweenMax.to('#inner_project_name', 0.4, { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px', delay: 0.4, ease: Power2.easeOut });
     TweenMax.staggerTo('.stag', 0.4, { opacity: 1, delay: 0.4, ease: Power2.easeOut }, -0.02);
@@ -2236,7 +2403,7 @@ Site.onHoverNext = function onHoverNext(event) {
 Site.offHoverNext = function offHoverNext(event) {
   if (Site.playOnce === !0) {
     Site.playOnce = !1;
-    Site.animateRandom('#to_next_project span');
+    Site.animateRandomElements('#to_next_project span');
     TweenMax.staggerTo(Site.random, 0.4, { opacity: 0, ease: Power2.easeIn }, 0.05, Site.animateNextInnerBtn);
   }
 };
@@ -2244,47 +2411,40 @@ Site.offHoverNext = function offHoverNext(event) {
 Site.animateNextBtn = function animateNextBtn() {
   document.getElementById('to_next_project').innerHTML = document.getElementById('to_next_project').getAttribute('data-next');
   TweenMax.set('#to_next_project span', { opacity: 0 });
-  Site.animateRandom('#to_next_project span');
+  Site.animateRandomElements('#to_next_project span');
   TweenMax.staggerTo(Site.random, 0.4, { opacity: 1, ease: Power2.easeOut }, 0.05);
 };
 
 Site.animateNextInnerBtn = function animateNextInnerBtn() {
   document.getElementById('to_next_project').innerHTML = '<span>N</span><span>e</span><span>x</span><span>t</span>';
   TweenMax.set('#to_next_project span', { opacity: 0 });
-  Site.animateRandom('#to_next_project span');
+  Site.animateRandomElements('#to_next_project span');
   TweenMax.staggerTo(Site.random, 0.4, { opacity: 1, ease: Power2.easeOut }, 0.05);
   TweenMax.to('#inner_project_name', 0.4, { x: '0px', ease: Power2.easeOut });
   TweenMax.staggerTo('.stag', 0.4, { opacity: 0, ease: Power2.easeOut }, 0.02);
 };
 
+
 /*----------------------------------------------------------------------------*/
 /*                           HELP FUNCTIONS - START                           */
 /*----------------------------------------------------------------------------*/
 
-Site.onUnload = function onUnload(event) {
-  window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
-  // if (Site.scrolling) {
-  //   console.log('Site.scrolling', Site.scrolling);
-  //   Site.scrolling.scrollTo(0, 0);
-  // }
-};
-
-Site.animateRandom = function animateRandom(element) {
+Site.animateRandomElements = function animateRandomElements(element) {
   Site.random = [];
   document.querySelectorAll(element).forEach((obj) => Site.random.push(obj));
   Site.random.sort(() => 0.5 - Math.random());
 };
 
-Site.addRandom = function addRandom(item, index) {
+Site.addRandomClass = function addRandomClass(item, index) {
   item.classList.add('random');
 };
 
-Site.mousePosition = function mousePosition(event) {
+Site.mousePositionHandler = function mousePositionHandler(event) {
   Site.currentMousePos.x = event.pageX;
   Site.currentMousePos.y = event.pageY;
 };
 
-Site.scrollIt = function scrollIt(destination, duration, easing, callback) {
+Site.scrollToTop = function scrollToTop(destination, duration, easing, callback) {
   const easings = {
     linear(t) {
       return t;
@@ -2359,148 +2519,5 @@ Site.scrollIt = function scrollIt(destination, duration, easing, callback) {
   scroll();
 };
 
-// Site.getElem = function getElem(el) {
-//   return document.getElementById(el);
-// };
-
-// Site.acceptsTouch = function acceptsTouch() {
-//   return 'ontouchstart' in document.documentElement;
-// };
-
-// Site.getPageMaxScroll = function getPageMaxScroll() {
-//   // Cross browser page height detection is ugly
-//   return Math.max(
-//     document.body.scrollHeight,
-//     document.body.offsetHeight,
-//     document.documentElement.clientHeight,
-//     document.documentElement.scrollHeight,
-//     document.documentElement.offsetHeight
-//   ) - window.innerHeight; // Subtract viewport height
-// };
-
-/*----------------------------------------------------------------------------*/
-/*                           HELP FUNCTIONS - END                           */
-/*----------------------------------------------------------------------------*/
-
-// Site.moveBackground = function moveBackground() {
-//   Site.x += (Site.lFollowX - Site.x) * Site.friction;
-//   Site.y += (Site.lFollowY - Site.y) * Site.friction;
-//
-//   var translate = 'translate(' + Site.x + 'px, ' + Site.y + 'px) scale(1.1)';
-//
-//   document.getElementById('inner_canvas').style.transform       = translate;
-//   document.getElementById('inner_canvas').style.webkitTransform = translate;
-//
-//   window.requestAnimationFrame(Site.moveBackground);
-// };
-//
-// Site.backgroundGyro = function backgroundGyro() {
-//   document.getElementById('#container').on('mousemove', function(e) {
-//     parallaxIt(e, '.slide', -100);
-//     parallaxIt(e, 'img', -30);
-//   });
-//
-//   function parallaxIt(e, target, movement) {
-//     var $this = $("#container");
-//     var relX = e.pageX - $this.offset().left;
-//     var relY = e.pageY - $this.offset().top;
-//
-//     TweenMax.to(target, 1, {
-//       x: (relX - $this.width() / 2) / $this.width() * movement,
-//       y: (relY - $this.height() / 2) / $this.height() * movement
-//     });
-//   }
-// };
-//
-// Site.preloadImages = function preloadImages() {
-//   // var progressText = new createjs.Text('Hello World', '20px Arial', '#000000');
-//   // progressText.x = 300 - progressText.getMeasuredWidth() / 2;
-//   // progressText.y = 20;
-//   // Site.stage.addChild(progressText);
-//   // Site.stage.update();
-//
-//   Site.preload.loadFile('../images/tp-hm2.jpeg');
-//   Site.preload.on('fileload', Site.handleFileLoad, this);
-//   Site.preload.on('progress', Site.handleOverallProgress, this);
-//   Site.preload.on('complete', Site.handleComplete, this);
-//   Site.preload.on('error', Site.handleError, this);
-//
-//   Site.handleFileLoad = function handleFileLoad(event) {
-//     console.log('handleFileLoad => event', event);
-//
-//     // var item = event.item; // A reference to the item that was passed in to the LoadQueue
-//     // var type = item.type;
-//     //
-//     // // Add any images to the page body.
-//     // if (type == createjs.Types.IMAGE) document.body.appendChild(event.result);
-//   };
-//
-//   Site.handleOverallProgress = function handleOverallProgress(event) {
-//     console.log('handleOverallProgress => event', event);
-//     // progressText.text = (preload.progress * 100 | 0) + ' % Loaded';
-//     // Site.stage.update();
-//   };
-//
-//   Site.handleComplete = function handleComplete(event) {
-//     console.log('handleComplete => event', event);
-//   };
-//
-//   Site.handleError = function handleError(event) {
-//     console.log('handleError => event', event);
-//   };
-// };
-//
-// Site.IntersectImages = function IntersectImages() {
-//   var lazyloadImages;
-//
-//   if ('IntersectionObserver' in window) {
-//     lazyloadImages = document.querySelectorAll('.lazy');
-//
-//     var imageObserver = new IntersectionObserver(function(entries, observer) {
-//       entries.forEach(function(entry) {
-//         if (entry.isIntersecting) {
-//           var image = entry.target;
-//           image.src = image.dataset.src;
-//           image.classList.remove('lazy');
-//           imageObserver.unobserve(image);
-//         }
-//       });
-//     });
-//
-//     lazyloadImages.forEach((image) => {
-//       console.log('image', image);
-//       imageObserver.observe(image);
-//     });
-//   }
-//   else {
-//     lazyloadImages = document.querySelectorAll('.lazy');
-//
-//     var lazyloadThrottleTimeout;
-//
-//     if (lazyloadThrottleTimeout) clearTimeout(lazyloadThrottleTimeout);
-//
-//     lazyloadThrottleTimeout = setTimeout(function() {
-//       var scrollTop = window.pageYOffset;
-//
-//       lazyloadImages.forEach(function(img) {
-//         if (img.offsetTop < (window.innerHeight + scrollTop)) {
-//           console.log('img', img);
-//           img.src = img.dataset.src;
-//           img.classList.remove('lazy');
-//         }
-//       });
-//
-//       if (lazyloadImages.length == 0) {
-//         document.removeEventListener('scroll', lazyload);
-//         window.removeEventListener('resize', lazyload);
-//         window.removeEventListener('orientationChange', lazyload);
-//       }
-//     }, 20);
-//
-//     document.addEventListener('scroll', lazyload);
-//     window.addEventListener('resize', lazyload);
-//     window.addEventListener('orientationChange', lazyload);
-//   }
-// };
-
+/* --- INITIATE APP --- */
 document.addEventListener('DOMContentLoaded', () => Site.setup());
