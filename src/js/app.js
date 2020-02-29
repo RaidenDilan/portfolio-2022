@@ -223,7 +223,7 @@ MenuPixi = {
     }
   },
   updatePixiDisplacement: () => {
-    if (Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin)) document.querySelectorAll('#the_menu li').forEach(Site.checkMenu);
+    if (Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin)) Site.pixiMenuLinks.forEach(Site.checkMenu);
     Site.displace.intensity = Site.displacementFilter3.scale.x;
     TweenMax.to(Site.displace, 0.3, {
       intensity: 4 * (Site.theDeltaMenu - Site.deltaMenu),
@@ -274,7 +274,7 @@ Menu = {
         if (UserAgent.iOS) {
           // console.log('1', Site.scrollMenuOpen);
           window.scrollTo(Site.scrollMenuOpen, 0);
-          document.getElementById('main').classList.add('black');
+          Site.main.classList.add('black');
           Site.body.classList.add('temp');
         }
       }
@@ -320,7 +320,7 @@ Menu = {
         document.getElementById('menu').style.display = 'none';
 
         if (UserAgent.iOS) {
-          document.getElementById('main').classList.remove('black');
+          Site.main.classList.remove('black');
           Site.body.classList.remove('temp');
           // console.log('2', Site.scrollMenuOpen);
           window.scrollTo(0, Site.scrollMenuOpen); // --- OR --- equivalent of => window.scrollTo({ left: 0, top: Site.scrollMenuOpen });
@@ -406,19 +406,30 @@ Menu = {
 var Drag = Drag || {};
 
 Drag = {
-  isDown: false,
+  isDown: !1,
   threshold: 100,
   isDrag: !0,
   isScroll: !0,
   init: () => {
     Drag.cursorMain = document.getElementsByClassName('cursor_main')[0];
     Drag.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
-    // Drag.isDrag = !0;
-    // Drag.isScroll = !0;
+    Drag.isDrag = !1;
+    Drag.isScroll = !1;
+
+    /* Mouse/drag events */
+    /* Add these events to document element */
+    window.onmousedown = Drag.start;
+    window.onmousedown = Drag.move;
+    window.onmousedown = Drag.end;
+
+    /* drag event */
+    window.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
+    window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
+    window.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
   },
   start: (event) => {
     /* homePixi mouse/touch : drag events */
-    Drag.isDown = true;
+    Drag.isDown = !0;
     event = event || window.event;
     event.preventDefault() || false;
 
@@ -446,7 +457,7 @@ Drag = {
     }
   },
   end: (event) => {
-    Drag.isDown = false;
+    Drag.isDown = !1;
 
     event = event || window.event;
     event.preventDefault() || false;
@@ -465,26 +476,12 @@ Drag = {
   },
   // REFACTOR METHODS BELLOW...
   toggleVisible: () => {
-    // Drag.cursorMain.style.display   = 'block';
-    // Drag.cursorJunior.style.display = 'block';
-
     Drag.cursorMain.classList.add('visible');
     Drag.cursorJunior.classList.add('visible');
-
-    // TweenMax.set(Drag.cursorMain, { display: 'none', });
-    // TweenMax.set(Drag.cursorJunior, { display: 'none', });
   },
   toggleHidden: () => {
-    // Drag.cursorMain.style.display   = 'none';
-    // Drag.cursorJunior.style.display = 'none';
-
     Drag.cursorMain.classList.remove('visible');
     Drag.cursorJunior.classList.remove('visible');
-
-    // window.removeEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500));
-
-    // TweenMax.set(Drag.cursorMain, { display: 'none', });
-    // TweenMax.set(Drag.cursorJunior, { display: 'none', });
   },
   show: () => {
     Drag.isDrag = !0;
@@ -495,17 +492,6 @@ Drag = {
 
     Drag.cursorMain.classList.add('mainDrag');
     Drag.cursorJunior.classList.add('j_Drag');
-
-    /* Mouse/drag events */
-    /* Add these events to document element */
-    window.onmousedown = Drag.start;
-    window.onmousedown = Drag.move;
-    window.onmousedown = Drag.end;
-
-    /* drag event */
-    window.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
-    window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
-    window.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
   },
   hide: () => {
     Drag.isScroll = !0;
@@ -631,34 +617,6 @@ Site.setup = function setup() {
     Drag.init();
     Menu.init();
 
-    /* anchor click events */
-    Site.onClickHandler = function onClickHandler(event) {
-      if (!event.target.classList.contains('external')) {
-        event = event || window.event;
-        event.preventDefault() || false;
-
-        if (Site.linkInProgress === !1) { // false
-          Site.linkInProgress = !0; // true
-          var href = this.getAttribute('href');
-
-          if (event.target.classList.contains('bottom_link')) {
-            Site.bottomLink = !0;
-            event.target.classList.add('changing');
-          }
-          else Site.bottomLink = !1;
-
-          if (Site.scrolling !== null) Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
-
-          history.pushState({}, '', href);
-          Site.onLoadPage(href);
-          Site.onRafLoading();
-
-          return !1; // false
-        }
-        return !1; // false
-      }
-    };
-
     this.exitOk = !1;
     this.ajaxOk = !1;
     this.linkInProgress = !1;
@@ -668,15 +626,21 @@ Site.setup = function setup() {
 
     this.body = document.querySelector('body');
     this.vsSection = document.querySelector('.vs-section');
+    this.loading = document.querySelector('.is-loading');
     this.vsDivs = document.querySelectorAll('.vs-div');
     this.innerH2 = document.getElementsByClassName('inner_h2');
     this.homeCanvas = document.getElementsByClassName('inner_h2')[0];
     this.mouseOverLinks = document.querySelectorAll('.link');
-    // this.social = document.getElementById('social');
+    this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
+
+    this.main = document.getElementById('main');
     this.about = document.getElementById('about');
     this.contact = document.getElementById('contact');
-    this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
+    // this.social = document.getElementById('social');
+
     this.pixiMenuCover = document.getElementById('pixi_menu');
+    this.pixiMenuLinks = document.querySelectorAll('#the_menu li');
+    this.pixiMenuAnchors = document.querySelectorAll('#the_menu li a');
 
     TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
     TweenMax.set('#main', { display: 'block', clearProps: 'y' });
@@ -717,7 +681,7 @@ Site.setup = function setup() {
     // Site.contact.classList.remove('light');
 
     /* classList of undefined when going from state to another => BUG!!! */
-    if (Site.body.classList.contains('is-loading')) setTimeout(() => document.querySelector('.is-loading').classList.remove('is-loading'), 1000, false);
+    if (Site.body.classList.contains('is-loading')) setTimeout(() => Site.loading.classList.remove('is-loading'), 1000, false);
 
     // when click on link
     // Site.links = document.querySelectorAll('a');
@@ -758,13 +722,13 @@ Site.setup = function setup() {
   };
   /* animations input */
   Site.animations = function animations() {
-    if (window.innerWidth < 768) document.querySelectorAll('#the_menu li').forEach((obj) => obj.classList.remove('active'));
+    if (window.innerWidth < 768) Site.pixiMenuLinks.forEach((obj) => obj.classList.remove('active'));
 
     // IF STATEMENT CONDITION IS "ALMOST" ITENDITICAL TO THE ABOVE IF STATEMENT
     if (UserAgent.iOS) {
       // console.log('3', Site.scrollMenuOpen);
       window.scrollTo(Site.scrollMenuOpen, 0);
-      document.getElementById('main').classList.remove('black');
+      Site.main.classList.remove('black');
     }
 
     /* Page transitions/animations when navigating between states */
@@ -889,7 +853,7 @@ Site.setup = function setup() {
     }
     else if (Site.body.classList.contains('single')) {
       if (window.innerWidth < 768) {
-        document.querySelectorAll('#the_menu li').forEach((obj) => {
+        Site.pixiMenuLinks.forEach((obj) => {
           if (Site.body.classList.contains(obj.getAttribute('data-id'))) obj.classList.add('active');
         });
       }
@@ -1110,7 +1074,7 @@ Site.setup = function setup() {
         let diff;
 
         if (Site.scrolling !== null) {
-          diff = document.getElementById('main').clientHeight - (Site.scrolling.vars.current + window.innerHeight);
+          diff = Site.main.clientHeight - (Site.scrolling.vars.current + window.innerHeight);
 
           TweenMax.to('#main', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
 
@@ -1129,7 +1093,7 @@ Site.setup = function setup() {
           });
         }
         else {
-          diff = document.getElementById('main').clientHeight - (window.pageYOffset + window.innerHeight);
+          diff = Site.main.clientHeight - (window.pageYOffset + window.innerHeight);
 
           TweenMax.to('#next_proj, .inner_img', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
 
@@ -1178,9 +1142,9 @@ Site.setup = function setup() {
     let classList = doc.querySelectorAll('body')[0].getAttribute('class');
     document.title = doc.querySelector('title').innerHTML;
     let res = classList.replace('is-loading', '');
-    document.querySelectorAll('body')[0].setAttribute('class', res);
-    !UserAgent.iOS ? document.querySelectorAll('body')[0].classList.add('desktop') : document.querySelectorAll('body')[0].classList.add('mobile');
-    document.getElementById('main').innerHTML = doc.getElementById('main').innerHTML;
+    Site.body.setAttribute('class', res);
+    !UserAgent.iOS ? Site.body.classList.add('desktop') : Site.body.classList.add('mobile');
+    Site.main.innerHTML = doc.getElementById('main').innerHTML;
     Site.init();
   };
 
@@ -1188,7 +1152,7 @@ Site.setup = function setup() {
   Site.init();
 
   if (!UserAgent.iOS) {
-    document.querySelectorAll('body')[0].classList.add('desktop');
+    Site.body.classList.add('desktop');
 
     window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
     /* add mouse events to each element with the class of link_hover and animate the cursor accordingly */
@@ -1199,7 +1163,7 @@ Site.setup = function setup() {
   }
 
   /* THIS WAS AN ELSE STATEMENT BEFORE - START */
-  document.querySelectorAll('body')[0].classList.add('mobile');
+  Site.body.classList.add('mobile');
   Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
   Site.contact.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
   Drag.toggleHidden();
@@ -1217,7 +1181,7 @@ Site.setup = function setup() {
 
   Site.stageMenu = new PIXI.Container();
 
-  document.querySelectorAll('#the_menu li a').forEach(Site.setMenuDimensions);
+  Site.pixiMenuAnchors.forEach(Site.setMenuDimensions);
 
   /* displacement 2 */
   Site.displacementSprite3 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
@@ -1283,6 +1247,35 @@ Site.setup = function setup() {
   window.resize = Site.onResizeHandler;
   window.keydown = Site.onKeydownHandler;
 };
+
+/* anchor click events */
+Site.onClickHandler = function onClickHandler(event) {
+  if (!event.target.classList.contains('external')) {
+    event = event || window.event;
+    event.preventDefault() || false;
+
+    if (Site.linkInProgress === !1) { // false
+      Site.linkInProgress = !0; // true
+      var href = this.getAttribute('href');
+
+      if (event.target.classList.contains('bottom_link')) {
+        Site.bottomLink = !0;
+        event.target.classList.add('changing');
+      }
+      else Site.bottomLink = !1;
+
+      if (Site.scrolling !== null) Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
+
+      history.pushState({}, '', href);
+      Site.onLoadPage(href);
+      Site.onRafLoading();
+
+      return !1; // false
+    }
+    return !1; // false
+  }
+};
+
 
 /* State Change Events */
 Site.onPopStateHandler = function onPopStateHandler(event) {
@@ -1561,7 +1554,8 @@ Site.handleMouseOver = function handleMouseOver(event) {
       Drag.cursorMain.classList.add('cursor_main-small');
     }
   }
-  else return false;
+
+  return false;
 };
 
 Site.handleMouseOut = function handleMouseOut(event) {
@@ -2054,7 +2048,7 @@ Site.changePagination = function changePagination(element) {
   });
 
   TweenMax.to('#white_circle', 0.9, {
-    strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Site.lindex * 1 / Site.totalSlides)),
+    strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.lindex) / Site.totalSlides)),
     ease: Power4.easeInOut
   });
 
@@ -2066,7 +2060,7 @@ Site.changePagination = function changePagination(element) {
 Site.updatePagination = function updatePagination(direction) {
   if (direction === 'next') {
     Site.multiplier = 1;
-    TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Site.currentSlide * 1 / Site.totalSlides)), ease: Power4.easeInOut });
+    TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.currentSlide) / Site.totalSlides)), ease: Power4.easeInOut });
   }
   else {
     Site.multiplier = -1;
