@@ -238,7 +238,7 @@ MenuPixi = {
 var Menu = Menu || {};
 
 Menu = {
-  isOpen: !1,
+  isOpen: !1, // false
   button: null,
   arrowHidingTimeout: void 0,
   init: () => {
@@ -247,12 +247,13 @@ Menu = {
     Menu.navMenu = document.getElementById('menu');
     Menu.social = document.getElementById('social');
     // Menu.button.classList.toggle('opened');
-    Menu.button.isArrow = !1;
+    Menu.button.isArrow = !1; // set init state to false
+    Menu.button.isOpen = !1; // set init state to false
     cancelAnimationFrame(MenuPixi.rafPixiMenu); // Fixes issue where when click on nav menu links when it is opened, pixi repple efffect doesn't intitiate due to bollean property set on INIT();
   },
   open: () => {
-    Menu.isOpen = !0; // true
     Menu.button.classList.remove('closing');
+    Menu.button.classList.add('opened');
 
     Drag.cursorMain.classList.remove('vertical_scroll');
     Drag.cursorJunior.classList.remove('vertical_scroll');
@@ -300,16 +301,17 @@ Menu = {
     cancelAnimationFrame(Site.rafPixiSingle);
     cancelAnimationFrame(AboutRAFs.theRafAbout);
 
+    Menu.button.isOpen = !0; // true
     MenuPixi.init();
   },
   close: () => {
-    Menu.isOpen = !1; // Means : false
+    Menu.button.classList.remove('opened');
     Menu.button.classList.add('closing');
 
     setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
 
     if (Site.scrolling !== null) Site.scrolling.on();
-    if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
+    else if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
 
     TweenMax.to('#menu', 0.2, {
       opacity: 0,
@@ -339,6 +341,8 @@ Menu = {
     // else if (Site.body.classList.contains('single')) Site.singlePixi();
 
     if (Site.body.classList.contains('about')) AboutRAFs.init();
+
+    Menu.button.isOpen = !1; // false
   },
   showArrow: () => {
     Menu.button.isArrow || (Menu.button.isArrow = !0);
@@ -373,7 +377,7 @@ Menu = {
         false;
   },
   showHideArrow: () => {
-    if (!Menu.button.classList.contains('opened')) {
+    if (!Menu.button.isOpen) {
       if (!UserAgent.iOS) {
         if (Site.body.classList.contains('single')) {
           Menu.arrowUpdateHandler();
@@ -409,12 +413,14 @@ Drag = {
   init: () => {
     Drag.cursorMain = document.getElementsByClassName('cursor_main')[0];
     Drag.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
+    // Drag.isDrag = !0;
+    // Drag.isScroll = !0;
   },
   start: (event) => {
     /* homePixi mouse/touch : drag events */
     Drag.isDown = true;
-    event.preventDefault();
     event = event || window.event;
+    event.preventDefault() || false;
 
     Site.startPosition = event.pageX;
     // Site.body.classList.add('dragging');
@@ -427,8 +433,8 @@ Drag = {
   },
   move: (event) => {
     if (!Drag.isDown) return;
-    event.preventDefault();
     event = event || window.event;
+    event.preventDefault() || false;
 
     if (event.type === 'touchmove') {
       Site.posX2 = Site.posX1 - event.touches[0].clientX;
@@ -442,8 +448,8 @@ Drag = {
   end: (event) => {
     Drag.isDown = false;
 
-    event.preventDefault();
     event = event || window.event;
+    event.preventDefault() || false;
 
     Site.finishPosition = event.pageX;
     // Site.body.classList.remove('dragging');
@@ -522,7 +528,6 @@ Site.setup = function setup() {
   this.directoryUri = './';
   this.scrolling = null;
   this.preload = new createjs.LoadQueue(true);
-  console.log('Site.preload', Site.preload);
   this.newPageContent = void 0;
   this.rafPixiHome = void 0;
   this.rafPixiMenu = void 0;
@@ -590,6 +595,18 @@ Site.setup = function setup() {
   // this.addedLast = 0;
   // this.friction = 1 / 30;
 
+  // ----------------------------- PRELOAD PART ----------------------------- //
+  // function handleOverallProgress(event) {
+  //   return console.log('handleOverallProgress', 1 - event.progress);
+  // }
+
+  // function handleComplete(event) {
+  //   return console.log('handleComplete', event.complete);
+  // }
+
+  // Site.preload.on('progress', handleOverallProgress);
+  // Site.preload.on('complete', handleComplete);
+
   /* RAFs loading screen */
   Site.onRafLoading = function onRafLoading() {
     Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
@@ -608,20 +625,7 @@ Site.setup = function setup() {
       cancelAnimationFrame(Site.rafLoading);
     }
   };
-
-  // ----------------------------- PRELOAD PART ----------------------------- //
-  // function handleOverallProgress(event) {
-  //   return console.log('handleOverallProgress', 1 - event.progress);
-  // }
-
-  // function handleComplete(event) {
-  //   return console.log('handleComplete', event.complete);
-  // }
-
-  // Site.preload.on('progress', handleOverallProgress);
-  // Site.preload.on('complete', handleComplete);
-
-  /* called each time a page is launched */
+  /* initialization */
   Site.init = function init() {
     UserAgent.init();
     Drag.init();
@@ -630,7 +634,8 @@ Site.setup = function setup() {
     /* anchor click events */
     Site.onClickHandler = function onClickHandler(event) {
       if (!event.target.classList.contains('external')) {
-        event.preventDefault();
+        event = event || window.event;
+        event.preventDefault() || false;
 
         if (Site.linkInProgress === !1) { // false
           Site.linkInProgress = !0; // true
@@ -671,6 +676,7 @@ Site.setup = function setup() {
     this.about = document.getElementById('about');
     this.contact = document.getElementById('contact');
     this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
+    this.pixiMenuCover = document.getElementById('pixi_menu');
 
     TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
     TweenMax.set('#main', { display: 'block', clearProps: 'y' });
@@ -820,7 +826,7 @@ Site.setup = function setup() {
 
       Site.loader.load((loader, resources) => {
         Site.blockedAction = false;
-        if (!Menu.button.classList.contains('opened')) Site.homePixi();
+        if (!Menu.button.isOpen) Site.homePixi();
         Site.nextSlide();
 
         // DISABLE elements with class of update_link (<a>) in home pixi slider
@@ -1011,7 +1017,7 @@ Site.setup = function setup() {
       Site.loader.load((loader, resources) => {
         Site.blockedAction = false;
 
-        if (!Menu.button.classList.contains('opened')) Site.singlePixi();
+        if (!Menu.button.isOpen) Site.singlePixi();
 
         Site.animateRandomElements('.random');
 
@@ -1049,7 +1055,7 @@ Site.setup = function setup() {
 
     Site.sendHttpRequest(href);
 
-    if (Menu.button.classList.contains('opened')) {
+    if (Menu.button.isOpen) {
       cancelAnimationFrame(Site.rafPixiMenu);
       cancelAnimationFrame(AboutRAFs.theRafAbout); // TESTING <---|
       /* reset projMenu when changing states/clicking on anchor elements */
@@ -1178,40 +1184,32 @@ Site.setup = function setup() {
     Site.init();
   };
 
-  /* State Change Events */
-  Site.onPopStateHandler = function onPopStateHandler(event) {
-    if (event.state !== null) {
-      Site.onLoadPage(location.href);
-      Site.onRafLoading();
-    }
-  };
-  Site.onUnloadHandler = function onUnloadHandler(event) {
-    // console.log('5', Site.scrollMenuOpen);
-    window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
-    // if (Site.scrolling) {
-    //   Site.scrolling.scrollTo(0, 0);
-    // }
-  };
-
-  /* Add these events to window element */
-  window.onpopstate = Site.onPopStateHandler;
-  window.onunload = Site.onUnloadHandler;
-
   history.pushState({}, '', location);
   Site.init();
 
-  if (!UserAgent.iOS) document.querySelectorAll('body')[0].classList.add('desktop');
-  else {
-    document.querySelectorAll('body')[0].classList.add('mobile');
-    Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
-    Site.contact.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
+  if (!UserAgent.iOS) {
+    document.querySelectorAll('body')[0].classList.add('desktop');
+
+    window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
+    /* add mouse events to each element with the class of link_hover and animate the cursor accordingly */
+    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500)));
+    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500)));
+
+    Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
   }
+
+  /* THIS WAS AN ELSE STATEMENT BEFORE - START */
+  document.querySelectorAll('body')[0].classList.add('mobile');
+  Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
+  Site.contact.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
+  Drag.toggleHidden();
+  /* THIS WAS AN ELSE STATEMENT BEFORE - END */
 
   /* pixi menu statement */
   Site.rendererMenu = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
   // Site.rendererMenu = PIXI.autoDetectRenderer(0.24 * window.innerWidth, window.innerHeight - 0.074 * window.innerWidth, { transparent: !0 });
 
-  if (document.getElementById('pixi_menu')) document.getElementById('pixi_menu').appendChild(Site.rendererMenu.view);
+  if (Site.pixiMenuCover) Site.pixiMenuCover.appendChild(Site.rendererMenu.view);
 
   /* RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
   Site.rendererMenu.view.width = window.innerWidth;
@@ -1236,38 +1234,10 @@ Site.setup = function setup() {
 
   // ------------------------ END OF DOCUMENT READY ------------------------- //
 
-  if (!UserAgent.iOS) {
-    window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
-    /* adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
-    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500)));
-    Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500)));
-
-    Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
-  }
-  else Drag.toggleHidden();
-
-  /*
-   * Mouse events -
-   * Add these events to document element
-   */
-  window.onmousedown = Site.mousePositionHandler;
-  window.onmousedown = Site.projectChangedHandler;
-  window.onmousedown = Site.scrollEventHandler;
-  window.onmousedown = Site.touchStartHandler;
-  window.onmousedown = Site.touchMoveHandler;
-  window.onmousedown = Site.showHideArrow;
-  /*
-   * State Change Events -
-   * Add these events to window element
-   */
-  // window.onpopstate = Site.onPopStateHandler;
-  // window.onunload = Site.onUnloadHandler;
-
   window.addEventListener('onpopstate', Site.onPopStateHandler);
   window.addEventListener('onunload', Site.onUnloadHandler);
-
   window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500));
-  window.addEventListener('keydown', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500));
+  window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500));
   // window.addEventListener('scroll', Site.showHideArrow, false); // shows/hides menu arrow when scrolling on mobile devices
 
   /* device giroscope event */
@@ -1293,8 +1263,52 @@ Site.setup = function setup() {
   document.addEventListener(Site.clickEvent, Site.projectChangedHandler);
   // document.addEventListener('click', Site.projectChangedHandler, false);
   // document.addEventListener('touchend', Site.projectChangedHandler, false);
+
+  /*
+   * State Change Events -
+   * Add these events to window element
+   */
+  window.onpopstate = Site.onPopStateHandler;
+  window.onunload = Site.onUnloadHandler;
+  /*
+   * Mouse events -
+   * Add these events to document element
+   */
+  window.onmousedown = Site.mousePositionHandler;
+  window.onmousedown = Site.projectChangedHandler;
+  window.onmousedown = Site.scrollEventHandler;
+  window.onmousedown = Site.touchStartHandler;
+  window.onmousedown = Site.touchMoveHandler;
+  window.onmousedown = Site.showHideArrow;
+  window.resize = Site.onResizeHandler;
+  window.keydown = Site.onKeydownHandler;
 };
 
+/* State Change Events */
+Site.onPopStateHandler = function onPopStateHandler(event) {
+  event = event || window.event;
+  event.preventDefault() || false;
+
+  if (event.state !== null) {
+    Site.onLoadPage(location.href);
+    Site.onRafLoading();
+  }
+};
+
+Site.onUnloadHandler = function onUnloadHandler(event) {
+  console.log('onUnloadHandler - event.state', event.state);
+  event = event || window.event;
+  event.preventDefault() || false;
+  return window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
+};
+
+/* called each time a page is launched */
+Site.onKeydownHandler = function onKeydownHandler(event) {
+  event = event || window.event;
+  event.preventDefault() || false;
+  const escKey = event.key === 'Escape' || event.keyCode === 27;
+  (Menu.button.isOpen && escKey) && (Menu.close());
+};
 
 Site.sendHttpRequest = function sendHttpRequest(url) {
   const xhr = new XMLHttpRequest();
@@ -1375,36 +1389,16 @@ Site.projectChangedHandler = function projectChangedHandler(event) {
   else if (event.target.classList.contains('to_next') && Site.blockedAction === false) Site.nextSlide();
   else if (event.target.classList.contains('to_prev') && Site.blockedAction === false) Site.prevSlide();
   else if (event.target.classList.contains('projects')) {
-    event.preventDefault();
-    // Menu.button.isArrow ? Site.smoothScroll.scrollToY(0, !0) : Menu.isOpen ? Menu.close() : Menu.open();
+    event = event || window.event;
+    event.preventDefault() || false;
 
     if (Menu.button.isArrow) {
-      // Site.smoothScroll.scrollToY(0, !0);
-
       Site.scrolling !== null ?
         Site.scrolling.scrollTo(0) : // Site.scrolling.scrollTo(0, !0);
         Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad'); // Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
     }
-
     document.querySelectorAll('.projects').forEach((obj) => obj.classList.toggle('opened')); // Takes a second argument => true || false |\ Condition
-    // document.querySelector('.projects').classList.toggle('opened');
-    // Menu.button.classList.toggle('opened');
-
-    // if (!Menu.button.classList.contains('opened')) {
-    //   Menu.button.classList.add('closing');
-    //   setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
-    // }
-
-    Menu.button.classList.contains('opened') ? Menu.open() : Menu.close();
-  }
-};
-
-Site.onKeydownHandler = function onKeydownHandler(event) {
-  if (event.key === 'Escape' || event.keyCode === 27) {
-    if (Menu.button.classList.contains('opened')) {
-      Menu.init();
-      Menu.close();
-    }
+    !Menu.button.isOpen ? Menu.open() : Menu.close();
   }
 };
 
@@ -1553,7 +1547,7 @@ Site.scrollBackUp = function scrollBackUp(target) {
 /* anchor mouse events */
 Site.handleMouseOver = function handleMouseOver(event) {
   event = event || window.event;
-  event.preventDefault();
+  event.preventDefault() || false;
 
   if (event.target.classList.contains('link_hover')) {
     if (Site.body.classList.contains('home')) {
@@ -1572,7 +1566,7 @@ Site.handleMouseOver = function handleMouseOver(event) {
 
 Site.handleMouseOut = function handleMouseOut(event) {
   event = event || window.event;
-  event.preventDefault();
+  event.preventDefault() || false;
 
   if (event.target.classList.contains('link_hover')) {
     if (Site.body.classList.contains('home')) {
@@ -1581,7 +1575,7 @@ Site.handleMouseOut = function handleMouseOut(event) {
       Drag.cursorMain.classList.remove('cursor_main-small');
       Drag.cursorMain.classList.remove('menu_opened');
 
-      if (Menu.button.classList.contains('opened')) {
+      if (Menu.button.isOpen) {
         Drag.cursorMain.classList.remove('mainDrag');
         Drag.cursorJunior.classList.remove('j_Drag');
         Drag.cursorMain.classList.add('menu_opened');
@@ -1594,7 +1588,7 @@ Site.handleMouseOut = function handleMouseOut(event) {
         Drag.cursorMain.classList.remove('cursor_main-small');
         Drag.cursorMain.classList.remove('menu_opened');
       }
-      if (Menu.button.classList.contains('opened')) {
+      if (Menu.button.isOpen) {
         Drag.cursorMain.classList.remove('vertical_scroll');
         Drag.cursorJunior.classList.remove('vertical_scroll');
         Drag.cursorMain.classList.add('menu_opened');
@@ -1610,7 +1604,7 @@ Site.handleMouseOut = function handleMouseOut(event) {
 
 Site.handlerMouseMove = function handlerMouseMove(event) {
   event = event || window.event;
-  event.preventDefault();
+  event.preventDefault() || false;
 
   let pad = 26;
   let pad2 = 5;
@@ -1678,7 +1672,7 @@ Site.scrollEventHandler = function scrollEventHandler(event) {
 
   var delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
 
-  if (Site.lethargy.check(event) !== false && Site.blockedAction === !1 && !Menu.button.classList.contains('opened') && Site.body.classList.contains('home')) {
+  if (Site.lethargy.check(event) !== false && Site.blockedAction === !1 && !Menu.button.isOpen && Site.body.classList.contains('home')) {
     if (delta > 0) Site.nextSlide();
     else if (delta < 0) Site.prevSlide();
   }
@@ -1986,7 +1980,7 @@ Site.checkMenu = function checkMenu(item, index) {
   ) {
     document.querySelector('#the_menu .active').classList.remove('active');
     item.classList.add('active');
-    document.getElementById('pixi_menu').setAttribute('href', item.querySelector('a').getAttribute('href'));
+    Site.pixiMenuCover.setAttribute('href', item.querySelector('a').getAttribute('href'));
 
     /* add new image */
     Site.stageMenu.addChild(window['image_menu' + index]);
