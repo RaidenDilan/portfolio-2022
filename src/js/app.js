@@ -415,26 +415,23 @@ Drag = {
     Drag.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
     Drag.isDrag = !1;
     Drag.isScroll = !1;
-
     /* Mouse/drag events */
     /* Add these events to document element */
     window.onmousedown = Drag.start;
     window.onmousedown = Drag.move;
     window.onmousedown = Drag.end;
-
     /* drag event */
     window.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
     window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
     window.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
   },
   start: (event) => {
-    /* homePixi mouse/touch : drag events */
     Drag.isDown = !0;
     event = event || window.event;
     event.preventDefault() || false;
-
     Site.startPosition = event.pageX;
-    // Site.body.classList.add('dragging');
+    Site.body.classList.add('dragging'); // IS THIS NECESSARY?
+
     if (event.type === 'touchstart') Site.posX1 = event.touches[0].clientX;
     else {
       Site.posX1 = event.clientX;
@@ -458,12 +455,10 @@ Drag = {
   },
   end: (event) => {
     Drag.isDown = !1;
-
     event = event || window.event;
     event.preventDefault() || false;
-
     Site.finishPosition = event.pageX;
-    // Site.body.classList.remove('dragging');
+    Site.body.classList.remove('dragging'); // IS THIS NECESSARY?
 
     (Site.finishPosition - Site.startPosition < -Drag.threshold) && Site.blockedAction === !1 ?
       Site.nextSlide() :
@@ -474,7 +469,6 @@ Drag = {
     document.onmouseup = null;
     document.onmousemove = null;
   },
-  // REFACTOR METHODS BELLOW...
   toggleVisible: () => {
     Drag.cursorMain.classList.add('visible');
     Drag.cursorJunior.classList.add('visible');
@@ -486,20 +480,16 @@ Drag = {
   show: () => {
     Drag.isDrag = !0;
     Drag.isScroll = !1;
-
     Drag.cursorMain.classList.remove('vertical_scroll');
     Drag.cursorJunior.classList.remove('vertical_scroll');
-
     Drag.cursorMain.classList.add('mainDrag');
     Drag.cursorJunior.classList.add('j_Drag');
   },
   hide: () => {
     Drag.isScroll = !0;
     Drag.isDrag = !1;
-
     Drag.cursorMain.classList.remove('mainDrag');
     Drag.cursorJunior.classList.remove('j_Drag');
-
     Drag.cursorMain.classList.add('vertical_scroll');
     Drag.cursorJunior.classList.add('vertical_scroll');
   }
