@@ -497,8 +497,6 @@ Drag = {
 
 var Site = Site || {};
 
-/* TO DO: DEBUG PAGINATION UPDATE ON CLICK EVENTS WHERE LETTER DOESN'T ANIMATE || SLIDE BACKWARDS */
-
 Site.setup = function setup() {
   /* DOMContentLoaded global variables */
   this.directoryUri = './';
@@ -574,11 +572,9 @@ Site.setup = function setup() {
   // function handleOverallProgress(event) {
   //   return console.log('handleOverallProgress', 1 - event.progress);
   // }
-
   // function handleComplete(event) {
   //   return console.log('handleComplete', event.complete);
   // }
-
   // Site.preload.on('progress', handleOverallProgress);
   // Site.preload.on('complete', handleComplete);
 
@@ -625,8 +621,6 @@ Site.setup = function setup() {
     this.main = document.getElementById('main');
     this.about = document.getElementById('about');
     this.contact = document.getElementById('contact');
-    // this.social = document.getElementById('social');
-
     this.pixiMenuCover = document.getElementById('pixi_menu');
     this.pixiMenuLinks = document.querySelectorAll('#the_menu li');
     this.pixiMenuAnchors = document.querySelectorAll('#the_menu li a');
@@ -634,23 +628,16 @@ Site.setup = function setup() {
     TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
     TweenMax.set('#main', { display: 'block', clearProps: 'y' });
     // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
-    // Site.onResizeHandler();
 
     // Resets header menu elements back to their defaults states/classes.
     Menu.navMenu.style.display = 'none';
-
     /* Update and Animate projMenu from arrow/Close(X) */
     if (Menu.button.classList.contains('arrow-transition-in')) Menu.hideArrow();
-    // if (Menu.button.classList.contains('arrow-transition-in')) Menu.hideArrow();
 
     /* close Nav Menu when anchor click events */
     Menu.button.classList.remove('opened');
-    // Menu.button.classList.remove('opened');
-
     /* Reset lightButtonStyles */
     Menu.button.classList.remove('light');
-    // Menu.button.classList.remove('light');
-
     Menu.social.classList.remove('light');
     Menu.logo.classList.remove('light');
     Drag.cursorMain.classList.remove('menu_opened');
@@ -658,40 +645,20 @@ Site.setup = function setup() {
     Site.about.style.display = 'block';
     Site.contact.style.display = 'block';
 
-    // if (!Menu.button.classList.contains('.point3.black')) {
-    //   // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
-    //   Menu.button.style.setProperty('--button-color', 'blue');
-    // } else {
-    //   // Menu.button.childNodes.forEach((obj) => obj.style.setProperty('--button-color'));
-    //   Menu.button.style.setProperty('--button-color', 'red');
-    // }
-
-    // Site.about.classList.remove('light');
-    // Site.contact.classList.remove('light');
-
     /* classList of undefined when going from state to another => BUG!!! */
     if (Site.body.classList.contains('is-loading')) setTimeout(() => Site.loading.classList.remove('is-loading'), 1000, false);
-
-    // when click on link
-    // Site.links = document.querySelectorAll('a');
 
     /* removes event listeners from elements with 'link' class before adding click events to each element */
     Site.links.forEach((link) => link.removeEventListener('click', Site.onClickHandler, !1));
     Site.links.forEach((link) => link.addEventListener('click', Site.onClickHandler, !1));
 
+    // if (!Menu.button.classList.contains('.point3.black')) Menu.button.style.setProperty('--button-color', 'blue'); // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
+    // else Menu.button.style.setProperty('--button-color', 'red'); // Menu.button.childNodes.forEach((obj) => obj.style.setProperty('--button-color'));
     // Site.preloadImages();
-    // Menu.button.onclick = (event) => {
-    //   event.preventDefault();
-    //   Menu.button.isArrow ? Site.smoothScroll.scrollToY(0, !0) : Site.isOpen ? Site.close() : Site.open();
-    //
-    //   // if (Menu.button.isArrow) Site.smoothScroll.scrollToY(0, !0);
-    //   // else if (Site.isOpen) Site.close();
-    //   // else Site.open();
-    // };
     // let root = document.documentElement;
-    // root.addEventListener("mousemove", e => {
-    //   root.style.setProperty('--mouse-x', e.clientX + "px");
-    //   root.style.setProperty('--mouse-y', e.clientY + "px");
+    // root.addEventListener('mousemove', (e) => {
+    //   root.style.setProperty('--mouse-x', e.clientX + 'px');
+    //   root.style.setProperty('--mouse-y', e.clientY + 'px');
     // });
 
     if (!UserAgent.iOS) {
@@ -1186,20 +1153,12 @@ Site.setup = function setup() {
   /* ladder x/y */
   Site.displacementSprite3.scale.x = 0.4;
 
-  // ------------------------ END OF DOCUMENT READY ------------------------- //
-
   window.addEventListener('onpopstate', Site.onPopStateHandler);
   window.addEventListener('onunload', Site.onUnloadHandler);
   window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
   window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
-  // window.addEventListener('scroll', Site.showHideArrow, false); // shows/hides menu arrow when scrolling on mobile devices
-
   /* device giroscope event */
   if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1);
-
-  // window.addEventListener('scroll', () => Site.aboutRafs());
-  // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs), 1000);
-
   /* scroll events */
   document.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
   document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
@@ -1215,9 +1174,6 @@ Site.setup = function setup() {
   /* Add the event listeners for each click/mousemove events. */
   document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
   document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
-  // document.addEventListener('click', Site.projectChangedHandler, !);
-  // document.addEventListener('touchend', Site.projectChangedHandler, !);
-  /* removes event listeners from elements with 'link' class before adding click events to each element */
   /*
    * State Change Events -
    * Add these events to window element
