@@ -290,9 +290,9 @@ Menu = {
 
     Site.stageMenu.addChild(Site.displacementSprite3);
 
-    /* image_menu0 returned by PixiJS */
+    /* menu_image0 returned by PixiJS */
     // eslint-disable-next-line camelcase
-    var imageSprite = image_menu0;
+    var imageSprite = menu_image0;
 
     Site.stageMenu.addChild(imageSprite);
     imageSprite.alpha = 1;
@@ -417,13 +417,13 @@ Drag = {
     Drag.isScroll = !1;
     /* Mouse/drag events */
     /* Add these events to document element */
-    window.onmousedown = Drag.start;
-    window.onmousedown = Drag.move;
-    window.onmousedown = Drag.end;
+    document.onmousedown = Drag.start;
+    document.onmousedown = Drag.move;
+    document.onmousedown = Drag.end;
     /* drag event */
-    window.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
-    window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
-    window.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
+    document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
+    document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
+    document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
   },
   start: (event) => {
     Drag.isDown = !0;
@@ -569,7 +569,6 @@ Site.setup = function setup() {
   this.deltaGamma = void 0;
   this.clickEvent = ('ontouchstart' in window ? 'touchend' : 'click');
   // this.addedLast = 0;
-  // this.friction = 1 / 30;
 
   // ----------------------------- PRELOAD PART ----------------------------- //
   // function handleOverallProgress(event) {
@@ -677,8 +676,8 @@ Site.setup = function setup() {
     // Site.links = document.querySelectorAll('a');
 
     /* removes event listeners from elements with 'link' class before adding click events to each element */
-    Site.links.forEach((link) => link.removeEventListener('click', Site.onClickHandler, false));
-    Site.links.forEach((link) => link.addEventListener('click', Site.onClickHandler, false));
+    Site.links.forEach((link) => link.removeEventListener('click', Site.onClickHandler, !1));
+    Site.links.forEach((link) => link.addEventListener('click', Site.onClickHandler, !1));
 
     // Site.preloadImages();
     // Menu.button.onclick = (event) => {
@@ -1139,7 +1138,8 @@ Site.setup = function setup() {
   };
 
   history.pushState({}, '', location);
-  Site.init();
+
+  Site.init(); // INITIALISE APP
 
   if (!UserAgent.iOS) {
     Site.body.classList.add('desktop');
@@ -1190,8 +1190,8 @@ Site.setup = function setup() {
 
   window.addEventListener('onpopstate', Site.onPopStateHandler);
   window.addEventListener('onunload', Site.onUnloadHandler);
-  window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500));
-  window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500));
+  window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
+  window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
   // window.addEventListener('scroll', Site.showHideArrow, false); // shows/hides menu arrow when scrolling on mobile devices
 
   /* device giroscope event */
@@ -1201,23 +1201,23 @@ Site.setup = function setup() {
   // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs), 1000);
 
   /* scroll events */
-  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500));
-  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500));
-  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500));
+  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
   /* touch events */
   document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
   document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
   /* Show Hide Menu Arrow events */
-  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
-  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
-  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500));
-  document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500)); // shows/hides menu arrow when scrolling on mobile devices
+  document.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+  document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+  document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+  document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1); // shows/hides menu arrow when scrolling on mobile devices
   /* Add the event listeners for each click/mousemove events. */
-  document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500));
-  document.addEventListener(Site.clickEvent, Site.projectChangedHandler);
-  // document.addEventListener('click', Site.projectChangedHandler, false);
-  // document.addEventListener('touchend', Site.projectChangedHandler, false);
-
+  document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
+  document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+  // document.addEventListener('click', Site.projectChangedHandler, !);
+  // document.addEventListener('touchend', Site.projectChangedHandler, !);
+  /* removes event listeners from elements with 'link' class before adding click events to each element */
   /*
    * State Change Events -
    * Add these events to window element
@@ -1240,38 +1240,33 @@ Site.setup = function setup() {
 
 /* anchor click events */
 Site.onClickHandler = function onClickHandler(event) {
-  if (!event.target.classList.contains('external')) {
+  // IF ---> LINK IS NOT AN EXTERNAL LINK
+  if (!event.target.matches('external')) {
     event = event || window.event;
     event.preventDefault() || false;
 
-    if (Site.linkInProgress === !1) { // false
-      Site.linkInProgress = !0; // true
-      var href = this.getAttribute('href');
-
-      if (event.target.classList.contains('bottom_link')) {
-        Site.bottomLink = !0;
-        event.target.classList.add('changing');
-      }
-      else Site.bottomLink = !1;
-
-      if (Site.scrolling !== null) Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
-
-      history.pushState({}, '', href);
+    if (Site.linkInProgress === !1) {
+      Site.linkInProgress = !0;
+      let href = this.getAttribute('href');
+      // let href = event.target.getAttribute('href');
+      event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
+      Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
+      /* history.pushState(initialState, '', href); */
+      history.pushState(null, null, href);
+      // history.pushState({}, '', href);
       Site.onLoadPage(href);
       Site.onRafLoading();
-
-      return !1; // false
+      return !1;
     }
-    return !1; // false
+    return !1;
   }
+  // event.stopPropagation();
 };
-
 
 /* State Change Events */
 Site.onPopStateHandler = function onPopStateHandler(event) {
-  event = event || window.event;
-  event.preventDefault() || false;
-
+  // event = event || window.event;
+  // event.preventDefault() || false;
   if (event.state !== null) {
     Site.onLoadPage(location.href);
     Site.onRafLoading();
@@ -1279,7 +1274,6 @@ Site.onPopStateHandler = function onPopStateHandler(event) {
 };
 
 Site.onUnloadHandler = function onUnloadHandler(event) {
-  console.log('onUnloadHandler - event.state', event.state);
   event = event || window.event;
   event.preventDefault() || false;
   return window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
@@ -1388,17 +1382,9 @@ Site.projectChangedHandler = function projectChangedHandler(event) {
 
 Site.setDimensions = function setDimensions(item, index) {
   Site.totalSlides++;
-
   window['image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-url')));
   window['image' + index].alpha = 0;
-
-  // Chainable `pre` to add a middleware that runs for each resource, *before* loading that resource.
-  // This is useful to implement custom caching modules (using filesystem, indexeddb, memory, etc).
-  // Site.loader.pre(cachingMiddleware);
-  // Site.loader.add('image' + index, item.getAttribute('data-url'));
-
-  var img = new Image(); // equivalent to document.createElement('img')
-
+  let img = new Image(); // equivalent to document.createElement('img')
   img.src = item.getAttribute('data-url');
   img.onload = function() {
     let width = this.width;
@@ -1422,17 +1408,11 @@ Site.setDimensions = function setDimensions(item, index) {
 };
 
 Site.setMenuDimensions = function setMenuDimensions(item, index) {
-  // Site.totalSlides++;
+  window['menu_image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-img')));
+  window['menu_image' + index].alpha = 0;
   let frameWidth = 0.24 * window.innerWidth;
-  let frameHeight = window.innerHeight - 0.074 * window.innerWidth; // ---> 705.28px
-
-  // console.log('frameWidth --->', frameWidth);
-  // console.log('frameHeight --->', frameHeight);
-
-  window['image_menu' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-img')));
-  window['image_menu' + index].alpha = 0;
-
-  var img = new Image();
+  let frameHeight = window.innerHeight - 0.074 * window.innerWidth;
+  let img = new Image(); // equivalent to document.createElement('img')
 
   img.src = item.getAttribute('data-img');
   img.onload = function() {
@@ -1441,52 +1421,18 @@ Site.setMenuDimensions = function setMenuDimensions(item, index) {
     let imageRatio = width / height;
     let windowRatio = frameWidth / frameHeight;
 
-    // console.log('height --->', height);
-    // console.log('window.innerWidth --->', window.innerWidth);
-
     // +10 and -5 values to avoid white edges
     if (windowRatio >= imageRatio) {
-      // console.log('1', windowRatio >= imageRatio);
-      window['image_menu' + index].width = window.innerWidth + 10;
-      window['image_menu' + index].height = height * (window.innerWidth + 10) / width;
-      window['image_menu' + index].x = -5;
-      window['image_menu' + index].y = window.innerHeight / 2 - window['image_menu' + index].height / 2;
-
-
-      // window['image_menu' + index].width = window.innerWidth + 10;
-      // window['image_menu' + index].height = height * (window.innerWidth + 10) / width;
-      // window['image_menu' + index].x = -5;
-      // window['image_menu' + index].y = window.innerHeight / 2 - window['image_menu' + index].height / 2;
+      window['menu_image' + index].width = window.innerWidth + 10;
+      window['menu_image' + index].height = height * (window.innerWidth + 10) / width;
+      window['menu_image' + index].x = -5;
+      window['menu_image' + index].y = window.innerHeight / 2 - window['menu_image' + index].height / 2;
     }
     else {
-      // console.log('2', windowRatio >= imageRatio);
-      // window['image_menu' + index].width = width;
-      // window['image_menu' + index].width = window.innerWidth + 10;;
-      window['image_menu' + index].width = (width * window.innerHeight / height) + 10;
-      // window['image_menu' + index].height = height;
-      window['image_menu' + index].height = height * (window.innerWidth + 10) / width;
-      window['image_menu' + index].x = (frameWidth / 2 - window['image_menu' + index].width / 2) - 25; // -757.4
-      // window['image_menu' + index].x      = (frameHeight / 2 - window['image_menu' + index].width / 2) - 150; // -757.36
-      // window['image_menu' + index].y = height / 6 - window['image_menu' + index].height / 2; // ADDED BY ME
-
-
-      // window['image_menu' + index].height = height;
-      // window['image_menu' + index].width = (width * window.innerHeight / height) + 10;
-      // // window['image_menu' + index].x      = (window.innerWidth / 2 - window['image_menu' + index].width / 2) - 5;
-      // window['image_menu' + index].y = height / 6 - window['image_menu' + index].height / 2; // ADDED BY ME
+      window['menu_image' + index].width = (width * window.innerHeight / height) + 10;
+      window['menu_image' + index].height = height * (window.innerWidth + 10) / width;
+      window['menu_image' + index].x = (frameWidth / 2 - window['menu_image' + index].width / 2) - 25;
     }
-    // // ORIGINAL
-    // // +10 and -5 values to avoid white edges
-    // if (windowRatio >= imageRatio) {
-    //   window['image_menu' + index].width  = frameWidth + 10;
-    //   window['image_menu' + index].height = height * (frameWidth + 10) / width;
-    //   window['image_menu' + index].x      = - 5;
-    //   window['image_menu' + index].y      = frameHeight / 2 - window['image_menu' + index].height / 2;
-    // } else {
-    //   window['image_menu' + index].height = frameHeight;
-    //   window['image_menu' + index].width  = (width * frameHeight / height) + 10;
-    //   window['image_menu' + index].x      = (frameWidth / 2 - window['image_menu' + index].width / 2) - 5;
-    // }
   };
 };
 
@@ -1593,12 +1539,12 @@ Site.handlerMouseMove = function handlerMouseMove(event) {
   let pad = 26;
   let pad2 = 5;
 
-  if (!Drag.cursorMain.classList.contains('visible')) Drag.toggleVisible();
-  else if (Drag.cursorMain.classList.contains('visible')) {
-    TweenMax.to(Drag.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }); // Drag.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
-    TweenMax.to(Drag.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }); // Drag.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
-  }
-  else return false;
+  !Drag.cursorMain.classList.contains('visible') ?
+    Drag.toggleVisible() :
+    Drag.cursorMain.classList.contains('visible') ? (
+      TweenMax.to(Drag.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }), // Drag.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
+      TweenMax.to(Drag.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }) // Drag.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
+    ) : false;
 };
 
 Site.circleHandler = function circleHandler(event) {
@@ -1609,7 +1555,7 @@ Site.circleHandler = function circleHandler(event) {
       window.orientation === -90 ?
         Site.gamma = -event.beta :
         window.orientation === 90 &&
-        (Site.gamma = event.beta); // last conditionale block || else statement
+        (Site.gamma = event.beta); // this is the last conditional block OR 'else' statement
 };
 
 Site.touchStartHandler = function touchStartHandler(event) {
@@ -1618,19 +1564,22 @@ Site.touchStartHandler = function touchStartHandler(event) {
 };
 
 Site.touchMoveHandler = function touchMoveHandler(event) {
-  if (!Site.xDown || !Site.yDown) return;
+  !!(!Site.xDown || !Site.yDown); // return if touch props are valid
 
-  var xUp = event.touches[0].clientX;
-  var yUp = event.touches[0].clientY;
+  let xUp = event.touches[0].clientX;
+  let yUp = event.touches[0].clientY;
 
-  var xDiff = Site.xDown - xUp;
-  var yDiff = Site.yDown - yUp;
+  let xDiff = Site.xDown - xUp;
+  let yDiff = Site.yDown - yUp;
 
-  if (Math.abs(xDiff) > Math.abs(yDiff)) { /* most significant */
-    if (Site.body.classList.contains('home') && Site.blockedAction === !1) xDiff > 0 ? Site.nextSlide() : Site.prevSlide();
+  const expression = Site.body.classList.contains('home') && Site.blockedAction === !1;
+
+  /* most significant */
+  if (Math.abs(xDiff) > Math.abs(yDiff)) {
+    if (expression) xDiff > 0 ? Site.nextSlide() : Site.prevSlide();
   }
   else {
-    if (Site.body.classList.contains('home') && Site.blockedAction === !1) yDiff > 0 ? Site.nextSlide() : Site.prevSlide();
+    if (expression) yDiff > 0 ? Site.nextSlide() : Site.prevSlide();
   }
 
   /* reset values */
@@ -1651,36 +1600,30 @@ Site.offHover = function offHover(event) {
 
 
 Site.scrollEventHandler = function scrollEventHandler(event) {
-  if (event.type === 'wheel') Site.supportsWheel = !0;
-  else if (Site.supportsWheel) return;
-
-  var delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
-
-  if (Site.lethargy.check(event) !== false && Site.blockedAction === !1 && !Menu.button.isOpen && Site.body.classList.contains('home')) {
-    if (delta > 0) Site.nextSlide();
-    else if (delta < 0) Site.prevSlide();
-  }
+  event = event || window.event;
+  event.type === 'wheel' ? Site.supportsWheel = !0 : Site.supportsWheel && true;
+  let delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
+  const checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
+  if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) delta > 0 ? Site.nextSlide() : (delta < 0) ? Site.prevSlide() : false;
 };
 
 Site.onResizeHandler = function onResizeHandler() {
-  if (!UserAgent.iOS && Site.scrolling !== null) Site.scrolling.resize();
-  else {
-    Site.about.style.top = (window.innerHeight / 2) - 50 + 'px';
-    Site.contact.style.top = (window.innerHeight / 2) - 50 + 'px';
-  }
+  !UserAgent.iOS && Site.scrolling !== null ?
+    (Site.scrolling.resize()) :
+    (
+      Site.about.style.top = (window.innerHeight / 2) - 50 + 'px',
+      Site.contact.style.top = (window.innerHeight / 2) - 50 + 'px'
+    );
 };
 
 Site.nextSlide = function nextSlide() {
   Site.speed = 4;
-
   Site.commonTransition();
   Site.updatePagination('next');
-
   window['image' + Site.currentSlide].alpha = 0;
   Site.stage.addChild(window['image' + Site.currentSlide]);
-
   // image1.alpha = 1;
-  var timeline = new TimelineMax();
+  const timeline = new TimelineMax();
 
   timeline.to(Site.attributes2, 0.9, {
     intensity: 150,
@@ -1699,17 +1642,9 @@ Site.nextSlide = function nextSlide() {
           Site.stage.removeChild(Site.displacementSprite2);
           Site.stage.addChild(Site.displacementSprite);
         }
-
         Site.listenCursor = !0;
-
-        Site.currentSlide === 0 ?
-          Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) :
-          Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
-
-        Site.currentSlide < (Site.totalSlides - 1) ?
-          Site.currentSlide++ :
-          Site.currentSlide = 0;
-
+        Site.currentSlide === 0 ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
+        Site.currentSlide < (Site.totalSlides - 1) ? Site.currentSlide++ : Site.currentSlide = 0;
         Site.displacementSprite.x = Site.currentMousePos.x;
         Site.blockedAction = !1;
       }, 800);
@@ -1728,26 +1663,20 @@ Site.nextSlide = function nextSlide() {
 
 Site.prevSlide = function prevSlide() {
   Site.speed = -4;
-
   Site.commonTransition();
   Site.updatePagination('prev');
-
-  if (Site.currentSlide === 0) {
-    window['image' + (Site.totalSlides - 2)].alpha = 0;
-    Site.stage.addChild(window['image' + (Site.totalSlides - 2)]);
-  }
-  else if (Site.currentSlide === 1) {
-    window['image' + (Site.totalSlides - 1)].alpha = 0;
-    Site.stage.addChild(window['image' + (Site.totalSlides - 1)]);
-  }
-  else {
-    window['image' + (Site.currentSlide - 2)].alpha = 0;
-    Site.stage.addChild(window['image' + (Site.currentSlide - 2)]);
-  }
-
+  Site.currentSlide === 0 ? (
+    window['image' + (Site.totalSlides - 2)].alpha = 0,
+    Site.stage.addChild(window['image' + (Site.totalSlides - 2)])
+  ) : Site.currentSlide === 1 ? (
+    window['image' + (Site.totalSlides - 1)].alpha = 0,
+    Site.stage.addChild(window['image' + (Site.totalSlides - 1)])
+  ) : (
+    window['image' + (Site.currentSlide - 2)].alpha = 0,
+    Site.stage.addChild(window['image' + (Site.currentSlide - 2)])
+  );
   // image1.alpha = 1;
-  var timeline = new TimelineMax();
-
+  const timeline = new TimelineMax();
   // Site.attributes2.anchor = 0;
 
   timeline.to(Site.attributes2, 0.9, {
@@ -1780,15 +1709,9 @@ Site.prevSlide = function prevSlide() {
           Site.stage.removeChild(Site.displacementSprite2);
           Site.stage.addChild(Site.displacementSprite);
         }
-
         Site.listenCursor = !0;
-
-        Site.currentSlide === 0 ?
-          Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) :
-          Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
-
+        Site.currentSlide === 0 ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
         Site.currentSlide > 0 ? Site.currentSlide-- : Site.currentSlide = Site.totalSlides - 1;
-
         Site.displacementSprite.x = Site.currentMousePos.x;
         Site.blockedAction = !1;
       }, 800);
@@ -1800,9 +1723,11 @@ Site.prevSlide = function prevSlide() {
     delay: 0.6,
     ease: Linear.easeNone,
     onUpdate: () => {
-      if (Site.currentSlide === 0) window['image' + (Site.totalSlides - 2)].alpha = Site.attributes3.opacity;
-      else if (Site.currentSlide === 1) window['image' + (Site.totalSlides - 1)].alpha = Site.attributes3.opacity;
-      else window['image' + (Site.currentSlide - 2)].alpha = Site.attributes3.opacity;
+      Site.currentSlide === 0 ?
+        window['image' + (Site.totalSlides - 2)].alpha = Site.attributes3.opacity :
+        Site.currentSlide === 1 ?
+          window['image' + (Site.totalSlides - 1)].alpha = Site.attributes3.opacity :
+          window['image' + (Site.currentSlide - 2)].alpha = Site.attributes3.opacity;
     }
   });
 };
@@ -1811,12 +1736,9 @@ Site.prevSlide = function prevSlide() {
 Site.commonTransition = function commonTransition() {
   Site.listenCursor = !1;
   Site.blockedAction = !0;
-
   Site.stage.removeChild(Site.displacementSprite);
   Site.stage.addChild(Site.displacementSprite2);
-
   Site.attributes.intensity = Site.displacementFilter.scale.x;
-
   TweenMax.to(Site.attributes, 0.3, {
     intensity: 0,
     ease: Power2.easeOut,
@@ -1824,7 +1746,6 @@ Site.commonTransition = function commonTransition() {
       Site.displacementFilter.scale.x = Site.attributes.intensity;
     }
   });
-
   Site.displacementSprite2.x = 0;
   Site.attributes2.intensity = Site.displacementFilter2.scale.x;
   Site.attributes2.x = Site.speed;
@@ -1967,14 +1888,14 @@ Site.checkMenu = function checkMenu(item, index) {
     Site.pixiMenuCover.setAttribute('href', item.querySelector('a').getAttribute('href'));
 
     /* add new image */
-    Site.stageMenu.addChild(window['image_menu' + index]);
+    Site.stageMenu.addChild(window['menu_image' + index]);
     Site.displace2.alpha = 0;
     // Site.stageMenu.removeChild(Site.displacementSprite3);
 
     TweenMax.to(Site.displace2, 0.2, {
       alpha: 1,
       onUpdate: () => {
-        window['image_menu' + index].alpha = Site.displace2.alpha;
+        window['menu_image' + index].alpha = Site.displace2.alpha;
       },
       onComplete: () => {
       //   // to do : management suppression former child
@@ -1991,19 +1912,14 @@ Site.checkMenu = function checkMenu(item, index) {
 /*----------------------------------------------------------------------------*/
 
 Site.changePagination = function changePagination(element) {
-  if (element.classList.contains('current')) return;
-
+  !!element.classList.contains('current'); // return if element contains the 'current' class
   Site.lindex = Array.from(document.getElementById('num_letter').children).indexOf(element);
-  const currentIndex = Array.from(document.getElementById('num_letter').children).indexOf(document.querySelector('#num_letter .current'));
-
+  let currentIndex = Array.from(document.getElementById('num_letter').children).indexOf(document.querySelector('#num_letter .current'));
   Site.speed = 4;
-
   Site.commonTransition();
-
   window['image' + Site.lindex].alpha = 0;
   Site.stage.addChild(window['image' + Site.lindex]);
-
-  var timeline = new TimelineMax();
+  const timeline = new TimelineMax();
 
   timeline.to(Site.attributes2, 0.9, {
     intensity: 150,
@@ -2036,14 +1952,8 @@ Site.changePagination = function changePagination(element) {
       window['image' + Site.lindex].alpha = Site.attributes3.opacity;
     }
   });
-
-  TweenMax.to('#white_circle', 0.9, {
-    strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.lindex) / Site.totalSlides)),
-    ease: Power4.easeInOut
-  });
-
+  TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.lindex) / Site.totalSlides)), ease: Power4.easeInOut });
   Site.animateRandomElements('.random');
-
   TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.clickablePagination);
 };
 
@@ -2054,9 +1964,11 @@ Site.updatePagination = function updatePagination(direction) {
   }
   else {
     Site.multiplier = -1;
-    if (Site.currentSlide === 1) TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 0, ease: Power4.easeInOut });
-    else if (Site.currentSlide === 0) TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 / Site.totalSlides, ease: Power4.easeInOut });
-    else TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 - (Site.currentSlide - 1) * 1900 / Site.totalSlides, ease: Power4.easeInOut });
+    Site.currentSlide === 1 ?
+      TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 0, ease: Power4.easeInOut }) :
+      Site.currentSlide === 0 ?
+        TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 / Site.totalSlides, ease: Power4.easeInOut }) :
+        TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 - (Site.currentSlide - 1) * 1900 / Site.totalSlides, ease: Power4.easeInOut });
   }
 
   Site.animateRandomElements('.random');
@@ -2065,9 +1977,10 @@ Site.updatePagination = function updatePagination(direction) {
 
 Site.scrollablePagination = function scrollablePagination() {
   document.querySelectorAll('.random.first').forEach((obj) => obj.classList.remove('first'));
-
   // Added to prevent classList of null.
   if (document.querySelector('#num_letter .current')) document.querySelector('#num_letter .current').classList.add('after');
+  // TERNARY --->
+  // document.querySelector('#num_letter .current') ? document.querySelector('#num_letter .current').classList.add('after') : true;
 
   if (Site.multiplier === 1) {
     // Added to prevent classList of null.
@@ -2191,7 +2104,6 @@ Site.clickablePagination = function clickablePagination() {
   document.querySelector('#num_letter .current').classList.add('after');
   TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
   document.querySelectorAll('#num_letter > div')[Site.lindex].classList.add('before');
-
   TweenMax.to(document.querySelectorAll('#num_letter > div')[Site.lindex].querySelector('div'), 0.4, {
     x: '0%',
     clearProps: 'x',
@@ -2202,37 +2114,13 @@ Site.clickablePagination = function clickablePagination() {
       document.querySelectorAll('#num_letter > div')[Site.lindex].classList.remove('before');
     }
   });
-
-  // if (document.querySelector('#num_letter .current').nextElementSibling !== null) {
-  //     document.querySelector('#num_letter .current').nextElementSibling.classList.add('before');
-  //     var next = document.querySelector('#num_letter .current').nextElementSibling;
-  //     TweenMax.to('.current .letter', 0.4, {x: '100%', clearProps: 'x', ease: Power4.easeInOut});
-  //     TweenMax.to(document.querySelector('#num_letter .current').nextElementSibling.querySelector('div'), 0.4, {x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: () => {
-  //         document.querySelector('#num_letter .current').classList.remove('current','after');
-  //         next.classList.add('current');
-  //         next.classList.remove('before');
-  //     }});
-  // } else {
-  //     var first = document.querySelector('#num_letter div');
-  //     first.classList.add('before');
-
-  //     TweenMax.to('.current .letter', 0.4, {x: '100%', clearProps: 'x', ease: Power4.easeInOut});
-  //     TweenMax.to(first.querySelector('div'), 0.4, {x: '0%', clearProps: 'x', ease: Power4.easeInOut, onComplete: () => {
-  //         document.querySelector('#num_letter .current').classList.remove('current','after');
-  //         first.classList.add('current');
-  //         first.classList.remove('before');
-  //     }});
-  // }
-
   document.getElementById('num_project').innerHTML = Site.lindex + 1;
   document.getElementById('title_h2').innerHTML = document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-title');
   document.getElementById('type').innerHTML = document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-cap');
   document.getElementById('year').innerHTML = document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-year');
-
   /* NodeList.prototype.forEach = NodeList.prototype.forEach || Array.prototype.forEach; */
   document.querySelectorAll('.update_link').forEach((obj) => obj.setAttribute('href', document.querySelectorAll('#images div')[Site.lindex].getAttribute('data-params')));
   document.querySelectorAll('#title_h2 span').forEach(Site.addRandomClass);
-
   Site.animateRandomElements('.random');
   TweenMax.staggerFromTo(Site.random, 1, { x: '-24px', opacity: 0 }, { x: '0px', opacity: 1, ease: Power2.easeOut }, 0.1);
 };
@@ -2243,7 +2131,7 @@ Site.clickablePagination = function clickablePagination() {
 
 Site.increaseDisplacementIntensity = function increaseDisplacementIntensity() {
   Site.speed = 2;
-  var options = { intensity: 0, x: 4 };
+  const options = { intensity: 0, x: 4 };
 
   TweenMax.to(options, 0.9, {
     intensity: 150,
@@ -2258,7 +2146,7 @@ Site.increaseDisplacementIntensity = function increaseDisplacementIntensity() {
 
 Site.decreaseDisplacementIntensity = function decreaseDisplacementIntensity() {
   Site.speed = 3;
-  var options = { intensity: 150, x: 6 };
+  const options = { intensity: 150, x: 6 };
 
   TweenMax.to(options, 0.9, {
     intensity: 0,
