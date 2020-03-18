@@ -1,29 +1,10 @@
 /*
  * NOTES:
  * !0 ---> true
- * !1 ---> false */
+ * !1 ---> false
+ */
 
 PIXI.utils.skipHello();
-
-var BreakPoints = BreakPoints || {};
-
-BreakPoints = {
-  MajorBreakPoints: {
-    A: 0,
-    B: 1,
-    C: 2,
-    D: 3
-  },
-  currentMajorBreakPoint: () => {
-    return window.innerWidth <= 580 ?
-      BreakPoints.MajorBreakPoints.A :
-      window.innerWidth <= 768 ?
-        BreakPoints.MajorBreakPoints.B :
-        window.innerWidth <= 1280 ?
-          BreakPoints.MajorBreakPoints.C :
-          BreakPoints.MajorBreakPoints.D;
-  }
-};
 
 var UserAgent = UserAgent || {};
 
@@ -56,7 +37,7 @@ UserAgent = {
 var Theme = Theme || {};
 
 Theme = {
-  showLightButtonStyle: () => {
+  lightStyle: () => {
     Menu.button.classList.add('light');
     Menu.social.classList.add('light');
     Menu.logo.classList.add('light');
@@ -67,7 +48,7 @@ Theme = {
     TweenMax.set(Site.about, { display: 'none' });
     TweenMax.set(Site.contact, { display: 'none' });
   },
-  showDarkButtonStyle: () => {
+  darkStyle: () => {
     Menu.button.classList.remove('light');
     Menu.social.classList.remove('light');
     Menu.logo.classList.remove('light');
@@ -243,7 +224,7 @@ Menu = {
   arrowHidingTimeout: void 0,
   init: () => {
     Menu.button = document.querySelector('.projects');
-    Menu.logo = document.querySelector('.projects');
+    Menu.logo = document.querySelector('.logo');
     Menu.navMenu = document.getElementById('menu');
     Menu.social = document.getElementById('social');
     // Menu.button.classList.toggle('opened');
@@ -394,8 +375,8 @@ Menu = {
               console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement
 
           window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34) ?
-            Theme.showLightButtonStyle() :
-            Theme.showDarkButtonStyle();
+            Theme.lightStyle() :
+            Theme.darkStyle();
         }
         else if (Site.body.classList.contains('about')) window.pageYOffset >= 10 ? Menu.showArrow() : Menu.hideArrow();
       }
@@ -502,13 +483,17 @@ Site.setup = function setup() {
   this.directoryUri = './';
   this.scrolling = null;
   this.preload = new createjs.LoadQueue(true);
+  this.mousePos = {};
+  this.attributes = {};
+  this.attributes2 = {};
+  this.attributes3 = {};
+  this.formerDelta = 0;
+  this.speed = 0;
   this.newPageContent = void 0;
   this.rafPixiHome = void 0;
   this.rafPixiMenu = void 0;
   this.rafPixiSingle = void 0;
   this.rafLoading = void 0;
-  this.mousePos = {};
-  this.formerDelta = 0;
   this.displacementSprite = void 0;
   this.displacementSprite2 = void 0;
   this.stage = void 0;
@@ -517,24 +502,16 @@ Site.setup = function setup() {
   this.renderer = void 0;
   this.links = void 0;
   this.hovers = void 0;
-  this.bottomLink = !1;
   this.ladderScale = void 0;
   this.scrollMenuOpen = void 0;
   this.rendererMenu = void 0;
   this.displacementFilter3 = void 0;
   this.displacementSprite3 = void 0;
   this.stageMenu = void 0;
-  this.currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
   this.loader = void 0;
-  this.listenCursor = !1;
-  this.speed = 0;
   this.totalSlides = void 0;
   this.currentSlide = 0;
   this.lethargy = new Lethargy();
-  this.blockedAction = !0;
-  this.attributes = {};
-  this.attributes2 = {};
-  this.attributes3 = {};
   this.deltaMenu = void 0;
   this.deltaScroll = void 0;
   this.intensity = void 0;
@@ -545,20 +522,24 @@ Site.setup = function setup() {
   this.cursorPercentage = void 0;
   this.menuEntrance = void 0;
   this.entranceHeight = void 0;
+  this.blockedAction = !0;
+  this.bottomLink = !1;
+  this.listenCursor = !1;
+  this.currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
 
   /** init() */
-  this.supportsWheel = !1;
   this.random = void 0;
   this.multiplier = void 0;
   this.imageNumber = void 0;
-  this.tempImageNumber = -1;
   this.delayx = void 0;
-  this.passOnce = !1;
-  this.formerHeight = 0;
-  this.displace = {};
-  this.displace2 = {};
   this.lindex = void 0;
+  this.passOnce = !1;
   this.playOnce = !1;
+  this.supportsWheel = !1;
+  this.tempImageNumber = -1;
+  this.displace2 = {};
+  this.displace = {};
+  this.formerHeight = 0;
 
   /* More variables */
   this.xDown = null;
@@ -745,7 +726,7 @@ Site.setup = function setup() {
       Site.stage.filters = [Site.displacementFilter, Site.displacementFilter2];
 
       Site.loader.load((loader, resources) => {
-        Site.blockedAction = false;
+        Site.blockedAction = !1;
         if (!Menu.button.isOpen) Site.homePixi();
         Site.nextSlide();
 
@@ -935,7 +916,7 @@ Site.setup = function setup() {
       Site.stage.filters = [Site.displacementFilter2];
 
       Site.loader.load((loader, resources) => {
-        Site.blockedAction = false;
+        Site.blockedAction = !1;
 
         if (!Menu.button.isOpen) Site.singlePixi();
 
@@ -987,7 +968,7 @@ Site.setup = function setup() {
         ease: Power2.easeInOut,
         onComplete: () => {
           Site.stageMenu.removeChildren();
-          Site.exitOk = true;
+          Site.exitOk = !0;
           TweenMax.set('#main', { clearProps: 'backgroundColor' });
         }
       });
@@ -1014,7 +995,7 @@ Site.setup = function setup() {
       //   onComplete: () => {}
       // });
 
-      TweenMax.to('#main', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = true });
+      TweenMax.to('#main', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = !0 });
       Site.hovers = document.querySelectorAll('.change_project');
 
       Site.hovers.forEach((hover) => {
@@ -1042,7 +1023,7 @@ Site.setup = function setup() {
                 opacity: 0,
                 ease: Power2.easeInOut,
                 onComplete: () => {
-                  Site.exitOk = true;
+                  Site.exitOk = !0;
                 }
               });
             }
@@ -1062,7 +1043,7 @@ Site.setup = function setup() {
                 ease: Power2.easeInOut,
                 onComplete: () => {
                   // TweenMax.set('#main', { clearProps: 'y' });
-                  Site.exitOk = true;
+                  Site.exitOk = !0;
                   // console.log('4', Site.scrollMenuOpen);
                   window.scrollTo(Site.scrollMenuOpen, 0);
                 }
@@ -1076,7 +1057,7 @@ Site.setup = function setup() {
           opacity: 0,
           ease: Power2.easeInOut,
           onComplete: () => {
-            Site.exitOk = true;
+            Site.exitOk = !0;
           }
         });
       }
@@ -1086,10 +1067,10 @@ Site.setup = function setup() {
         opacity: 0,
         clearProps: 'backgroundColor',
         ease: Power2.easeInOut,
-        onComplete: () => Site.exitOk = true
+        onComplete: () => Site.exitOk = !0
       });
     }
-    else Site.exitOk = true;
+    else Site.exitOk = !0;
   };
   /* updating the data of the page */
   Site.onUpdatePage = function onUpdatePage(html) {
@@ -1319,8 +1300,8 @@ Site.projectChangedHandler = function projectChangedHandler(event) {
     TweenMax.set(Site.about, { display: 'block' });
     TweenMax.set(Site.contact, { display: 'block' });
   }
-  else if (event.target.classList.contains('to_next') && Site.blockedAction === false) Site.nextSlide();
-  else if (event.target.classList.contains('to_prev') && Site.blockedAction === false) Site.prevSlide();
+  else if (event.target.classList.contains('to_next') && Site.blockedAction === !1) Site.nextSlide();
+  else if (event.target.classList.contains('to_prev') && Site.blockedAction === !1) Site.prevSlide();
   else if (event.target.classList.contains('projects')) {
     event = event || window.event;
     event.preventDefault() || false;
@@ -1719,12 +1700,12 @@ Site.footerInView = function footerInView() {
   if (Site.scrolling.vars.target >= Math.round(Site.scrolling.vars.bounding - 34)) {
     Drag.cursorMain.classList.remove('vertical_scroll', 'black');
     Drag.cursorJunior.classList.remove('vertical_scroll', 'black');
-    Theme.showLightButtonStyle();
+    Theme.lightStyle();
   }
   else {
     Drag.cursorMain.classList.add('vertical_scroll', 'black');
     Drag.cursorJunior.classList.add('vertical_scroll', 'black');
-    Theme.showDarkButtonStyle();
+    Theme.darkStyle();
   }
 };
 

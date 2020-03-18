@@ -755,6 +755,10 @@ footer {
   .deets-dash {
     left: -18%;
   }
+
+  #about {
+    left: calc(7vw - 20px);
+  }
 }
 
 @media (max-width: 767px) {
@@ -970,6 +974,7 @@ footer {
     }
   }
 }
+
 @media (max-width: 320px) {
   // #about, #contact {
   //   width: 66px;
@@ -1007,6 +1012,7 @@ footer {
     }
   }
 }
+
 // .metric {
 //   svg {
 //     max-width: 100%;
