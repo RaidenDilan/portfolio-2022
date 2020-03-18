@@ -2,7 +2,7 @@
 /node_modules
 /public
 /archive
-/vendor
+/src/js/vendor
 /coming-soon.html
 /404.html
 /500.html

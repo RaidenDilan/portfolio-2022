@@ -20,6 +20,7 @@ const fetchVendorJs = () => {
 
 const validateLocalJs = () => {
   return gulp.src(`${config.src.js}${config.selectors.js}`)
+  // return gulp.src([`${config.src.js}${config.selectors.js}`, '!**/*/pixi.js'])
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish', { beep: true }));
 };
