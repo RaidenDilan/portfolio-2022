@@ -163,7 +163,7 @@
     "no-unneeded-ternary": 2,
     "object-curly-spacing": [ 2, "always" ],
     "one-var": [ 2, "never" ],
-    "operator-linebreak": [ 2, "after" ],
+    "operator-linebreak": [ 2, "before" ],
     "quote-props": [ 2, "consistent-as-needed" ],
     "quotes": [ 2, "single", "avoid-escape" ],
     "semi": [ 2, "always" ],

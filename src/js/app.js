@@ -75,9 +75,9 @@ AboutRAFs = {
       TweenMax.to('#inner_svg', 1, { rotation: Math.ceil(-Site.scrolling.vars.current / 4), ease: Linear.easeNone });
       TweenMax.to('#inner_svg img', 1, { rotation: Math.ceil(Site.scrolling.vars.current / 4), ease: Linear.easeNone });
 
-      Math.abs((Site.scrolling.vars.current - Site.deltaScroll) / 200 + 1) < 2.2 ?
-        Site.intensity = Math.abs((Site.scrolling.vars.current - Site.deltaScroll) / 200 + 1) :
-        Site.intensity = 2.2;
+      Math.abs((Site.scrolling.vars.current - Site.deltaScroll) / 200 + 1) < 2.2
+        ? Site.intensity = Math.abs((Site.scrolling.vars.current - Site.deltaScroll) / 200 + 1)
+        : Site.intensity = 2.2;
 
       Site.deltaScroll = Site.scrolling.vars.current;
     }
@@ -85,9 +85,9 @@ AboutRAFs = {
       TweenMax.to('#inner_svg', 1, { rotation: -window.pageYOffset / 4, ease: Linear.easeNone });
       TweenMax.to('#inner_svg img', 1, { rotation: window.pageYOffset / 4, ease: Linear.easeNone });
 
-      Math.abs((window.pageYOffset - Site.deltaScroll) / 200 + 1) < 2.2 ?
-        Site.intensity = Math.abs((window.pageYOffset - Site.deltaScroll) / 200 + 1) :
-        Site.intensity = 2.2;
+      Math.abs((window.pageYOffset - Site.deltaScroll) / 200 + 1) < 2.2
+        ? Site.intensity = Math.abs((window.pageYOffset - Site.deltaScroll) / 200 + 1)
+        : Site.intensity = 2.2;
 
       Site.deltaScroll = window.pageYOffset;
     }
@@ -184,9 +184,9 @@ MenuPixi = {
     Site.deltaMenu = Site.theDeltaMenu;
   },
   calculateMousePosition: () => {
-    Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8 ?
-      Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) :
-      Site.intensity = 1.8;
+    Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8
+      ? Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1)
+      : Site.intensity = 1.8;
   },
   updateNavLinksPos: () => {
     if (!UserAgent.iOS) {
@@ -351,11 +351,11 @@ Menu = {
   // REFACTOR METHODS BELLOW...
   arrowUpdateHandler: () => {
     // return Site.scrolling && Site.scrolling.vars.target >= 10 ? Menu.showArrow() : Menu.hideArrow();
-    return Site.scrolling && Site.scrolling.vars.target >= 10 ?
-      Menu.showArrow() :
-      Site.scrolling.vars.target <= 10 ?
-        Menu.hideArrow() :
-        false;
+    return Site.scrolling && Site.scrolling.vars.target >= 10
+      ? Menu.showArrow()
+      : Site.scrolling.vars.target <= 10
+        ? Menu.hideArrow()
+        : false;
   },
   showHideArrow: () => {
     if (!Menu.button.isOpen) {
@@ -368,15 +368,15 @@ Menu = {
       }
       else {
         if (Site.body.classList.contains('single')) {
-          window.pageYOffset >= 10 ?
-            Menu.showArrow() :
-            window.pageYOffset <= 10 ?
-              Menu.hideArrow() :
-              console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement
+          window.pageYOffset >= 10
+            ? Menu.showArrow()
+            : window.pageYOffset <= 10
+              ? Menu.hideArrow()
+              : console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement
 
-          window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34) ?
-            Theme.lightStyle() :
-            Theme.darkStyle();
+          window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34)
+            ? Theme.lightStyle()
+            : Theme.darkStyle();
         }
         else if (Site.body.classList.contains('about')) window.pageYOffset >= 10 ? Menu.showArrow() : Menu.hideArrow();
       }
@@ -441,11 +441,11 @@ Drag = {
     Site.finishPosition = event.pageX;
     Site.body.classList.remove('dragging'); // IS THIS NECESSARY?
 
-    (Site.finishPosition - Site.startPosition < -Drag.threshold) && Site.blockedAction === !1 ?
-      Site.nextSlide() :
-      (Site.finishPosition - Site.startPosition > Drag.threshold) && Site.blockedAction === !1 ?
-        Site.prevSlide() :
-        false;
+    (Site.finishPosition - Site.startPosition < -Drag.threshold) && Site.blockedAction === !1
+      ? Site.nextSlide()
+      : (Site.finishPosition - Site.startPosition > Drag.threshold) && Site.blockedAction === !1
+        ? Site.prevSlide()
+        : false;
 
     document.onmouseup = null;
     document.onmousemove = null;
@@ -489,7 +489,7 @@ Site.setup = function setup() {
   this.attributes3 = {};
   this.formerDelta = 0;
   // this.speed = 0;
-  // this.state = {}
+  this.historyState = {};
   this.newPageContent = void 0;
   this.rafPixiHome = void 0;
   this.rafPixiMenu = void 0;
@@ -551,14 +551,8 @@ Site.setup = function setup() {
   // this.addedLast = 0;
 
   // ----------------------------- PRELOAD PART ----------------------------- //
-  // function handleOverallProgress(event) {
-  //   return console.log('handleOverallProgress', 1 - event.progress);
-  // }
-  // function handleComplete(event) {
-  //   return console.log('handleComplete', event.complete);
-  // }
-  // Site.preload.on('progress', handleOverallProgress);
-  // Site.preload.on('complete', handleComplete);
+  Site.preload.on('progress', Site.handleOverallProgress);
+  Site.preload.on('complete', Site.handleComplete);
 
   /* RAFs loading screen */
   Site.onRafLoading = function onRafLoading() {
@@ -589,9 +583,9 @@ Site.setup = function setup() {
     this.linkInProgress = !1;
     this.deltaMenu = 0;
     this.deltaScroll = 0;
-    this.speed = 0;
+    // this.speed = 0;
     // this.state = 0;
-    this.state = {};
+    // this.state = {};
 
     this.body = document.querySelector('body');
     this.vsSection = document.querySelector('.vs-section');
@@ -658,6 +652,7 @@ Site.setup = function setup() {
   /* when get() completed */
   Site.onAjaxLoad = function onAjaxLoad(html) {
     Site.newPageContent = html;
+    // console.log('[ onAjaxLoad ] -> html', html);
     Site.ajaxOk = !0;
   };
   /* animations input */
@@ -957,7 +952,7 @@ Site.setup = function setup() {
     document.getElementById('progress').style.display = 'block';
     if (Site.scrolling !== null) Site.scrolling.off();
 
-    // console.log('href', href);
+    // console.log('[ onLoadPage ] -> href', href);
 
     Site.sendHttpRequest(href);
 
@@ -1091,8 +1086,9 @@ Site.setup = function setup() {
   };
 
   /* Site.state - initialState */
-  // window.history.replaceState(Site.state, null, '');
-  window.history.pushState({}, '', location);
+  // window.history.replaceState(Site.historyState, null, '');
+  window.history.pushState(Site.historyState, '', window.location);
+  // window.history.pushState({}, '', window.location);
 
   Site.init(); // INITIALISE APP
 
@@ -1141,8 +1137,8 @@ Site.setup = function setup() {
   /* ladder x/y */
   Site.displacementSprite3.scale.x = 0.4;
 
-  // window.addEventListener('popstate', Site.onPopStateHandler);
-  window.addEventListener('onpopstate', Site.onPopStateHandler);
+  window.addEventListener('popstate', Site.onPopStateHandler);
+  // window.addEventListener('onpopstate', Site.onPopStateHandler);
   window.addEventListener('onunload', Site.onUnloadHandler);
   window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
   window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
@@ -1163,13 +1159,16 @@ Site.setup = function setup() {
   /* Add the event listeners for each click/mousemove events. */
   document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
   document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+
   /*
    * State Change Events -
    * Add these events to window element
    */
-  window.onpopstate = Site.onPopStateHandler;
-  // window.popstate = Site.onPopStateHandler;
   window.onunload = Site.onUnloadHandler;
+  window.popstate = Site.onPopStateHandler;
+  // window.onpopstate = Site.onPopStateHandler;
+  window.onhashchange = Site.onHashChangeHandler;
+
   /*
    * Mouse events -
    * Add these events to document element
@@ -1182,18 +1181,6 @@ Site.setup = function setup() {
   window.onmousedown = Site.showHideArrow;
   window.resize = Site.onResizeHandler;
   window.keydown = Site.onKeydownHandler;
-};
-
-Site.loadTemplate = function loadTemplate(templateId) {
-  if (typeof templateId !== undefined) {
-    var template = document.getElementById(templateId);
-    if (template !== null) {
-      var content = document.getElementById('main');
-
-      content.innerHTML = '';
-      content.appendChild(template.content.cloneNode(true));
-    }
-  }
 };
 
 /* anchor click events */
@@ -1212,34 +1199,29 @@ Site.onClickHandler = function onClickHandler(event) {
       event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
       Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
 
-      var popObject = {
-        templateRef: this.dataset.templateRef,
-        title: this.dataset.templateTitle
-        // goToPage: this.href // ???
-      };
+      var historyState = {};
+      var popObject = { templateRef: this.dataset.templateRef, title: this.dataset.templateTitle };
+      var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+      var newPage = window.location.href + '#' + this.href.replace(base, ''); /* Change to new page with hash */
+      // window.location.href = newPage; // BUG ---> THIS STOPS OUR EXIT ANIMATION
 
-      // console.log('window.location', window.location);
-      // console.log('popObject', popObject);
-      // console.log('href', href);
+      /* Remove hash from URL and replace with desired URL */
+      if (window.history && window.history.pushState) {
+        // window.history.pushState({}, '', href + '.html');
+        window.history.pushState({}, this.innerHTML, this.href); /* Only do this if history.pushState is supported by the browser */
+        // window.history.pushState(historyState, this.innerHTML, this.href);
+        // window.history.pushState(Site.historyState, this.innerHTML, this.href);
+        // window.history.pushState(popObject, popObject.title, popObject.templateRef + '.html');
+      }
 
-      /*
-       * history.pushState(
-       *   => this.state,
-       *   => pageTitle,
-       *   => href
-       * );
-      */
-      window.history.pushState({}, '', href);
-      // window.history.pushState({}, '', href + '.html');
-      // window.history.pushState(initialState, '', href);
-      // history.pushState(popObject, popObject.title, popObject.templateRef + '.html');
-      // loadTemplate(popObject.templateRef);
-
+      // Site.loadTemplate(popObject.templateRef);
       // Site.onLoadPage(popObject.templateRef);
       Site.onLoadPage(href);
       Site.onRafLoading();
+
       return !1;
     }
+
     return !1;
   }
   // event.stopPropagation();
@@ -1247,28 +1229,31 @@ Site.onClickHandler = function onClickHandler(event) {
 
 /* State Change Events */
 Site.onPopStateHandler = function onPopStateHandler(event) {
-  // console.log('got popstate event: ', event);
+  event = event || window.event;
+  event.preventDefault() || false;
 
-  // console.log('event', event);
-  // event = event || window.event;
-  // event.preventDefault() || false;
   // if (event.state) {
   if (event.state !== null) {
     Site.state = event.state;
-    // console.log('event.state !== null', event.state !== null);
-    // console.log('location.href', location.href);
-    // console.log('window.location.href', window.location.href);
-    // Site.onLoadPage(event.state.templateRef);
-    Site.onLoadPage(window.location.href);
+    // console.log('[ onPopStateHandler ] -> window.location.href', window.location.href);
+
     // Site.loadTemplate(event.state.templateRef);
+    // Site.onLoadPage(event.state.templateRef);
+
+    Site.onLoadPage(window.location.href);
     Site.onRafLoading();
   }
 };
-
+Site.onHashChangeHandler = function onHashChangeHandler(event) {
+  document.getElementById('main').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
+  // console.log('[ onHashChangeHandler ]' + window.location.href + ' (' + window.location.pathname + ')');
+};
 Site.onUnloadHandler = function onUnloadHandler(event) {
   event = event || window.event;
   event.preventDefault() || false;
-  return window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
+  // console.log('[ onUnloadHandler ] -> Site.scrollMenuOpen', Site.scrollMenuOpen);
+  return window.scrollTo(0, 0); // scroll back to top when reloading page
+  // return window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
 };
 
 /* called each time a page is launched */
@@ -1283,10 +1268,14 @@ Site.sendHttpRequest = function sendHttpRequest(url) {
   const xhr = new XMLHttpRequest();
   const method = 'GET';
   xhr.open(method, url, !0);
+
   xhr.onreadystatechange = (event) => {
     // console.log('[sendHttpRequest] -> xhr -> onreadystatechange -> event', event);
-    if (xhr.readyState === xhr.DONE && xhr.status === 200) Site.onAjaxLoad(xhr.responseText);
-    else if (xhr.status === 400) console.log('There was an error - 400');
+    (xhr.readyState === xhr.DONE && xhr.status === 200)
+      ? Site.onAjaxLoad(xhr.responseText)
+      : xhr.status === 400
+        ? console.log('There was an error - 400')
+        : null;
   };
   xhr.send();
 };
@@ -1307,15 +1296,14 @@ Site.projectChangedHandler = function projectChangedHandler(event) {
     event.preventDefault() || false;
 
     if (Menu.button.isArrow) {
-      Site.scrolling !== null ?
-        Site.scrolling.scrollTo(0) : // Site.scrolling.scrollTo(0, !0);
-        Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad'); // Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
+      Site.scrolling !== null
+        ? Site.scrolling.scrollTo(0) // Site.scrolling.scrollTo(0, !0);
+        : Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad'); // Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
     }
     document.querySelectorAll('.projects').forEach((obj) => obj.classList.toggle('opened')); // Takes a second argument => true || false |\ Condition
     !Menu.button.isOpen ? Menu.open() : Menu.close();
   }
 };
-
 
 Site.setDimensions = function setDimensions(item, index) {
   Site.totalSlides++;
@@ -1372,7 +1360,6 @@ Site.setMenuDimensions = function setMenuDimensions(item, index) {
     }
   };
 };
-
 
 Site.scrollBackUp = function scrollBackUp(target) {
   // Site.scrollingBackUpBtn = requestAnimationFrame(Site.scrollBackUp);
@@ -1476,23 +1463,22 @@ Site.handlerMouseMove = function handlerMouseMove(event) {
   let pad = 26;
   let pad2 = 5;
 
-  !Drag.cursorMain.classList.contains('visible') ?
-    Drag.toggleVisible() :
-    Drag.cursorMain.classList.contains('visible') ? (
+  !Drag.cursorMain.classList.contains('visible')
+    ? Drag.toggleVisible()
+    : Drag.cursorMain.classList.contains('visible') ? (
       TweenMax.to(Drag.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }), // Drag.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
       TweenMax.to(Drag.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }) // Drag.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
     ) : false;
 };
 
 Site.circleHandler = function circleHandler(event) {
-  window.orientation === 0 ?
-    Site.gamma = event.gamma :
-    window.orientation === 180 ?
-      Site.gamma = -event.gamma :
-      window.orientation === -90 ?
-        Site.gamma = -event.beta :
-        window.orientation === 90 &&
-        (Site.gamma = event.beta); // this is the last conditional block OR 'else' statement
+  window.orientation === 0
+    ? Site.gamma = event.gamma
+    : window.orientation === 180
+      ? Site.gamma = -event.gamma
+      : window.orientation === -90
+        ? Site.gamma = -event.beta
+        : window.orientation === 90 && (Site.gamma = event.beta); // this is the last conditional block OR 'else' statement
 };
 
 Site.touchStartHandler = function touchStartHandler(event) {
@@ -1524,7 +1510,6 @@ Site.touchMoveHandler = function touchMoveHandler(event) {
   Site.yDown = null;
 };
 
-
 Site.onHover = function onHover(event) {
   event.target.classList.add('feature');
   document.querySelector('.change_project.current').classList.add('temp');
@@ -1535,7 +1520,6 @@ Site.offHover = function offHover(event) {
   document.querySelector('.change_project.current').classList.remove('temp');
 };
 
-
 Site.scrollEventHandler = function scrollEventHandler(event) {
   event = event || window.event;
   event.type === 'wheel' ? Site.supportsWheel = !0 : Site.supportsWheel && true;
@@ -1545,9 +1529,9 @@ Site.scrollEventHandler = function scrollEventHandler(event) {
 };
 
 Site.onResizeHandler = function onResizeHandler() {
-  !UserAgent.iOS && Site.scrolling !== null ?
-    (Site.scrolling.resize()) :
-    (
+  !UserAgent.iOS && Site.scrolling !== null
+    ? (Site.scrolling.resize())
+    : (
       Site.about.style.top = (window.innerHeight / 2) - 50 + 'px',
       Site.contact.style.top = (window.innerHeight / 2) - 50 + 'px'
     );
@@ -1660,15 +1644,14 @@ Site.prevSlide = function prevSlide() {
     delay: 0.6,
     ease: Linear.easeNone,
     onUpdate: () => {
-      Site.currentSlide === 0 ?
-        window['image' + (Site.totalSlides - 2)].alpha = Site.attributes3.opacity :
-        Site.currentSlide === 1 ?
-          window['image' + (Site.totalSlides - 1)].alpha = Site.attributes3.opacity :
-          window['image' + (Site.currentSlide - 2)].alpha = Site.attributes3.opacity;
+      Site.currentSlide === 0
+        ? window['image' + (Site.totalSlides - 2)].alpha = Site.attributes3.opacity
+        : Site.currentSlide === 1
+          ? window['image' + (Site.totalSlides - 1)].alpha = Site.attributes3.opacity
+          : window['image' + (Site.currentSlide - 2)].alpha = Site.attributes3.opacity;
     }
   });
 };
-
 
 Site.commonTransition = function commonTransition() {
   Site.listenCursor = !1;
@@ -1690,7 +1673,6 @@ Site.commonTransition = function commonTransition() {
   Site.attributes3.opacity = 0;
 };
 
-
 Site.footerInView = function footerInView() {
   // if (Site.scrolling.vars.target <= window.innerHeight) {
   //   TweenMax.set(Site.about, { display: 'block' });
@@ -1708,7 +1690,6 @@ Site.footerInView = function footerInView() {
     Theme.darkStyle();
   }
 };
-
 
 Site.homePixi = function homePixi() {
   Site.rafPixiHome = requestAnimationFrame(Site.homePixi);
@@ -1813,12 +1794,11 @@ Site.singlePixi = function singlePixi() {
   // else {}
 };
 
-
 Site.checkMenu = function checkMenu(item, index) {
   if (
-    Site.cursorPercentage > (Site.heightMargin + (index * Site.entranceHeight)) &&
-    Site.cursorPercentage < (Site.heightMargin + ((index + 1) * Site.entranceHeight)) &&
-    !item.classList.contains('active')
+    Site.cursorPercentage > (Site.heightMargin + (index * Site.entranceHeight))
+    && Site.cursorPercentage < (Site.heightMargin + ((index + 1) * Site.entranceHeight))
+    && !item.classList.contains('active')
   ) {
     document.querySelector('#the_menu .active').classList.remove('active');
     item.classList.add('active');
@@ -1901,11 +1881,11 @@ Site.updatePagination = function updatePagination(direction) {
   }
   else {
     Site.multiplier = -1;
-    Site.currentSlide === 1 ?
-      TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 0, ease: Power4.easeInOut }) :
-      Site.currentSlide === 0 ?
-        TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 / Site.totalSlides, ease: Power4.easeInOut }) :
-        TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 - (Site.currentSlide - 1) * 1900 / Site.totalSlides, ease: Power4.easeInOut });
+    Site.currentSlide === 1
+      ? TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 0, ease: Power4.easeInOut })
+      : Site.currentSlide === 0
+        ? TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 / Site.totalSlides, ease: Power4.easeInOut })
+        : TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 - (Site.currentSlide - 1) * 1900 / Site.totalSlides, ease: Power4.easeInOut });
   }
 
   Site.animateRandomElements('.random');
@@ -2134,7 +2114,6 @@ Site.animateNextInnerBtn = function animateNextInnerBtn() {
   TweenMax.staggerTo('.stag', 0.4, { opacity: 0, ease: Power2.easeOut }, 0.02);
 };
 
-
 /*----------------------------------------------------------------------------*/
 /*                           HELP FUNCTIONS - START                           */
 /*----------------------------------------------------------------------------*/
@@ -2230,5 +2209,24 @@ Site.scrollToTop = function scrollToTop(destination, duration, easing, callback)
   scroll();
 };
 
+Site.handleOverallProgress = function handleOverallProgress(event) {
+  return console.log('[ handleOverallProgress ]', 1 - event.progress);
+};
+
+Site.handleComplete = function handleComplete(event) {
+  return console.log('[ handleComplete ]', event.complete);
+};
+
 /* --- INITIATE APP --- */
 document.addEventListener('DOMContentLoaded', () => Site.setup());
+
+// Site.loadTemplate = function loadTemplate(templateId) {
+//   if (typeof templateId !== undefined) {
+//     var template = document.getElementById(templateId);
+//     if (template !== null) {
+//       var content = document.getElementById('main');
+//       content.innerHTML = '';
+//       content.appendChild(template.content.cloneNode(true));
+//     }
+//   }
+// };

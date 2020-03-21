@@ -8,13 +8,13 @@ BreakPoints = {
     D: 3
   },
   currentMajorBreakPoint: () => {
-    return window.innerWidth <= 580 ?
-      BreakPoints.MajorBreakPoints.A :
-      window.innerWidth <= 768 ?
-        BreakPoints.MajorBreakPoints.B :
-        window.innerWidth <= 1280 ?
-          BreakPoints.MajorBreakPoints.C :
-          BreakPoints.MajorBreakPoints.D;
+    return window.innerWidth <= 580
+      ? BreakPoints.MajorBreakPoints.A
+      : window.innerWidth <= 768
+        ? BreakPoints.MajorBreakPoints.B
+        : window.innerWidth <= 1280
+          ? BreakPoints.MajorBreakPoints.C
+          : BreakPoints.MajorBreakPoints.D;
   }
 };
 
