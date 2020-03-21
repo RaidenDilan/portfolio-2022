@@ -488,7 +488,8 @@ Site.setup = function setup() {
   this.attributes2 = {};
   this.attributes3 = {};
   this.formerDelta = 0;
-  this.speed = 0;
+  // this.speed = 0;
+  // this.state = {}
   this.newPageContent = void 0;
   this.rafPixiHome = void 0;
   this.rafPixiMenu = void 0;
@@ -589,6 +590,8 @@ Site.setup = function setup() {
     this.deltaMenu = 0;
     this.deltaScroll = 0;
     this.speed = 0;
+    // this.state = 0;
+    this.state = {};
 
     this.body = document.querySelector('body');
     this.vsSection = document.querySelector('.vs-section');
@@ -954,6 +957,8 @@ Site.setup = function setup() {
     document.getElementById('progress').style.display = 'block';
     if (Site.scrolling !== null) Site.scrolling.off();
 
+    // console.log('href', href);
+
     Site.sendHttpRequest(href);
 
     if (Menu.button.isOpen) {
@@ -1085,7 +1090,9 @@ Site.setup = function setup() {
     Site.init();
   };
 
-  history.pushState({}, '', location);
+  /* Site.state - initialState */
+  // window.history.replaceState(Site.state, null, '');
+  window.history.pushState({}, '', location);
 
   Site.init(); // INITIALISE APP
 
@@ -1134,6 +1141,7 @@ Site.setup = function setup() {
   /* ladder x/y */
   Site.displacementSprite3.scale.x = 0.4;
 
+  // window.addEventListener('popstate', Site.onPopStateHandler);
   window.addEventListener('onpopstate', Site.onPopStateHandler);
   window.addEventListener('onunload', Site.onUnloadHandler);
   window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
@@ -1160,6 +1168,7 @@ Site.setup = function setup() {
    * Add these events to window element
    */
   window.onpopstate = Site.onPopStateHandler;
+  // window.popstate = Site.onPopStateHandler;
   window.onunload = Site.onUnloadHandler;
   /*
    * Mouse events -
@@ -1175,6 +1184,18 @@ Site.setup = function setup() {
   window.keydown = Site.onKeydownHandler;
 };
 
+Site.loadTemplate = function loadTemplate(templateId) {
+  if (typeof templateId !== undefined) {
+    var template = document.getElementById(templateId);
+    if (template !== null) {
+      var content = document.getElementById('main');
+
+      content.innerHTML = '';
+      content.appendChild(template.content.cloneNode(true));
+    }
+  }
+};
+
 /* anchor click events */
 Site.onClickHandler = function onClickHandler(event) {
   // IF ---> LINK IS NOT AN EXTERNAL LINK
@@ -1186,11 +1207,35 @@ Site.onClickHandler = function onClickHandler(event) {
       Site.linkInProgress = !0;
       let href = this.getAttribute('href');
       // let href = event.target.getAttribute('href');
+      // let page = this.attributes.href.value;
+
       event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
       Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
-      /* history.pushState(initialState, '', href); */
-      history.pushState(null, null, href);
-      // history.pushState({}, '', href);
+
+      var popObject = {
+        templateRef: this.dataset.templateRef,
+        title: this.dataset.templateTitle
+        // goToPage: this.href // ???
+      };
+
+      // console.log('window.location', window.location);
+      // console.log('popObject', popObject);
+      // console.log('href', href);
+
+      /*
+       * history.pushState(
+       *   => this.state,
+       *   => pageTitle,
+       *   => href
+       * );
+      */
+      window.history.pushState({}, '', href);
+      // window.history.pushState({}, '', href + '.html');
+      // window.history.pushState(initialState, '', href);
+      // history.pushState(popObject, popObject.title, popObject.templateRef + '.html');
+      // loadTemplate(popObject.templateRef);
+
+      // Site.onLoadPage(popObject.templateRef);
       Site.onLoadPage(href);
       Site.onRafLoading();
       return !1;
@@ -1202,10 +1247,20 @@ Site.onClickHandler = function onClickHandler(event) {
 
 /* State Change Events */
 Site.onPopStateHandler = function onPopStateHandler(event) {
+  // console.log('got popstate event: ', event);
+
+  // console.log('event', event);
   // event = event || window.event;
   // event.preventDefault() || false;
+  // if (event.state) {
   if (event.state !== null) {
-    Site.onLoadPage(location.href);
+    Site.state = event.state;
+    // console.log('event.state !== null', event.state !== null);
+    // console.log('location.href', location.href);
+    // console.log('window.location.href', window.location.href);
+    // Site.onLoadPage(event.state.templateRef);
+    Site.onLoadPage(window.location.href);
+    // Site.loadTemplate(event.state.templateRef);
     Site.onRafLoading();
   }
 };
@@ -1227,67 +1282,12 @@ Site.onKeydownHandler = function onKeydownHandler(event) {
 Site.sendHttpRequest = function sendHttpRequest(url) {
   const xhr = new XMLHttpRequest();
   const method = 'GET';
-
-  // progress on transfers from the server to the client (downloads)
-  function updateProgress(oEvent) {
-    console.log('oEvent', oEvent);
-    if (oEvent.lengthComputable) var percentComplete = oEvent.loaded / oEvent.total * 100;
-    else {
-      // Unable to compute progress information since the total size is unknown
-    }
-  }
-  function transferComplete(event) {
-    console.log('The transfer is complete.');
-  }
-  function transferFailed(event) {
-    console.log('An error occurred while transferring the file.');
-  }
-  function transferCanceled(event) {
-    console.log('The transfer has been canceled by the user.');
-  }
-
-  // xhr.onload = (event) => console.log('event => onload =>', event);
-  // xhr.onprogress = (event) => console.log('event => onprogress =>', event);
-  // xhr.onerror = (event) => console.log('event => onerror =>', event);
-
-  // xhr.upload.onprogress = (event) => {
-  //   updateProgress();
-  // };
-  //
-  // xhr.upload.onload = (event) => {
-  //   transferComplete();
-  // };
-  //
-  // xhr.upload.onerror = (event) => {
-  //   transferFailed();
-  // };
-  //
-  // xhr.upload.onabort = (event) => {
-  //   transferCanceled();
-  // };
-
-  // Create and send a GET request
-  // The first argument is the post type (GET, POST, PUT, DELETE, etc.)
-  // The second argument is the endpoint URL
-  xhr.open(method, url, !0); // => !0 --> true
-
-  // Setup our listener to process completed requests
-  // xhr.onload = () => {
-  //   // Process our return data
-  //   if (xhr.status >= 200 && xhr.status < 300) Site.onAjaxLoad(xhr.responseText);
-  //   else console.log('The request failed!'); // What do when the request fails
-  // };
-
-  /*
-   * xhr.onreadystatechange = callback
-   * callback is the function to be executed when the readyState changes.
-   */
+  xhr.open(method, url, !0);
   xhr.onreadystatechange = (event) => {
+    // console.log('[sendHttpRequest] -> xhr -> onreadystatechange -> event', event);
     if (xhr.readyState === xhr.DONE && xhr.status === 200) Site.onAjaxLoad(xhr.responseText);
-    else if (xhr.status === 400) console.log('There was an error 400');
-    // else console.log('something else other than 200 or 400 was returned');
+    else if (xhr.status === 400) console.log('There was an error - 400');
   };
-
   xhr.send();
 };
 
