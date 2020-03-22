@@ -194,13 +194,13 @@ MenuPixi = {
       Site.theDeltaMenu = Site.currentMousePos.y;
       let expression = -1 * (Site.menuHeight - window.innerHeight) / window.innerHeight * Site.currentMousePos.y;
       // console.log('expression', expression);
-      TweenMax.to('#the_menu', 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
+      TweenMax.to('#nav__menu__links', 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
     }
     else {
       Site.cursorPercentage = window.pageYOffset * 100 / (Site.menuHeight - window.innerHeight);
       Site.theDeltaMenu = window.pageYOffset;
       // console.log('ELSE');
-      TweenMax.to('#the_menu', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
+      TweenMax.to('#nav__menu__links', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
     }
   },
   updatePixiDisplacement: () => {
@@ -263,10 +263,10 @@ Menu = {
 
     TweenMax.to('#nav__menu', 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
 
-    Site.menuHeight = document.getElementById('the_menu').clientHeight;
+    Site.menuHeight = document.getElementById('nav__menu__links').clientHeight;
     Site.margins = window.innerHeight / 2 - 70;
     Site.heightMargin = Math.round((100 - (Site.menuHeight - 2 * Site.margins) * 100 / Site.menuHeight) / 2 * 100) / 100;
-    Site.menuEntrance = document.getElementById('the_menu').querySelectorAll('li').length;
+    Site.menuEntrance = document.getElementById('nav__menu__links').querySelectorAll('li').length;
     Site.entranceHeight = Math.round((100 - 2 * Site.heightMargin) / Site.menuEntrance * 100) / 100;
 
     Site.stageMenu.addChild(Site.displacementSprite3);
@@ -604,10 +604,10 @@ Site = {
       this.about = document.getElementById('about');
       this.contact = document.getElementById('contact');
       this.pixiMenuCover = document.getElementById('pixi_menu');
-      this.pixiMenuLinks = document.querySelectorAll('#the_menu li');
-      this.pixiMenuAnchors = document.querySelectorAll('#the_menu li a');
+      this.pixiMenuLinks = document.querySelectorAll('#nav__menu__links li');
+      this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
-      TweenMax.set('#main__content, #the_menu, #pixi_menu', { opacity: 1 });
+      TweenMax.set('#main__content, #nav__menu__links, #pixi_menu', { opacity: 1 });
       TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
       // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
 
@@ -967,7 +967,7 @@ Site = {
         Menu.button.classList.add('closing');
         setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
 
-        TweenMax.to('#the_menu, #pixi_menu', 0.4, {
+        TweenMax.to('#nav__menu__links, #pixi_menu', 0.4, {
           opacity: 0,
           ease: Power2.easeInOut,
           onComplete: () => {
@@ -1787,7 +1787,7 @@ Site = {
       && Site.cursorPercentage < (Site.heightMargin + ((index + 1) * Site.entranceHeight))
       && !item.classList.contains('active')
     ) {
-      document.querySelector('#the_menu .active').classList.remove('active');
+      document.querySelector('#nav__menu__links .active').classList.remove('active');
       item.classList.add('active');
       Site.pixiMenuCover.setAttribute('href', item.querySelector('a').getAttribute('href'));
 

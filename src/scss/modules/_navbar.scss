@@ -209,7 +209,7 @@ header {
   .logo {
     z-index: 1;
   }
-  ol#the_menu {
+  ol#nav__menu__links {
     font: 300 normal 68px/133px $italiana, Arial, Helvetica, sans-serif;
     // font: 300 normal 68px/133px 'MullerLight', Arial, Helvetica, sans-serif;
     // font: 500 normal 68px/133px 'Alconica';
@@ -333,7 +333,7 @@ header {
     #pixi_menu {
       display: none;
     }
-    ol#the_menu {
+    ol#nav__menu__links {
       padding-left: 60px;
       width: 100%;
       // font: 500 normal 10vw/20vw 'Alconica';
@@ -393,7 +393,7 @@ header {
     }
   }
   #nav__menu {
-    ol#the_menu {
+    ol#nav__menu__links {
       padding-left: 70px;
 
       li {
