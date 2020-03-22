@@ -224,7 +224,7 @@ svg.svg-circle {
   color: $white;
 
   &.mobile {
-    #main {
+    #main__content {
       position: fixed;
       top: 0;
       left: 0;
@@ -339,7 +339,7 @@ svg.svg-circle {
       }
     }
   }
-  #main {
+  #main__content {
     #inner_canvas {
       position: fixed;
       top: 0;

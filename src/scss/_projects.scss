@@ -199,7 +199,7 @@ header {
   background: $black;
 }
 
-#main {
+#main__content {
   &.blocked {
     display: none;
     position: relative !important;
@@ -339,7 +339,7 @@ header {
 }
 
 .rdt {
-  #main {
+  #main__content {
     .inner_img {
       .wrap {
         img {
@@ -369,7 +369,7 @@ header {
 }
 
 @media (max-width: 1024px) {
-  #main {
+  #main__content {
     .datas {
       padding: 5vh 0 5vh 60vw;
     }
@@ -386,7 +386,7 @@ header {
 }
 
 @media (max-width: 767px) {
-  #main {
+  #main__content {
     #next_proj {
       > div {
         // margin-left: 5%;
@@ -436,7 +436,7 @@ header {
 }
 
 @media (max-width: 414px) {
-  #main {
+  #main__content {
     #next_proj {
       > div {
         width: 90%;
@@ -454,7 +454,7 @@ header {
 }
 
 @media (max-width: 320px) {
-  #main #next_proj > div a span {
+  #main__content #next_proj > div a span {
     font: 500 normal 40px/50px $italiana, serif;
   }
 }

@@ -402,14 +402,18 @@ Drag = {
     document.onmousedown = Drag.move;
     document.onmousedown = Drag.end;
     /* drag event */
-    document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
-    document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
-    document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
+    if (Site.body.classList.contains('home')) {
+      document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
+      document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
+      document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
+    }
   },
   start: (event) => {
-    Drag.isDown = !0;
+    // Drag.isDown = !0;
     event = event || window.event;
     event.preventDefault() || false;
+
+    Drag.isDown = !0;
     Site.startPosition = event.pageX;
     Site.body.classList.add('dragging'); // IS THIS NECESSARY?
 
@@ -421,9 +425,10 @@ Drag = {
     }
   },
   move: (event) => {
-    if (!Drag.isDown) return;
     event = event || window.event;
     event.preventDefault() || false;
+
+    if (!Drag.isDown) return;
 
     if (event.type === 'touchmove') {
       Site.posX2 = Site.posX1 - event.touches[0].clientX;
@@ -435,9 +440,11 @@ Drag = {
     }
   },
   end: (event) => {
-    Drag.isDown = !1;
+    // Drag.isDown = !1;
     event = event || window.event;
     event.preventDefault() || false;
+
+    Drag.isDown = !1;
     Site.finishPosition = event.pageX;
     Site.body.classList.remove('dragging'); // IS THIS NECESSARY?
 
@@ -492,7 +499,7 @@ Site = {
     Site.attributes2 = {};
     Site.attributes3 = {};
     Site.formerDelta = 0;
-    // Site.speed = 0;
+    Site.stage = void 0;
     Site.historyState = {};
     Site.newPageContent = void 0;
     Site.rafPixiHome = void 0;
@@ -501,17 +508,16 @@ Site = {
     Site.rafLoading = void 0;
     Site.displacementSprite = void 0;
     Site.displacementSprite2 = void 0;
-    Site.stage = void 0;
+    Site.displacementSprite3 = void 0;
     Site.displacementFilter = void 0;
     Site.displacementFilter2 = void 0;
+    Site.displacementFilter3 = void 0;
     Site.renderer = void 0;
     Site.links = void 0;
     Site.hovers = void 0;
     Site.ladderScale = void 0;
     Site.scrollMenuOpen = void 0;
     Site.rendererMenu = void 0;
-    Site.displacementFilter3 = void 0;
-    Site.displacementSprite3 = void 0;
     Site.stageMenu = void 0;
     Site.loader = void 0;
     Site.totalSlides = void 0;
@@ -552,7 +558,6 @@ Site = {
     Site.gamma = void 0;
     Site.deltaGamma = void 0;
     Site.clickEvent = ('ontouchstart' in window ? 'touchend' : 'click');
-    // this.addedLast = 0;
 
     // ----------------------------- PRELOAD PART ----------------------------- //
     Site.preload.on('progress', Site.handleOverallProgress);
@@ -578,18 +583,11 @@ Site = {
     };
     /* initialization */
     Site.init = function init() {
-      UserAgent.init();
-      Drag.init();
-      Menu.init();
-
       this.exitOk = !1;
       this.ajaxOk = !1;
       this.linkInProgress = !1;
       this.deltaMenu = 0;
       this.deltaScroll = 0;
-      // this.speed = 0;
-      // this.state = 0;
-      // this.state = {};
 
       this.body = document.querySelector('body');
       this.vsSection = document.querySelector('.vs-section');
@@ -606,6 +604,10 @@ Site = {
       this.pixiMenuCover = document.getElementById('pixi_menu');
       this.pixiMenuLinks = document.querySelectorAll('#nav__menu__links li');
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
+
+      UserAgent.init();
+      Drag.init();
+      Menu.init();
 
       TweenMax.set('#main__content, #nav__menu__links, #pixi_menu', { opacity: 1 });
       TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
@@ -631,8 +633,8 @@ Site = {
       if (Site.body.classList.contains('is-loading')) setTimeout(() => Site.loading.classList.remove('is-loading'), 1000, false);
 
       /* removes event listeners from elements with 'link' class before adding click events to each element */
-      Site.links.forEach((link) => link.removeEventListener('click', Site.onClickHandler, !1));
-      Site.links.forEach((link) => link.addEventListener('click', Site.onClickHandler, !1));
+      Site.links.forEach((obj) => obj.removeEventListener('click', Site.onClickHandler, !1));
+      Site.links.forEach((obj) => obj.addEventListener('click', Site.onClickHandler, !1));
 
       // if (!Menu.button.classList.contains('.point3.black')) Menu.button.style.setProperty('--button-color', 'blue'); // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
       // else Menu.button.style.setProperty('--button-color', 'red'); // Menu.button.childNodes.forEach((obj) => obj.style.setProperty('--button-color'));
@@ -663,9 +665,8 @@ Site = {
     Site.animations = function animations() {
       if (window.innerWidth < 768) Site.pixiMenuLinks.forEach((obj) => obj.classList.remove('active'));
 
-      // IF STATEMENT CONDITION IS "ALMOST" ITENDITICAL TO THE ABOVE IF STATEMENT
+      // IF STATEMENT CONDITION DOES THE SAME EXPRESSION AS THE ABOVE IF STATEMENT
       if (UserAgent.iOS) {
-        // console.log('3', Site.scrollMenuOpen);
         window.scrollTo(Site.scrollMenuOpen, 0);
         Site.main.classList.remove('black');
       }
@@ -674,7 +675,7 @@ Site = {
       if (Site.body.classList.contains('home')) {
         document.querySelectorAll('.point3').forEach((obj) => obj.classList.remove('black'));
 
-        Site.hovers = document.querySelectorAll('.change_project');
+        Site.hovers = document.querySelectorAll('.main__pagination');
 
         Site.hovers.forEach((hover) => hover.addEventListener('mouseenter', Site.onHover, false));
         Site.hovers.forEach((hover) => hover.addEventListener('mouseleave', Site.offHover, false));
@@ -730,10 +731,15 @@ Site = {
         Site.loader.load((loader, resources) => {
           Site.blockedAction = !1;
           if (!Menu.button.isOpen) Site.homePixi();
+          console.log('1');
           Site.nextSlide();
+          console.log('2');
 
+          //
+          //
+          //
           // DISABLE elements with class of update_link (<a>) in home pixi slider
-
+          //
           // if (Site.currentSlide === 0) {
           //   document.querySelectorAll('.update_link').forEach((obj) => {
           //     obj
@@ -937,12 +943,8 @@ Site = {
 
         });
       }
-      else if (Site.body.classList.contains('notFound')) {
-        document.getElementById('progress').style.display = 'none';
-      }
-      else if (Site.body.classList.contains('internalServerError')) {
-        document.getElementById('progress').style.display = 'none';
-      }
+      else if (Site.body.classList.contains('notFound')) document.getElementById('progress').style.display = 'none';
+      else if (Site.body.classList.contains('internalServerError')) document.getElementById('progress').style.display = 'none';
 
       // TweenMax.to('body', 1, { opacity: 1, onComplete: () => {
       //   scroll.init();
@@ -1000,7 +1002,7 @@ Site = {
         // });
 
         TweenMax.to('#main__content', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = !0 });
-        Site.hovers = document.querySelectorAll('.change_project');
+        Site.hovers = document.querySelectorAll('.main__pagination');
 
         Site.hovers.forEach((hover) => {
           hover.removeEventListener('mouseenter', Site.onHover);
@@ -1084,7 +1086,9 @@ Site = {
       document.title = doc.querySelector('title').innerHTML;
       let res = classList.replace('is-loading', '');
       Site.body.setAttribute('class', res);
-      !UserAgent.iOS ? Site.body.classList.add('desktop') : Site.body.classList.add('mobile');
+      (!UserAgent.iOS)
+        ? Site.body.classList.add('desktop')
+        : Site.body.classList.add('mobile');
       Site.main.innerHTML = doc.getElementById('main__content').innerHTML;
       Site.init();
     };
@@ -1141,8 +1145,7 @@ Site = {
     /* ladder x/y */
     Site.displacementSprite3.scale.x = 0.4;
 
-    window.addEventListener('popstate', Site.onPopStateHandler);
-    // window.addEventListener('onpopstate', Site.onPopStateHandler);
+    window.addEventListener('onpopstate', Site.onPopStateHandler);
     window.addEventListener('onunload', Site.onUnloadHandler);
     window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
     window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
@@ -1163,20 +1166,11 @@ Site = {
     /* Add the event listeners for each click/mousemove events. */
     document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
-
-    /*
-     * State Change Events -
-     * Add these events to window element
-     */
+    /* State Change Events: Add these events to window element */
     window.onunload = Site.onUnloadHandler;
-    window.popstate = Site.onPopStateHandler;
-    // window.onpopstate = Site.onPopStateHandler;
+    window.onpopstate = Site.onPopStateHandler;
     window.onhashchange = Site.onHashChangeHandler;
-
-    /*
-     * Mouse events -
-     * Add these events to document element
-     */
+    /* Mouse events: Add these events to document element */
     window.onmousedown = Site.mousePositionHandler;
     window.onmousedown = Site.projectChangedHandler;
     window.onmousedown = Site.scrollEventHandler;
@@ -1286,7 +1280,11 @@ Site = {
     xhr.send();
   },
   projectChangedHandler: (event) => {
-    if (event.target.classList.contains('change_project')) Site.changePagination(event.target);
+    console.log('[projectChangedHandler] -> event --->', event);
+    event = event || window.event;
+    event.preventDefault() || false;
+
+    if (event.target.classList.contains('main__pagination')) Site.changePagination(event.target);
     else if (event.target.classList.contains('arrow-transition-in')) {
       Site.scrollBackUp(event.target);
 
@@ -1297,8 +1295,8 @@ Site = {
     else if (event.target.classList.contains('to_next') && Site.blockedAction === !1) Site.nextSlide();
     else if (event.target.classList.contains('to_prev') && Site.blockedAction === !1) Site.prevSlide();
     else if (event.target.classList.contains('projects')) {
-      event = event || window.event;
-      event.preventDefault() || false;
+      // event = event || window.event;
+      // event.preventDefault() || false;
 
       if (Menu.button.isArrow) {
         Site.scrolling !== null
@@ -1509,11 +1507,11 @@ Site = {
   },
   onHover: (event) => {
     event.target.classList.add('feature');
-    document.querySelector('.change_project.current').classList.add('temp');
+    document.querySelector('.main__pagination.current').classList.add('temp');
   },
   offHover: (event) => {
     event.target.classList.remove('feature');
-    document.querySelector('.change_project.current').classList.remove('temp');
+    document.querySelector('.main__pagination.current').classList.remove('temp');
   },
   scrollEventHandler: (event) => {
     event = event || window.event;
@@ -1532,7 +1530,7 @@ Site = {
   },
   nextSlide: () => {
     Site.speed = 4;
-    Site.commonTransition();
+    if (Site.body.classList.contains('home')) Site.commonTransition();
     Site.updatePagination('next');
     window['image' + Site.currentSlide].alpha = 0;
     Site.stage.addChild(window['image' + Site.currentSlide]);
@@ -1576,7 +1574,7 @@ Site = {
   },
   prevSlide: () => {
     Site.speed = -4;
-    Site.commonTransition();
+    if (Site.body.classList.contains('home')) Site.commonTransition();
     Site.updatePagination('prev');
     Site.currentSlide === 0 ? (
       window['image' + (Site.totalSlides - 2)].alpha = 0,
@@ -1649,7 +1647,14 @@ Site = {
     Site.blockedAction = !0;
     Site.stage.removeChild(Site.displacementSprite);
     Site.stage.addChild(Site.displacementSprite2);
+
+    console.log('Site.displacementFilter', Site.displacementFilter);
     Site.attributes.intensity = Site.displacementFilter.scale.x;
+    // console.log('Site.attributes.intensity', Site.attributes.intensity);
+
+    // if (Site.body.classList.contains('home')) Site.attributes.intensity = Site.displacementFilter.scale.x;
+    // if (Site.body.classList.contains('home') || Site.body.classList.contains('single-works')) Site.attributes.intensity = Site.displacementFilter.scale.x;
+
     TweenMax.to(Site.attributes, 0.3, {
       intensity: 0,
       ease: Power2.easeOut,
@@ -1912,7 +1917,7 @@ Site = {
             clearProps: 'x',
             ease: Power4.easeInOut,
             onComplete: () => {
-              if (document.querySelectorAll('.change_project')[Site.totalSlides - 1].classList.contains('first')) document.querySelectorAll('.change_project')[Site.totalSlides - 1].classList.remove('first');
+              if (document.querySelectorAll('.main__pagination')[Site.totalSlides - 1].classList.contains('first')) document.querySelectorAll('.main__pagination')[Site.totalSlides - 1].classList.remove('first');
               document.querySelector('#num_letter .current').classList.remove('current', 'after');
               first.classList.add('current');
               first.classList.remove('before');
