@@ -131,7 +131,7 @@ header {
 //   background: $black;
 // }
 
-#menu {
+#nav__menu {
   position: absolute;
   top: 0;
   left: 0;
@@ -288,7 +288,7 @@ header {
 // @media (max-width: 1440px) {}
 
 @media (max-width: 1024px) {
-  #menu ol {
+  #nav__menu ol {
     font: 500 normal 5.5vw/10.4vw 'Alconica';
 
     // font-family: 'Alconica';
@@ -329,7 +329,7 @@ header {
       left: 0;
     }
   }
-  #menu {
+  #nav__menu {
     #pixi_menu {
       display: none;
     }
@@ -392,7 +392,7 @@ header {
       left: 0;
     }
   }
-  #menu {
+  #nav__menu {
     ol#the_menu {
       padding-left: 70px;
 

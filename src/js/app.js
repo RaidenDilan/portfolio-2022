@@ -225,7 +225,7 @@ Menu = {
   init: () => {
     Menu.button = document.querySelector('.projects');
     Menu.logo = document.querySelector('.logo');
-    Menu.navMenu = document.getElementById('menu');
+    Menu.navMenu = document.getElementById('nav__menu');
     Menu.social = document.getElementById('social');
     // Menu.button.classList.toggle('opened');
     Menu.button.isArrow = !1; // set init state to false
@@ -243,7 +243,7 @@ Menu = {
     else Site.scrollMenuOpen = window.pageYOffset;
 
     document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.add('black'));
-    document.getElementById('menu').style.display = 'block';
+    document.getElementById('nav__menu').style.display = 'block';
 
     // TweenMax.to('.feature1', 0.2, { scaleY: 0, delay: 0.2, ease: Power2.easeIn });
 
@@ -261,7 +261,7 @@ Menu = {
       }
     });
 
-    TweenMax.to('#menu', 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
+    TweenMax.to('#nav__menu', 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
 
     Site.menuHeight = document.getElementById('the_menu').clientHeight;
     Site.margins = window.innerHeight / 2 - 70;
@@ -294,11 +294,11 @@ Menu = {
     if (Site.scrolling !== null) Site.scrolling.on();
     else if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
 
-    TweenMax.to('#menu', 0.2, {
+    TweenMax.to('#nav__menu', 0.2, {
       opacity: 0,
       ease: Power2.easeIn,
       onComplete: () => {
-        document.getElementById('menu').style.display = 'none';
+        document.getElementById('nav__menu').style.display = 'none';
 
         if (UserAgent.iOS) {
           Site.main.classList.remove('black');
