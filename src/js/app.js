@@ -247,7 +247,7 @@ Menu = {
 
     // TweenMax.to('.feature1', 0.2, { scaleY: 0, delay: 0.2, ease: Power2.easeIn });
 
-    TweenMax.to('#main', 0.2, {
+    TweenMax.to('#main__content', 0.2, {
       opacity: 0,
       display: 'none',
       ease: Power2.easeIn,
@@ -310,7 +310,7 @@ Menu = {
       }
     });
 
-    TweenMax.to('#main', 0.2, { opacity: 1, display: 'block', delay: 0.2, ease: Power2.easeOut });
+    TweenMax.to('#main__content', 0.2, { opacity: 1, display: 'block', delay: 0.2, ease: Power2.easeOut });
     // TweenMax.to('.feature1', 0.2, { scaleY: 1, delay: 0.2, ease: Power2.easeIn });
 
     Site.stageMenu.removeChildren();
@@ -600,15 +600,15 @@ Site = {
       this.mouseOverLinks = document.querySelectorAll('.link');
       this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
 
-      this.main = document.getElementById('main');
+      this.main = document.getElementById('main__content');
       this.about = document.getElementById('about');
       this.contact = document.getElementById('contact');
       this.pixiMenuCover = document.getElementById('pixi_menu');
       this.pixiMenuLinks = document.querySelectorAll('#the_menu li');
       this.pixiMenuAnchors = document.querySelectorAll('#the_menu li a');
 
-      TweenMax.set('#main, #the_menu, #pixi_menu', { opacity: 1 });
-      TweenMax.set('#main', { display: 'block', clearProps: 'y' });
+      TweenMax.set('#main__content, #the_menu, #pixi_menu', { opacity: 1 });
+      TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
       // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
 
       // Resets header menu elements back to their defaults states/classes.
@@ -772,7 +772,7 @@ Site = {
           Site.scrolling.init();
         }
 
-        // TweenMax.to('#main', 0.4, { backgroundColor: '#EFEFEF', ease: Power2.easeInOut });
+        // TweenMax.to('#main__content', 0.4, { backgroundColor: '#EFEFEF', ease: Power2.easeInOut });
         TweenMax.to('#inner_svg', 1, { opacity: 1, ease: Power2.easeIn });
         TweenMax.fromTo('#inner_svg', 2, { rotation: 140 }, { rotation: 0, ease: Power2.easeOut });
         TweenMax.fromTo('#inner_svg img', 2, { rotation: -140 }, {
@@ -973,7 +973,7 @@ Site = {
           onComplete: () => {
             Site.stageMenu.removeChildren();
             Site.exitOk = !0;
-            TweenMax.set('#main', { clearProps: 'backgroundColor' });
+            TweenMax.set('#main__content', { clearProps: 'backgroundColor' });
           }
         });
       }
@@ -999,7 +999,7 @@ Site = {
         //   onComplete: () => {}
         // });
 
-        TweenMax.to('#main', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = !0 });
+        TweenMax.to('#main__content', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = !0 });
         Site.hovers = document.querySelectorAll('.change_project');
 
         Site.hovers.forEach((hover) => {
@@ -1017,7 +1017,7 @@ Site = {
           if (Site.scrolling !== null) {
             diff = Site.main.clientHeight - (Site.scrolling.vars.current + window.innerHeight);
 
-            TweenMax.to('#main', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+            TweenMax.to('#main__content', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
 
             TweenMax.to('#next_proj > div', 1.2, {
               y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
@@ -1046,7 +1046,7 @@ Site = {
                   opacity: 0,
                   ease: Power2.easeInOut,
                   onComplete: () => {
-                    // TweenMax.set('#main', { clearProps: 'y' });
+                    // TweenMax.set('#main__content', { clearProps: 'y' });
                     Site.exitOk = !0;
                     // console.log('4', Site.scrollMenuOpen);
                     window.scrollTo(Site.scrollMenuOpen, 0);
@@ -1057,7 +1057,7 @@ Site = {
           }
         }
         else {
-          TweenMax.to('#main', 0.4, {
+          TweenMax.to('#main__content', 0.4, {
             opacity: 0,
             ease: Power2.easeInOut,
             onComplete: () => {
@@ -1067,7 +1067,7 @@ Site = {
         }
       }
       else if (Site.body.classList.contains('about')) {
-        TweenMax.to('#main', 0.4, {
+        TweenMax.to('#main__content', 0.4, {
           opacity: 0,
           clearProps: 'backgroundColor',
           ease: Power2.easeInOut,
@@ -1085,7 +1085,7 @@ Site = {
       let res = classList.replace('is-loading', '');
       Site.body.setAttribute('class', res);
       !UserAgent.iOS ? Site.body.classList.add('desktop') : Site.body.classList.add('mobile');
-      Site.main.innerHTML = doc.getElementById('main').innerHTML;
+      Site.main.innerHTML = doc.getElementById('main__content').innerHTML;
       Site.init();
     };
 
@@ -1251,7 +1251,7 @@ Site = {
     }
   },
   onHashChangeHandler: (event) => {
-    document.getElementById('main').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
+    document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
     // console.log('[ onHashChangeHandler ]' + window.location.href + ' (' + window.location.pathname + ')');
   },
   onUnloadHandler: (event) => {
@@ -2190,7 +2190,7 @@ Site = {
   //   if (typeof templateId !== undefined) {
   //     var template = document.getElementById(templateId);
   //     if (template !== null) {
-  //       var content = document.getElementById('main');
+  //       var content = document.getElementById('main__content');
   //       content.innerHTML = '';
   //       content.appendChild(template.content.cloneNode(true));
   //     }
