@@ -479,9 +479,6 @@ Drag = {
 var Site = Site || {};
 
 Site = {
-  /*--------------------------------------------------------------------------*/
-  /*                             initialization                               */
-  /*--------------------------------------------------------------------------*/
   directoryUri: './',
   lethargy: new Lethargy(),
   preload: new createjs.LoadQueue(true),
@@ -493,6 +490,17 @@ Site = {
   attributes2: {},
   attributes3: {},
   historyState: {},
+  blockedAction: !0,
+  passOnce: !1,
+  playOnce: !1,
+  bottomLink: !1,
+  listenCursor: !1,
+  supportsWheel: !1,
+  tempImageNumber: -1,
+  speed: 0,
+  formerDelta: 0,
+  formerHeight: 0,
+  currentSlide: 0,
   links: null,
   xDown: null,
   yDown: null,
@@ -533,17 +541,6 @@ Site = {
   displacementSprite3: null,
   displacementFilter2: null,
   displacementFilter3: null,
-  blockedAction: !0,
-  passOnce: !1,
-  playOnce: !1,
-  bottomLink: !1,
-  listenCursor: !1,
-  supportsWheel: !1,
-  tempImageNumber: -1,
-  speed: 0,
-  formerDelta: 0,
-  formerHeight: 0,
-  currentSlide: 0,
   clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
   currentMousePos: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
 
@@ -551,8 +548,8 @@ Site = {
     // ---------------------------- PRELOAD PART ---------------------------- //
     Site.preload.on('progress', Site.handleOverallProgress);
     Site.preload.on('complete', Site.handleComplete);
+    // ---------------------------------------------------------------------- //
 
-    /* RAFs loading screen */
     Site.onRafLoading = function onRafLoading() {
       Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
 
@@ -568,7 +565,6 @@ Site = {
         if (Site.rafLoading !== null || undefined) cancelAnimationFrame(Site.rafLoading);
       }
     };
-    /* initialization */
     Site.init = function init() {
       this.exitOk = !1;
       this.ajaxOk = !1;
@@ -650,12 +646,10 @@ Site = {
 
       Site.animations();
     };
-    /* when get() completed */
     Site.onAjaxLoad = function onAjaxLoad(html) {
       Site.newPageContent = html;
       Site.ajaxOk = !0;
     };
-    /* animations input */
     Site.animations = function animations() {
       if (window.innerWidth < 768) Site.pixiMenuLinks.forEach((obj) => obj.classList.remove('active'));
 
@@ -943,7 +937,6 @@ Site = {
       //
       // if ($('event')[0]) {}
     };
-    /* animations output outputs */
     Site.onLoadPage = function onLoadPage(href) {
       document.getElementById('progress').style.display = 'block';
 
@@ -1066,7 +1059,6 @@ Site = {
       }
       else Site.exitOk = !0;
     };
-    /* updating the data of the page */
     Site.onUpdatePage = function onUpdatePage(html) {
       let parser = new DOMParser();
       let doc = parser.parseFromString(html, 'text/html');
@@ -1081,10 +1073,7 @@ Site = {
       Site.init();
     };
 
-    /* Site.state - initialState */
-    // window.history.replaceState(Site.historyState, null, '');
     window.history.pushState(Site.historyState, '', window.location);
-    // window.history.pushState({}, '', window.location);
 
     Site.init();
 
@@ -1099,12 +1088,10 @@ Site = {
       Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
     }
 
-    /* THIS WAS AN ELSE STATEMENT BEFORE - START */
     Site.body.classList.add('mobile');
     Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
     Site.contact.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
     Drag.toggleHidden();
-    /* THIS WAS AN ELSE STATEMENT BEFORE - END */
 
     /* pixi menu statement */
     Site.rendererMenu = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
@@ -2158,5 +2145,4 @@ Site = {
   // }
 };
 
-// window.addEventListener('DOMContentLoaded', () => Site.setup());
 document.addEventListener('DOMContentLoaded', () => Site.setup());
