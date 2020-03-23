@@ -64,9 +64,9 @@ Theme = {
 var AboutRAFs = AboutRAFs || {};
 
 AboutRAFs = {
-  theRafAbout: void 0,
+  rafScaleAbout: void 0,
   init: () => {
-    AboutRAFs.theRafAbout = requestAnimationFrame(AboutRAFs.init);
+    AboutRAFs.rafScaleAbout = requestAnimationFrame(AboutRAFs.init);
     AboutRAFs.updateRotation();
     AboutRAFs.updateScaleX();
   },
@@ -97,8 +97,8 @@ AboutRAFs = {
       TweenMax.to('.scaleA', 1.4, {
         scaleX: Site.intensity,
         ease: Power2.easeOut
-        // onUpdate: () => console.log('onUpdate :: cancelAnimationFrame(AboutRAFs.theRafAbout) --->'),
-        // onComplete: () => console.log('onComplete :: cancelAnimationFrame(AboutRAFs.theRafAbout) --->')
+        // onUpdate: () => console.log('onUpdate :: cancelAnimationFrame(AboutRAFs.rafScaleAbout) --->'),
+        // onComplete: () => console.log('onComplete :: cancelAnimationFrame(AboutRAFs.rafScaleAbout) --->')
       });
     }
   }
@@ -193,13 +193,11 @@ MenuPixi = {
       Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100) / 100;
       Site.theDeltaMenu = Site.currentMousePos.y;
       let expression = -1 * (Site.menuHeight - window.innerHeight) / window.innerHeight * Site.currentMousePos.y;
-      // console.log('expression', expression);
       TweenMax.to('#nav__menu__links', 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
     }
     else {
       Site.cursorPercentage = window.pageYOffset * 100 / (Site.menuHeight - window.innerHeight);
       Site.theDeltaMenu = window.pageYOffset;
-      // console.log('ELSE');
       TweenMax.to('#nav__menu__links', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
     }
   },
@@ -253,7 +251,6 @@ Menu = {
       ease: Power2.easeIn,
       onComplete: () => {
         if (UserAgent.iOS) {
-          // console.log('1', Site.scrollMenuOpen);
           window.scrollTo(Site.scrollMenuOpen, 0);
           Site.main.classList.add('black');
           Site.body.classList.add('temp');
@@ -280,7 +277,7 @@ Menu = {
 
     cancelAnimationFrame(Site.rafPixiHome);
     cancelAnimationFrame(Site.rafPixiSingle);
-    cancelAnimationFrame(AboutRAFs.theRafAbout);
+    cancelAnimationFrame(AboutRAFs.rafScaleAbout);
 
     Menu.button.isOpen = !0; // true
     MenuPixi.init();
@@ -303,7 +300,6 @@ Menu = {
         if (UserAgent.iOS) {
           Site.main.classList.remove('black');
           Site.body.classList.remove('temp');
-          // console.log('2', Site.scrollMenuOpen);
           window.scrollTo(0, Site.scrollMenuOpen); // --- OR --- equivalent of => window.scrollTo({ left: 0, top: Site.scrollMenuOpen });
           // window.scrollTo(Site.scrollMenuOpen, 0); // --- OR --- equivalent of => window.scrollTo({ top: Site.scrollMenuOpen, left: 0});
         }
@@ -372,7 +368,7 @@ Menu = {
             ? Menu.showArrow()
             : window.pageYOffset <= 10
               ? Menu.hideArrow()
-              : console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement
+              : console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement // : null; // --- OR --- return Menu.hideArrow() as final block statement
 
           window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34)
             ? Theme.lightStyle()
@@ -486,73 +482,72 @@ Site = {
   /*--------------------------------------------------------------------------*/
   /*                             initialization                               */
   /*--------------------------------------------------------------------------*/
-  setup: () => {
-    Site.directoryUri = './';
-    Site.scrolling = null;
-    Site.preload = new createjs.LoadQueue(true);
-    Site.mousePos = {};
-    Site.attributes = {};
-    Site.attributes2 = {};
-    Site.attributes3 = {};
-    Site.formerDelta = 0;
-    Site.stage = void 0;
-    Site.historyState = {};
-    Site.newPageContent = void 0;
-    Site.rafPixiHome = void 0;
-    Site.rafPixiMenu = void 0;
-    Site.rafPixiSingle = void 0;
-    Site.rafLoading = void 0;
-    Site.displacementSprite = void 0;
-    Site.displacementSprite2 = void 0;
-    Site.displacementSprite3 = void 0;
-    Site.displacementFilter = void 0;
-    Site.displacementFilter2 = void 0;
-    Site.displacementFilter3 = void 0;
-    Site.renderer = void 0;
-    Site.links = void 0;
-    Site.hovers = void 0;
-    Site.ladderScale = void 0;
-    Site.scrollMenuOpen = void 0;
-    Site.rendererMenu = void 0;
-    Site.stageMenu = void 0;
-    Site.loader = void 0;
-    Site.totalSlides = void 0;
-    Site.currentSlide = 0;
-    Site.lethargy = new Lethargy();
-    Site.deltaMenu = void 0;
-    Site.deltaScroll = void 0;
-    Site.intensity = void 0;
-    Site.menuHeight = void 0;
-    Site.margins = void 0;
-    Site.expression = void 0;
-    Site.heightMargin = void 0;
-    Site.cursorPercentage = void 0;
-    Site.menuEntrance = void 0;
-    Site.entranceHeight = void 0;
-    Site.blockedAction = !0;
-    Site.bottomLink = !1;
-    Site.listenCursor = !1;
-    Site.currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    /** Site.init variables */
-    Site.random = void 0;
-    Site.multiplier = void 0;
-    Site.imageNumber = void 0;
-    Site.delayx = void 0;
-    Site.lindex = void 0;
-    Site.passOnce = !1;
-    Site.playOnce = !1;
-    Site.supportsWheel = !1;
-    Site.tempImageNumber = -1;
-    Site.displace2 = {};
-    Site.displace = {};
-    Site.formerHeight = 0;
-    /* More variables */
-    Site.xDown = null;
-    Site.yDown = null;
-    Site.gamma = void 0;
-    Site.deltaGamma = void 0;
-    Site.clickEvent = ('ontouchstart' in window ? 'touchend' : 'click');
+  directoryUri: './',
+  lethargy: new Lethargy(),
+  preload: new createjs.LoadQueue(true),
+  stage: {},
+  displace: {},
+  mousePos: {},
+  displace2: {},
+  attributes: {},
+  attributes2: {},
+  attributes3: {},
+  historyState: {},
+  links: null,
+  xDown: null,
+  yDown: null,
+  gamma: null,
+  hovers: null,
+  loader: null,
+  delayx: null,
+  random: null,
+  lindex: null,
+  margins: null,
+  renderer: null,
+  scrolling: null,
+  stageMenu: null,
+  deltaMenu: null,
+  intensity: null,
+  rafLoading: null,
+  menuHeight: null,
+  expression: null,
+  multiplier: null,
+  deltaGamma: null,
+  ladderScale: null,
+  totalSlides: null,
+  deltaScroll: null,
+  imageNumber: null,
+  rafPixiHome: null,
+  rafPixiMenu: null,
+  rendererMenu: null,
+  heightMargin: null,
+  menuEntrance: null,
+  rafPixiSingle: null,
+  newPageContent: null,
+  entranceHeight: null,
+  scrollMenuOpen: null,
+  cursorPercentage: null,
+  displacementSprite: null,
+  displacementFilter: null,
+  displacementSprite2: null,
+  displacementSprite3: null,
+  displacementFilter2: null,
+  displacementFilter3: null,
+  blockedAction: !0,
+  passOnce: !1,
+  playOnce: !1,
+  bottomLink: !1,
+  listenCursor: !1,
+  supportsWheel: !1,
+  tempImageNumber: -1,
+  speed: 0,
+  formerDelta: 0,
+  formerHeight: 0,
+  currentSlide: 0,
+  clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
+  currentMousePos: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
 
+  setup: () => {
     // ---------------------------- PRELOAD PART ---------------------------- //
     Site.preload.on('progress', Site.handleOverallProgress);
     Site.preload.on('complete', Site.handleComplete);
@@ -562,41 +557,41 @@ Site = {
       Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
 
       if (Site.exitOk === !0 && Site.ajaxOk === !0) {
-        cancelAnimationFrame(Site.rafPixiHome);
-        cancelAnimationFrame(Site.rafPixiSingle);
-        cancelAnimationFrame(AboutRAFs.theRafAbout); // TESTING <---|
-
+        if (Site.rafPixiHome !== null || undefined) cancelAnimationFrame(Site.rafPixiHome);
+        if (Site.rafPixiSingle !== null || undefined) cancelAnimationFrame(Site.rafPixiSingle);
+        if (Site.rafScaleAbout !== null || undefined) cancelAnimationFrame(AboutRAFs.rafScaleAbout);
         if (Site.body.classList.contains('single') || Site.body.classList.contains('home')) {
           Site.stage.destroy();
           Site.renderer.destroy();
         }
-
         Site.onUpdatePage(Site.newPageContent);
-        cancelAnimationFrame(Site.rafLoading);
+        if (Site.rafLoading !== null || undefined) cancelAnimationFrame(Site.rafLoading);
       }
     };
     /* initialization */
     Site.init = function init() {
       this.exitOk = !1;
       this.ajaxOk = !1;
-      this.linkInProgress = !1;
       this.deltaMenu = 0;
       this.deltaScroll = 0;
+      this.linkInProgress = !1;
 
       this.body = document.querySelector('body');
       this.vsSection = document.querySelector('.vs-section');
       this.loading = document.querySelector('.is-loading');
-      this.vsDivs = document.querySelectorAll('.vs-div');
+
       this.innerH2 = document.getElementsByClassName('inner_h2');
       this.homeCanvas = document.getElementsByClassName('inner_h2')[0];
-      this.mouseOverLinks = document.querySelectorAll('.link');
-      this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
 
       this.main = document.getElementById('main__content');
       this.about = document.getElementById('about');
       this.contact = document.getElementById('contact');
       this.pixiMenuCover = document.getElementById('pixi_menu');
+
+      this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
+      this.vsDivs = document.querySelectorAll('.vs-div');
       this.pixiMenuLinks = document.querySelectorAll('#nav__menu__links li');
+      this.mouseOverLinks = document.querySelectorAll('.link');
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
       UserAgent.init();
@@ -658,7 +653,6 @@ Site = {
     /* when get() completed */
     Site.onAjaxLoad = function onAjaxLoad(html) {
       Site.newPageContent = html;
-      // console.log('[ onAjaxLoad ] -> html', html);
       Site.ajaxOk = !0;
     };
     /* animations input */
@@ -677,8 +671,8 @@ Site = {
 
         Site.hovers = document.querySelectorAll('.main__pagination');
 
-        Site.hovers.forEach((hover) => hover.addEventListener('mouseenter', Site.onHover, false));
-        Site.hovers.forEach((hover) => hover.addEventListener('mouseleave', Site.offHover, false));
+        Site.hovers.forEach((obj) => obj.addEventListener('mouseenter', Site.onHover, false));
+        Site.hovers.forEach((obj) => obj.addEventListener('mouseleave', Site.offHover, false));
 
         Site.currentSlide = 0;
         Site.totalSlides = 0;
@@ -785,9 +779,9 @@ Site = {
           onComplete: () => {
             // Site.aboutRafs();
             AboutRAFs.init();
-            // AboutRAFs.theRafAbout = requestAnimationFrame(Site.aboutRafs);
+            // AboutRAFs.rafScaleAbout = requestAnimationFrame(Site.aboutRafs);
             // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs()), 1000);
-            // if (AboutRAFs.theRafAbout !== null) Site.aboutRafs();
+            // if (AboutRAFs.rafScaleAbout !== null) Site.aboutRafs();
             // else {}
           }
         });
@@ -811,8 +805,8 @@ Site = {
           document.getElementById('to_next_project').addEventListener('mouseout', Site.offHoverNext, false);
 
           if (Site.scrolling !== null) Site.scrolling.destroy();
-          Site.scrolling = null;
 
+          Site.scrolling = null;
           Site.scrolling = new Smooth({
             preload: !0,
             native: !1,
@@ -820,7 +814,6 @@ Site = {
             divs: Site.vsDivs,
             vs: { mouseMultiplier: 0.4 }
           });
-
           Site.scrolling.init();
         }
         else {
@@ -899,7 +892,6 @@ Site = {
         Site.stage.addChild(Site.displacementSprite2);
         Site.stage.addChild(image);
 
-
         // Site.stage.hitArea = Site.renderer.screen;
         // Site.stage.interactive = true;
 
@@ -954,15 +946,14 @@ Site = {
     /* animations output outputs */
     Site.onLoadPage = function onLoadPage(href) {
       document.getElementById('progress').style.display = 'block';
-      if (Site.scrolling !== null) Site.scrolling.off();
 
-      // console.log('[ onLoadPage ] -> href', href);
+      if (Site.scrolling !== null) Site.scrolling.off();
 
       Site.sendHttpRequest(href);
 
       if (Menu.button.isOpen) {
         cancelAnimationFrame(Site.rafPixiMenu);
-        cancelAnimationFrame(AboutRAFs.theRafAbout); // TESTING <---|
+        cancelAnimationFrame(AboutRAFs.rafScaleAbout); // TESTING <---|
         /* reset projMenu when changing states/clicking on anchor elements */
         Menu.button.classList.add('closing');
         setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
@@ -1002,9 +993,9 @@ Site = {
         TweenMax.to('#main__content', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = !0 });
         Site.hovers = document.querySelectorAll('.main__pagination');
 
-        Site.hovers.forEach((hover) => {
-          hover.removeEventListener('mouseenter', Site.onHover);
-          hover.removeEventListener('mouseleave', Site.offHover);
+        Site.hovers.forEach((obj) => {
+          obj.removeEventListener('mouseenter', Site.onHover);
+          obj.removeEventListener('mouseleave', Site.offHover);
         });
       }
       else if (Site.body.classList.contains('single')) {
@@ -1048,7 +1039,6 @@ Site = {
                   onComplete: () => {
                     // TweenMax.set('#main__content', { clearProps: 'y' });
                     Site.exitOk = !0;
-                    // console.log('4', Site.scrollMenuOpen);
                     window.scrollTo(Site.scrollMenuOpen, 0);
                   }
                 });
@@ -1219,23 +1209,16 @@ Site = {
     // if (event.state) {
     if (event.state !== null) {
       Site.state = event.state;
-      // console.log('[ onPopStateHandler ] -> window.location.href', window.location.href);
-
-      // Site.loadTemplate(event.state.templateRef);
-      // Site.onLoadPage(event.state.templateRef);
-
       Site.onLoadPage(window.location.href);
       Site.onRafLoading();
     }
   },
   onHashChangeHandler: (event) => {
     document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
-    // console.log('[ onHashChangeHandler ]' + window.location.href + ' (' + window.location.pathname + ')');
   },
   onUnloadHandler: (event) => {
     event = event || window.event;
     event.preventDefault() || false;
-    // console.log('[ onUnloadHandler ] -> Site.scrollMenuOpen', Site.scrollMenuOpen);
     return window.scrollTo(0, 0); // scroll back to top when reloading page
     // return window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
   },
@@ -1254,7 +1237,6 @@ Site = {
     xhr.open(method, url, !0);
 
     xhr.onreadystatechange = (event) => {
-      // console.log('[sendHttpRequest] -> xhr -> onreadystatechange -> event', event);
       (xhr.readyState === xhr.DONE && xhr.status === 200)
         ? Site.onAjaxLoad(xhr.responseText)
         : xhr.status === 400
@@ -1663,6 +1645,38 @@ Site = {
       Theme.darkStyle();
     }
   },
+  checkMenu: (item, index) => {
+    if (
+      Site.cursorPercentage > (Site.heightMargin + (index * Site.entranceHeight))
+      && Site.cursorPercentage < (Site.heightMargin + ((index + 1) * Site.entranceHeight))
+      && !item.classList.contains('active')
+    ) {
+      document.querySelector('#nav__menu__links .active').classList.remove('active');
+      item.classList.add('active');
+      Site.pixiMenuCover.setAttribute('href', item.querySelector('a').getAttribute('href'));
+
+      /* add new image */
+      Site.stageMenu.addChild(window['menu_image' + index]);
+      Site.displace2.alpha = 0;
+      // Site.stageMenu.removeChild(Site.displacementSprite3);
+
+      TweenMax.to(Site.displace2, 0.2, {
+        alpha: 1,
+        onUpdate: () => {
+          window['menu_image' + index].alpha = Site.displace2.alpha;
+        },
+        onComplete: () => {
+          //   // to do : management suppression former child
+          //   // Site.stageMenu.removeChildren(2);
+          //   // addedLast = index;
+        },
+        ease: Linear.easeNone
+      });
+    }
+  },
+  /*--------------------------------------------------------------------------*/
+  /*                           Pixi Configurations                            */
+  /*--------------------------------------------------------------------------*/
   homePixi: () => {
     Site.rafPixiHome = requestAnimationFrame(Site.homePixi);
     Site.renderer.render(Site.stage);
@@ -1737,8 +1751,6 @@ Site = {
     Site.renderer.render(Site.stage);
     Site.displacementSprite2.x += Site.speed;
 
-    /* USE SWITCH STATEMENT ---> */
-
     if (Site.scrolling !== null) {
       if (Site.scrolling.vars.target !== 0 && Site.passOnce === !1) {
         Site.passOnce = !0;
@@ -1763,35 +1775,6 @@ Site = {
     // TweenMax.to('#the_imgs', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
     // if (Site.scrolling !== null) Site.deltaScroll = Site.scrolling.vars.current;
     // else {}
-  },
-  checkMenu: (item, index) => {
-    if (
-      Site.cursorPercentage > (Site.heightMargin + (index * Site.entranceHeight))
-      && Site.cursorPercentage < (Site.heightMargin + ((index + 1) * Site.entranceHeight))
-      && !item.classList.contains('active')
-    ) {
-      document.querySelector('#nav__menu__links .active').classList.remove('active');
-      item.classList.add('active');
-      Site.pixiMenuCover.setAttribute('href', item.querySelector('a').getAttribute('href'));
-
-      /* add new image */
-      Site.stageMenu.addChild(window['menu_image' + index]);
-      Site.displace2.alpha = 0;
-      // Site.stageMenu.removeChild(Site.displacementSprite3);
-
-      TweenMax.to(Site.displace2, 0.2, {
-        alpha: 1,
-        onUpdate: () => {
-          window['menu_image' + index].alpha = Site.displace2.alpha;
-        },
-        onComplete: () => {
-        //   // to do : management suppression former child
-        //   // Site.stageMenu.removeChildren(2);
-        //   // addedLast = index;
-        },
-        ease: Linear.easeNone
-      });
-    }
   },
   /*--------------------------------------------------------------------------*/
   /*                            Home Pagination                               */
@@ -1949,15 +1932,6 @@ Site = {
           }
         });
       }
-      // if (Site.currentSlide === 2) {
-      //   document.querySelectorAll('.update_link').forEach((x) => {
-      //     console.log('x 1', x);
-      //     // x.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-params'));
-      //     // x.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-params'));
-      //     // x.removeAttribute('href');
-      //     // console.log('x 2', x);
-      //   });
-      // }
       if (Site.currentSlide === 1) {
         document.getElementById('num_project').innerHTML = Site.totalSlides;
         document.getElementById('title_h2').innerHTML = document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-title');
@@ -2184,4 +2158,5 @@ Site = {
   // }
 };
 
+// window.addEventListener('DOMContentLoaded', () => Site.setup());
 document.addEventListener('DOMContentLoaded', () => Site.setup());
