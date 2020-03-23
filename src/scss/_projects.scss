@@ -327,6 +327,7 @@ header {
       margin-left: -8px;
 
       .svg_menu {
+        pointer-events: none;
         bottom: 10px;
         left: 0px;
       }

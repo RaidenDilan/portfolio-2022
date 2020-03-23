@@ -63,6 +63,7 @@ header {
       color: $white;
 
       svg.svg_menu {
+        pointer-events: none;
         .svg_line {
           stroke: $white;
         }

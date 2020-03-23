@@ -544,8 +544,13 @@ svg.svg-circle {
       text-transform: uppercase;
       // z-index: 1000;
 
+      #title_h2 {
+        pointer-events: none;
+      }
+
       span {
         display: block;
+        // pointer-events: none;
       }
     }
     h2 {
@@ -605,6 +610,8 @@ svg.svg-circle {
       color: $white;
     }
     svg.svg_menu {
+      pointer-events: none;
+
       .svg_line {
         stroke: $white;
       }
@@ -624,6 +631,7 @@ svg.svg-circle {
     }
   }
   .svg_menu {
+    pointer-events: none;
     bottom: -10px;
     left: 0;
   }

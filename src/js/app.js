@@ -396,20 +396,18 @@ Drag = {
     Drag.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
     Drag.isDrag = !1;
     Drag.isScroll = !1;
-    /* Mouse/drag events */
-    /* Add these events to document element */
-    document.onmousedown = Drag.start;
-    document.onmousedown = Drag.move;
-    document.onmousedown = Drag.end;
-    /* drag event */
+
     if (Site.body.classList.contains('home')) {
       document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
       document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
       document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
+
+      document.onmousedown = Drag.start;
+      document.onmousedown = Drag.move;
+      document.onmousedown = Drag.end;
     }
   },
   start: (event) => {
-    // Drag.isDown = !0;
     event = event || window.event;
     event.preventDefault() || false;
 
@@ -440,7 +438,6 @@ Drag = {
     }
   },
   end: (event) => {
-    // Drag.isDown = !1;
     event = event || window.event;
     event.preventDefault() || false;
 
@@ -490,7 +487,6 @@ Site = {
   /*                             initialization                               */
   /*--------------------------------------------------------------------------*/
   setup: () => {
-    /* DOMContentLoaded global variables */
     Site.directoryUri = './';
     Site.scrolling = null;
     Site.preload = new createjs.LoadQueue(true);
@@ -537,8 +533,7 @@ Site = {
     Site.bottomLink = !1;
     Site.listenCursor = !1;
     Site.currentMousePos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-
-    /** init() */
+    /** Site.init variables */
     Site.random = void 0;
     Site.multiplier = void 0;
     Site.imageNumber = void 0;
@@ -551,7 +546,6 @@ Site = {
     Site.displace2 = {};
     Site.displace = {};
     Site.formerHeight = 0;
-
     /* More variables */
     Site.xDown = null;
     Site.yDown = null;
@@ -559,7 +553,7 @@ Site = {
     Site.deltaGamma = void 0;
     Site.clickEvent = ('ontouchstart' in window ? 'touchend' : 'click');
 
-    // ----------------------------- PRELOAD PART ----------------------------- //
+    // ---------------------------- PRELOAD PART ---------------------------- //
     Site.preload.on('progress', Site.handleOverallProgress);
     Site.preload.on('complete', Site.handleComplete);
 
@@ -633,8 +627,14 @@ Site = {
       if (Site.body.classList.contains('is-loading')) setTimeout(() => Site.loading.classList.remove('is-loading'), 1000, false);
 
       /* removes event listeners from elements with 'link' class before adding click events to each element */
-      Site.links.forEach((obj) => obj.removeEventListener('click', Site.onClickHandler, !1));
-      Site.links.forEach((obj) => obj.addEventListener('click', Site.onClickHandler, !1));
+      Site.links.forEach((obj) => {
+        obj.removeEventListener('click', Site.onClickHandler, !1);
+        obj.onclick = null;
+      });
+      Site.links.forEach((obj) => {
+        obj.addEventListener('click', Site.onClickHandler, !1);
+        obj.onclick = Site.onClickHandler;
+      });
 
       // if (!Menu.button.classList.contains('.point3.black')) Menu.button.style.setProperty('--button-color', 'blue'); // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
       // else Menu.button.style.setProperty('--button-color', 'red'); // Menu.button.childNodes.forEach((obj) => obj.style.setProperty('--button-color'));
@@ -731,9 +731,7 @@ Site = {
         Site.loader.load((loader, resources) => {
           Site.blockedAction = !1;
           if (!Menu.button.isOpen) Site.homePixi();
-          console.log('1');
           Site.nextSlide();
-          console.log('2');
 
           //
           //
@@ -1098,7 +1096,7 @@ Site = {
     window.history.pushState(Site.historyState, '', window.location);
     // window.history.pushState({}, '', window.location);
 
-    Site.init(); // INITIALISE APP
+    Site.init();
 
     if (!UserAgent.iOS) {
       Site.body.classList.add('desktop');
@@ -1127,9 +1125,7 @@ Site = {
     /* RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
     Site.rendererMenu.view.width = window.innerWidth;
     Site.rendererMenu.view.height = window.innerHeight;
-
     Site.stageMenu = new PIXI.Container();
-
     Site.pixiMenuAnchors.forEach(Site.setMenuDimensions);
 
     /* displacement 2 */
@@ -1170,60 +1166,48 @@ Site = {
     window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     window.onhashchange = Site.onHashChangeHandler;
-    /* Mouse events: Add these events to document element */
-    window.onmousedown = Site.mousePositionHandler;
-    window.onmousedown = Site.projectChangedHandler;
-    window.onmousedown = Site.scrollEventHandler;
-    window.onmousedown = Site.touchStartHandler;
-    window.onmousedown = Site.touchMoveHandler;
-    window.onmousedown = Site.showHideArrow;
+
     window.resize = Site.onResizeHandler;
     window.keydown = Site.onKeydownHandler;
+    /* Mouse events: Add these events to document element */
+    document.onmousedown = Site.projectChangedHandler;
+    document.onmousedown = Site.mousePositionHandler;
+    document.onmousedown = Site.scrollEventHandler;
+    document.onmousedown = Site.touchStartHandler;
+    document.onmousedown = Site.touchMoveHandler;
+    document.onmousedown = Site.showHideArrow;
   },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
   onClickHandler: function(event) {
-    // IF ---> LINK IS NOT AN EXTERNAL LINK
-    if (!event.target.classList.contains('external')) { // if (!event.target.classList.contains('external')) {
-      event = event || window.event;
-      event.preventDefault() || false;
+    event = event || window.event;
+    event.preventDefault() || false;
 
+    if (!event.target.classList.contains('external')) {
+      /* We stop reloading of the page here only when the targetted element is not an external link */
+      if (this.getAttribute('href') === '' || this.getAttribute('href').length === 0) return !1;
       if (Site.linkInProgress === !1) {
         Site.linkInProgress = !0;
-        let href = this.getAttribute('href');
-        // let href = event.target.getAttribute('href');
-        // let page = this.attributes.href.value;
+        let targetHref = this.getAttribute('href');
+        let targetHTML = this.innerHTML;
 
         event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
 
-        var historyState = {};
-        var popObject = { templateRef: this.dataset.templateRef, title: this.dataset.templateTitle };
-        var base = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
-        var newPage = window.location.href + '#' + this.href.replace(base, ''); /* Change to new page with hash */
-        // window.location.href = newPage; // BUG ---> THIS STOPS OUR EXIT ANIMATION
-
         /* Remove hash from URL and replace with desired URL */
-        if (window.history && window.history.pushState) {
-          // window.history.pushState({}, '', href + '.html');
-          window.history.pushState({}, this.innerHTML, this.href); /* Only do this if history.pushState is supported by the browser */
-          // window.history.pushState(historyState, this.innerHTML, this.href);
-          // window.history.pushState(Site.historyState, this.innerHTML, this.href);
-          // window.history.pushState(popObject, popObject.title, popObject.templateRef + '.html');
-        }
+        if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref); /* Only do this if history.pushState is supported by the browser */
 
-        // Site.loadTemplate(popObject.templateRef);
-        // Site.onLoadPage(popObject.templateRef);
-        Site.onLoadPage(href);
+        Site.onLoadPage(targetHref);
         Site.onRafLoading();
-
         return !1;
       }
-
+    }
+    if (event.target.classList.contains('external')) {
+      window.open(event.target.href, '_blank');
+      window.history.pushState(null, null, '');
       return !1;
     }
-    // event.stopPropagation();
   },
   /*--------------------------------------------------------------------------*/
   /*                           State Change Events                            */
@@ -1280,7 +1264,6 @@ Site = {
     xhr.send();
   },
   projectChangedHandler: (event) => {
-    console.log('[projectChangedHandler] -> event --->', event);
     event = event || window.event;
     event.preventDefault() || false;
 
@@ -1530,7 +1513,8 @@ Site = {
   },
   nextSlide: () => {
     Site.speed = 4;
-    if (Site.body.classList.contains('home')) Site.commonTransition();
+    // if (Site.body.classList.contains('home')) Site.commonTransition();
+    Site.commonTransition();
     Site.updatePagination('next');
     window['image' + Site.currentSlide].alpha = 0;
     Site.stage.addChild(window['image' + Site.currentSlide]);
@@ -1574,7 +1558,8 @@ Site = {
   },
   prevSlide: () => {
     Site.speed = -4;
-    if (Site.body.classList.contains('home')) Site.commonTransition();
+    // if (Site.body.classList.contains('home')) Site.commonTransition();
+    Site.commonTransition();
     Site.updatePagination('prev');
     Site.currentSlide === 0 ? (
       window['image' + (Site.totalSlides - 2)].alpha = 0,
@@ -1647,14 +1632,7 @@ Site = {
     Site.blockedAction = !0;
     Site.stage.removeChild(Site.displacementSprite);
     Site.stage.addChild(Site.displacementSprite2);
-
-    console.log('Site.displacementFilter', Site.displacementFilter);
     Site.attributes.intensity = Site.displacementFilter.scale.x;
-    // console.log('Site.attributes.intensity', Site.attributes.intensity);
-
-    // if (Site.body.classList.contains('home')) Site.attributes.intensity = Site.displacementFilter.scale.x;
-    // if (Site.body.classList.contains('home') || Site.body.classList.contains('single-works')) Site.attributes.intensity = Site.displacementFilter.scale.x;
-
     TweenMax.to(Site.attributes, 0.3, {
       intensity: 0,
       ease: Power2.easeOut,
@@ -1930,11 +1908,6 @@ Site = {
         document.getElementById('type').innerHTML = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-cap');
         document.getElementById('year').innerHTML = document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-year');
 
-        // if(UserAgent.iOS) {
-        //   if (document.querySelectorAll('#title_h2 span').length <= 2) document.getElementById('title_h2').style.fontSize = '14vw';
-        //   else document.getElementById('title_h2').style.fontSize = '11vw';
-        // }
-
         document.querySelectorAll('.update_link').forEach((obj) => obj.setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide].getAttribute('data-params')));
       }
     }
@@ -1976,7 +1949,15 @@ Site = {
           }
         });
       }
-
+      // if (Site.currentSlide === 2) {
+      //   document.querySelectorAll('.update_link').forEach((x) => {
+      //     console.log('x 1', x);
+      //     // x.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-params'));
+      //     // x.setAttribute('href', document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-params'));
+      //     // x.removeAttribute('href');
+      //     // console.log('x 2', x);
+      //   });
+      // }
       if (Site.currentSlide === 1) {
         document.getElementById('num_project').innerHTML = Site.totalSlides;
         document.getElementById('title_h2').innerHTML = document.querySelectorAll('#images div')[Site.totalSlides - 1].getAttribute('data-title');

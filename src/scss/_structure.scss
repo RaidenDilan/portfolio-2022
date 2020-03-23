@@ -45,6 +45,7 @@
 }
 
 svg.svg_menu {
+  pointer-events: none;
   position: absolute;
   bottom: 16px;
   left: 0;
@@ -192,6 +193,7 @@ svg.svg_underline {
   // }
 
   .svg_menu {
+    pointer-events: none;
     .svg_line {
       stroke: $white;
     }
@@ -206,6 +208,7 @@ svg.svg_underline {
     color: $black;
 
     .svg_menu {
+      pointer-events: none;
       .svg_line {
         stroke: $black;
       }
