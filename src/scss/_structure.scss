@@ -275,15 +275,15 @@ svg.svg_underline {
   z-index: 20;
 }
 
-// .lazy-image {
-//   opacity: 0.1;
-//   will-change: opacity;
-//   transition: all 0.5s;
-//
-//   &.loaded {
-//     opacity: 1;
-//   }
-// }
+.lazy-image {
+  opacity: 0.1;
+  will-change: opacity;
+  transition: all 0.5s;
+
+  &.loaded {
+    opacity: 1;
+  }
+}
 
 // .background_intro {
 //   width: 87%;

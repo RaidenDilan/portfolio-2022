@@ -508,7 +508,7 @@ LazyLoad = {
   init: () => {
     LazyLoad.images = [].concat(LazyLoad.toConsumableArray(document.querySelectorAll('.lazy-image')));
     LazyLoad.interactSettings = {
-      root: document.querySelector('.center'),
+      root: document.querySelector('.inner_img'),
       rootMargin: '0px 0px 200px 0px'
     };
     LazyLoad.observer = new IntersectionObserver(LazyLoad.onIntersection, LazyLoad.interactSettings);
@@ -517,7 +517,7 @@ LazyLoad = {
   toConsumableArray: (arr) => {
     if (Array.isArray(arr)) {
       let arr2 = Array(arr.length);
-      for (var i = 0; i < arr.length; i++) {
+      for (let i = 0; i < arr.length; i++) {
         arr2[i] = arr[i];
       }
       return arr2;
@@ -526,15 +526,15 @@ LazyLoad = {
   },
   onIntersection: (imageEntites) => {
     imageEntites.forEach((image) => {
-      if(image.isIntersecting) {
+      if (image.isIntersecting) {
         LazyLoad.observer.unobserve(image.target);
         image.target.src = image.target.dataset.src;
         image.target.onload = () => image.target.classList.add('loaded');
-        console.log('image', image);
       }
     });
   }
 };
+
 var Site = Site || {};
 
 Site = {
@@ -654,7 +654,7 @@ Site = {
       UserAgent.init();
       Drag.init();
       Menu.init();
-      // LazyLoad.init();
+      LazyLoad.init();
 
       TweenMax.set('#main__content, #nav__menu__links, #pixi_menu', { opacity: 1 });
       TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
