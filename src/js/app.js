@@ -502,6 +502,39 @@ Drag = {
   }
 };
 
+var LazyLoad = LazyLoad || {};
+
+LazyLoad = {
+  init: () => {
+    LazyLoad.images = [].concat(LazyLoad.toConsumableArray(document.querySelectorAll('.lazy-image')));
+    LazyLoad.interactSettings = {
+      root: document.querySelector('.center'),
+      rootMargin: '0px 0px 200px 0px'
+    };
+    LazyLoad.observer = new IntersectionObserver(LazyLoad.onIntersection, LazyLoad.interactSettings);
+    LazyLoad.images.forEach((image) => LazyLoad.observer.observe(image));
+  },
+  toConsumableArray: (arr) => {
+    if (Array.isArray(arr)) {
+      let arr2 = Array(arr.length);
+      for (var i = 0; i < arr.length; i++) {
+        arr2[i] = arr[i];
+      }
+      return arr2;
+    }
+    return Array.from(arr);
+  },
+  onIntersection: (imageEntites) => {
+    imageEntites.forEach((image) => {
+      if(image.isIntersecting) {
+        LazyLoad.observer.unobserve(image.target);
+        image.target.src = image.target.dataset.src;
+        image.target.onload = () => image.target.classList.add('loaded');
+        console.log('image', image);
+      }
+    });
+  }
+};
 var Site = Site || {};
 
 Site = {
@@ -621,6 +654,7 @@ Site = {
       UserAgent.init();
       Drag.init();
       Menu.init();
+      // LazyLoad.init();
 
       TweenMax.set('#main__content, #nav__menu__links, #pixi_menu', { opacity: 1 });
       TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
@@ -2230,19 +2264,6 @@ Site = {
   handleComplete: (event) => {
     return console.log('[ handleComplete ]', event.complete);
   }
-  /*--------------------------------------------------------------------------*/
-  /*                                EXTRA CODE                                */
-  /*--------------------------------------------------------------------------*/
-  // loadTemplate: (templateId) => {
-  //   if (typeof templateId !== undefined) {
-  //     var template = document.getElementById(templateId);
-  //     if (template !== null) {
-  //       var content = document.getElementById('main__content');
-  //       content.innerHTML = '';
-  //       content.appendChild(template.content.cloneNode(true));
-  //     }
-  //   }
-  // }
 };
 
 document.addEventListener('DOMContentLoaded', () => Site.setup());
