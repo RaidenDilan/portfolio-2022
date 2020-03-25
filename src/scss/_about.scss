@@ -64,10 +64,13 @@
   width: 80px;
   height: 80px;
   // -webkit-transition: 0.1s;
-          transition: 0.1s;
+  transition: 0.1s;
   // -webkit-transition-property: top;
-          transition-property: top;
+  transition-property: top;
 
+  svg {
+    pointer-events: none;
+  }
   .all_work {
     padding: 6px;
     transform: scale(1.05);
@@ -505,6 +508,10 @@ footer {
     padding: 6px 6px 12px 0;
     margin-left: 30px;
     position: relative;
+
+    .link_hover {
+      pointer-events: none;
+    }
 
     svg {
       bottom: 5px;

@@ -64,7 +64,7 @@ Theme = {
 var AboutRAFs = AboutRAFs || {};
 
 AboutRAFs = {
-  rafScaleAbout: void 0,
+  rafScaleAbout: null,
   init: () => {
     AboutRAFs.rafScaleAbout = requestAnimationFrame(AboutRAFs.init);
     AboutRAFs.updateRotation();
@@ -173,7 +173,7 @@ Throttle = {
 var MenuPixi = MenuPixi || {};
 
 MenuPixi = {
-  rafPixiMenu: void 0,
+  rafPixiMenu: null,
   init: () => {
     MenuPixi.rafPixiMenu = requestAnimationFrame(MenuPixi.init);
     Site.rendererMenu.render(Site.stageMenu);
@@ -219,7 +219,8 @@ var Menu = Menu || {};
 Menu = {
   isOpen: !1, // false
   button: null,
-  arrowHidingTimeout: void 0,
+  arrowHidingTimeout: null,
+  menuClosingTimeout: null,
   init: () => {
     Menu.button = document.querySelector('.projects');
     Menu.logo = document.querySelector('.logo');
@@ -286,7 +287,26 @@ Menu = {
     Menu.button.classList.remove('opened');
     Menu.button.classList.add('closing');
 
-    setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
+    // cancelAnimationFrame(timer);
+    // timer = requestAnimationFrame(() => loop(number + 1));
+
+    if (Menu.menuClosingTimeout !== null) clearTimeout(Menu.menuClosingTimeout);
+
+    Menu.menuClosingTimeout = setTimeout(() => {
+      Menu.button.classList.remove('closing');
+      clearTimeout(Menu.menuClosingTimeout);
+      Menu.menuClosingTimeout = null;
+    }, 1250); // delay is unusally long
+
+    // let timer = null;
+    // function loop(number) {
+    //   console.log(number);
+    //   // stop looping when 'number' is greater than 9
+    //   if (number > 9) return;
+    //   cancelAnimationFrame(timer);
+    //   timer = requestAnimationFrame(() => loop(number + 1));
+    // }
+    // loop(1);
 
     if (Site.scrolling !== null) Site.scrolling.on();
     else if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
@@ -338,9 +358,15 @@ Menu = {
       Menu.button.classList.remove('arrow-transition-in');
       Menu.button.classList.add('arrow-transition-out');
 
+      if (Menu.arrowHidingTimeout) {
+        clearTimeout(Menu.arrowHidingTimeout);
+        Menu.arrowHidingTimeout = null;
+      }
+
       Menu.arrowHidingTimeout = setTimeout(() => {
         Menu.button.classList.remove('arrow-transition-out');
-        Menu.arrowHidingTimeout = void 0;
+        clearTimeout(Menu.arrowHidingTimeout);
+        Menu.arrowHidingTimeout = null;
       }, 500);
     }
   },
@@ -535,6 +561,8 @@ Site = {
   entranceHeight: null,
   scrollMenuOpen: null,
   cursorPercentage: null,
+  nextSlideTimeout: null,
+  prevSlideTimeout: null,
   displacementSprite: null,
   displacementFilter: null,
   displacementSprite2: null,
@@ -615,7 +643,13 @@ Site = {
       Site.contact.style.display = 'block';
 
       /* classList of undefined when going from state to another => BUG!!! */
-      if (Site.body.classList.contains('is-loading')) setTimeout(() => Site.loading.classList.remove('is-loading'), 1000, false);
+      if (Site.body.classList.contains('is-loading')) {
+        Site.loadingTimeout = setTimeout(() => {
+          Site.loading.classList.remove('is-loading');
+          clearTimeout(Site.loadingTimeout);
+          Site.loadingTimeout = null;
+        }, 1000, false);
+      }
 
       /* removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
@@ -949,7 +983,13 @@ Site = {
         cancelAnimationFrame(AboutRAFs.rafScaleAbout); // TESTING <---|
         /* reset projMenu when changing states/clicking on anchor elements */
         Menu.button.classList.add('closing');
-        setTimeout(() => Menu.button.classList.remove('closing'), 1250); // delay is unusally long
+
+        if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
+        Menu.arrowHidingTimeout = setTimeout(() => {
+          Menu.button.classList.remove('closing');
+          clearTimeout(Menu.arrowHidingTimeout);
+          Menu.arrowHidingTimeout = null;
+        }, 1250);
 
         TweenMax.to('#nav__menu__links, #pixi_menu', 0.4, {
           opacity: 0,
@@ -1073,7 +1113,8 @@ Site = {
       Site.init();
     };
 
-    window.history.pushState(Site.historyState, '', window.location);
+    window.history.replaceState(Site.historyState, null, '');
+    // window.history.pushState(Site.historyState, '', window.location);
 
     Site.init();
 
@@ -1158,33 +1199,64 @@ Site = {
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
   onClickHandler: function(event) {
-    event = event || window.event;
-    event.preventDefault() || false;
+    // event = event || window.event;
+    // event.preventDefault() || false;
 
+    // console.log('target ---)', event.target);
+    // console.log('currentTarget ---)', event.currentTarget);
+
+    // if (event.target !== event.currentTarget) {
+    //   event = event || window.event;
+    //   event.preventDefault() || false;
+
+    //   console.log('event.target !== event.currentTarget', event.target !== event.currentTarget);
+
+    // let data = event.target.getAttribute('data-template-ref');
+    // let url = data + '.html';
+    // console.log('url', url);
+
+    /*
+       * here we can fix the current classes
+       * and update text with the data variable
+       * and make an Ajax request for the .content element
+       * finally we can manually update the document’s title
+       */
+    // window.history.pushState(data, null, url);
+
+    /* If the event target doesn't match bail */
     if (!event.target.classList.contains('external')) {
-      /* We stop reloading of the page here only when the targetted element is not an external link */
       if (this.getAttribute('href') === '' || this.getAttribute('href').length === 0) return !1;
       if (Site.linkInProgress === !1) {
         Site.linkInProgress = !0;
         let targetHref = this.getAttribute('href');
         let targetHTML = this.innerHTML;
+        // let data = event.target.getAttribute('data-template-ref');
+        // let url = data + '.html';
+        // event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
+        this.classList.contains('bottom_link') ? (Site.bottomLink = !0, this.classList.add('changing')) : Site.bottomLink = !1;
 
-        event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
-
-        /* Remove hash from URL and replace with desired URL */
-        if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref); /* Only do this if history.pushState is supported by the browser */
-
+        /*
+          * Remove hash from URL and replace with desired StateObject + mainContent + URL
+          * Only do this if history.pushState is supported by the browser
+          */
+        if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref);
         Site.onLoadPage(targetHref);
         Site.onRafLoading();
         return !1;
       }
     }
+    /* Otherwise, run your code... */
+
     if (event.target.classList.contains('external')) {
       window.open(event.target.href, '_blank');
-      window.history.pushState(null, null, '');
+      window.history.pushState(Site.historyState, null, '');
+      // window.history.pushState(null, null, '');
       return !1;
     }
+    // }
+
+    // event.stopPropagation();
   },
   /*--------------------------------------------------------------------------*/
   /*                           State Change Events                            */
@@ -1193,12 +1265,15 @@ Site = {
     event = event || window.event;
     event.preventDefault() || false;
 
-    // if (event.state) {
+    // event.state is equal to the data-attribute of the last image we clicked
     if (event.state !== null) {
+      // if (event.state) {
+      // history changed because of pushState/replaceState
       Site.state = event.state;
       Site.onLoadPage(window.location.href);
       Site.onRafLoading();
     }
+    // history changed because of a page load
   },
   onHashChangeHandler: (event) => {
     document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
@@ -1322,7 +1397,12 @@ Site = {
           Site.scrolling.scrollTo(0);
           var delay = Math.round(Site.scrolling.vars.current / 7);
 
-          setTimeout(() => Menu.hideArrow(), delay);
+          if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
+          Menu.arrowHidingTimeout = setTimeout(() => {
+            Menu.hideArrow();
+            clearTimeout(Menu.arrowHidingTimeout);
+            Menu.arrowHidingTimeout = null;
+          }, delay);
 
           document.querySelectorAll('.light').forEach((obj) => obj.classList.remove('light'));
           document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
@@ -1342,7 +1422,12 @@ Site = {
 
       var mobDelay = Math.round(window.pageYOffset / 7);
 
-      setTimeout(() => Menu.hideArrow(), mobDelay);
+      if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
+      Menu.arrowHidingTimeout = setTimeout(() => {
+        Menu.hideArrow();
+        clearTimeout(Menu.arrowHidingTimeout);
+        Menu.arrowHidingTimeout = null;
+      }, mobDelay);
 
       document.querySelectorAll('.light').forEach((obj) => obj.classList.remove('light'));
       document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
@@ -1502,7 +1587,9 @@ Site = {
       onComplete: () => {
         timeline.reverse();
 
-        setTimeout(() => {
+        if (Site.nextSlideTimeout !== null) clearTimeout(Site.nextSlideTimeout);
+
+        Site.nextSlideTimeout = setTimeout(() => {
           if (!UserAgent.iOS) {
             Site.stage.removeChild(Site.displacementSprite2);
             Site.stage.addChild(Site.displacementSprite);
@@ -1512,6 +1599,9 @@ Site = {
           Site.currentSlide < (Site.totalSlides - 1) ? Site.currentSlide++ : Site.currentSlide = 0;
           Site.displacementSprite.x = Site.currentMousePos.x;
           Site.blockedAction = !1;
+
+          clearTimeout(Site.nextSlideTimeout);
+          Site.nextSlideTimeout = null;
         }, 800);
       }
     });
@@ -1569,7 +1659,9 @@ Site = {
         //         speed = Site.attributes2.x;
         //     }
         // });
-        setTimeout(() => {
+        if (Site.prevSlideTimeout !== null) clearTimeout(Site.prevSlideTimeout);
+
+        Site.prevSlideTimeout = setTimeout(() => {
           if (!UserAgent.iOS) {
             Site.stage.removeChild(Site.displacementSprite2);
             Site.stage.addChild(Site.displacementSprite);
@@ -1579,6 +1671,9 @@ Site = {
           Site.currentSlide > 0 ? Site.currentSlide-- : Site.currentSlide = Site.totalSlides - 1;
           Site.displacementSprite.x = Site.currentMousePos.x;
           Site.blockedAction = !1;
+
+          clearTimeout(Site.prevSlideTimeout);
+          Site.prevSlideTimeout = null;
         }, 800);
       }
     });
@@ -1787,7 +1882,9 @@ Site = {
       onComplete: () => {
         timeline.reverse();
 
-        setTimeout(() => {
+        if (Site.changePaginationTimeout !== null) clearTimeout(Site.changePaginationTimeout);
+
+        Site.changePaginationTimeout = setTimeout(() => {
           Site.stage.removeChild(Site.displacementSprite2);
           Site.stage.addChild(Site.displacementSprite);
           Site.listenCursor = !0;
@@ -1795,6 +1892,9 @@ Site = {
           Site.lindex >= Site.totalSlides - 1 ? Site.currentSlide = 0 : Site.currentSlide = Site.lindex + 1;
           Site.displacementSprite.x = Site.currentMousePos.x;
           Site.blockedAction = !1;
+
+          clearTimeout(Site.changePaginationTimeout);
+          Site.changePaginationTimeout = null;
         }, 800);
       }
     });

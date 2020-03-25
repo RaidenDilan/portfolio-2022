@@ -637,11 +637,14 @@ svg.svg-circle {
   }
 }
 
-// .logo {
+.logo {
+  .logoName {
+    pointer-events: none;
+  }
 //   &:hover .svg_line {
 //     animation: dash4 0.5s linear forwards;
 //   }
-// }
+}
 
 // .svg_menu path {
 //   stroke-dasharray: 1000;
