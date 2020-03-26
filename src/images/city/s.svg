@@ -1,27 +1,13 @@
-<svg
-  width="6px"
-  height="9px"
-  viewBox="0 0 6 9"
-  version="1.1"
-  xmlns="http://www.w3.org/2000/svg"
-  xmlns:xlink="http://www.w3.org/1999/xlink"
-  >
-  <g
-    stroke="none"
-    stroke-width="1"
-    fill="none"
-    fill-rule="evenodd"
-    transform="translate(-862.000000, -399.000000)"
-    font-family="LarishNeueSemibold-Regular, Larish Neue"
-    font-size="10"
-    font-weight="500"
-    >
-    <g transform="translate(809.000000, 355.000000)" fill="#000000">
-      <g>
-        <text id="s">
-          <tspan x="53" y="52">S</tspan>
-        </text>
+<svg style="display:none;" width="6px" height="9px" viewBox="0 0 6 9" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <symbol id="s-svg" viewBox="0 0 6 9">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-862.000000, -399.000000)" font-family="LarishNeueSemibold-Regular, Larish Neue" font-size="10" font-weight="500" >
+      <g transform="translate(809.000000, 355.000000)" fill="#000000">
+        <g>
+          <text id="s">
+            <tspan x="53" y="52">S</tspan>
+          </text>
+        </g>
       </g>
     </g>
-  </g>
+  </symbol>
 </svg>

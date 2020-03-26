@@ -1,23 +1,9 @@
-<svg
-  width="4px"
-  height="8px"
-  viewBox="0 0 4 8"
-  version="1.1"
-  xmlns="http://www.w3.org/2000/svg"
-  xmlns:xlink="http://www.w3.org/1999/xlink"
-  >
-  <g
-    stroke="none"
-    stroke-width="1"
-    fill="none"
-    fill-rule="evenodd"
-    >
-    <g id="i" transform="translate(0.000000, -2.000000)" fill="#000000">
-      <path
-        d="M3.7,10 L0.46,10 L0.46,9.63 L0.76,9.63 C0.9,9.63 1.31,9.19 1.31,9.03 L1.31,3.69 C1.31,3.54 0.89,3.09 0.75,3.09 L0.45,3.09 L0.45,2.72 L3.73,2.72 L3.73,3.09 L3.44,3.09 C3.29,3.09 2.87,3.54 2.87,3.69 L2.87,9.03 C2.87,9.19 3.26,9.63 3.41,9.63 L3.7,9.63 L3.7,10 Z"
-        id="I"
-        >
-      </path>
+<svg style="display:none;" width="4px" height="8px" viewBox="0 0 4 8" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <symbol id="i-svg" viewBox="0 0 4 8">
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+      <g id="i" transform="translate(0.000000, -2.000000)" fill="#000000">
+        <path d="M3.7,10 L0.46,10 L0.46,9.63 L0.76,9.63 C0.9,9.63 1.31,9.19 1.31,9.03 L1.31,3.69 C1.31,3.54 0.89,3.09 0.75,3.09 L0.45,3.09 L0.45,2.72 L3.73,2.72 L3.73,3.09 L3.44,3.09 C3.29,3.09 2.87,3.54 2.87,3.69 L2.87,9.03 C2.87,9.19 3.26,9.63 3.41,9.63 L3.7,9.63 L3.7,10 Z" id="I"></path>
+      </g>
     </g>
-  </g>
+  </symbol>
 </svg>

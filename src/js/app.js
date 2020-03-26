@@ -37,6 +37,13 @@ UserAgent = {
 var Theme = Theme || {};
 
 Theme = {
+  button: null,
+  init: () => {
+    Theme.button = document.getElementById('change-theme-btn');
+
+    if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
+    if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) Site.body.classList.add('dark-theme');
+  },
   lightStyle: () => {
     Menu.button.classList.add('light');
     Menu.social.classList.add('light');
@@ -58,6 +65,10 @@ Theme = {
     // Site.contact.style.display = 'block';
     TweenMax.set(Site.about, { display: 'block' });
     TweenMax.set(Site.contact, { display: 'block' });
+  },
+  enableDarkTheme: () => {
+    let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
+    window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
   }
 };
 
@@ -652,6 +663,7 @@ Site = {
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
       UserAgent.init();
+      Theme.init();
       Drag.init();
       Menu.init();
       LazyLoad.init();
@@ -1197,6 +1209,8 @@ Site = {
     window.addEventListener('onunload', Site.onUnloadHandler);
     window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
     window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
+    // window.addEventListener('resize', Site.onResizeHandler, !1);
+    // window.addEventListener('keyup', Site.onKeydownHandler, !1);
     /* device giroscope event */
     if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1);
     /* scroll events */
@@ -1593,8 +1607,9 @@ Site = {
   },
   onResizeHandler: () => {
     !UserAgent.iOS && Site.scrolling !== null
-      ? (Site.scrolling.resize())
+      ? (Site.scrolling.resize(), console.log('Desktop'))
       : (
+        console.log('iOS'),
         Site.about.style.top = (window.innerHeight / 2) - 50 + 'px',
         Site.contact.style.top = (window.innerHeight / 2) - 50 + 'px'
       );

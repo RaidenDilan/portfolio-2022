@@ -1,0 +1,171 @@
+$dark: #111111;
+$light: #FFFFFF;
+
+:root {
+  // font-size: 25vmin;
+  // font-family: 'Roboto', sans-serif;
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  // margin: 0;
+  // display: flex;
+  // justify-content: space-around;
+  // align-items: center;
+  // height: 100%;
+  background-color: $light;
+  color: $dark;
+  transition: all 0.15s ease-out;
+}
+
+body.dark-theme {
+  background-color: $dark;
+  color: $light;
+
+  a, span {
+    color: $light !important;
+  }
+
+  #about.black .all_work text,
+  #contact.black .all_work text {
+    fill: $light;
+  }
+  #about.black .all_work .cls-1,
+  #contact.black .all_work .cls-1 {
+    stroke: $light;
+  }
+  header .projects.black .feature1,
+  .black .feature2,
+  .black .feature3 {
+    background: $light;
+  }
+  #main__content .inner_img {
+    background: $dark;
+  }
+  #nav__menu {
+    background: $dark;
+  }
+  #nav__menu ol#nav__menu__links li::before {
+    color: $light;
+  }
+  #nav__menu ol#nav__menu__links li a::after {
+    -webkit-text-stroke: 0px $light;
+    color: $light;
+  }
+  #nav__menu ol#nav__menu__links li.active a {
+    -webkit-text-stroke: 1px $light;
+    color: $light;
+  }
+  .cursor_main {
+    border: 2px solid $light;
+
+    &.vertical_scroll {
+      border: 2px solid $light;
+
+      &::after {
+        color: $light;
+      }
+    }
+  }
+  .cursor_junior {
+    &.vertical_scroll {
+      background-color: $light;
+        &::after {
+        background-color: $light;
+      }
+    }
+  }
+
+  // .about {
+    .background_intro {
+      background: #222222
+    }
+    .madein div {
+      color: $light;
+    }
+    .city div:first-child {
+      background: -webkit-gradient(left top, left bottom, color-stop(0%, $light), color-stop(58%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 1)));
+      background: -webkit-linear-gradient(top, $light 0%, rgba(255, 255, 255, 1) 58%, rgba(255, 255, 255, 1) 100%);
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .city {
+      fill: $light;
+
+      #inner_svg {
+        fill: $light;
+
+        svg g {
+          fill: $light;
+        }
+      }
+    }
+    .deets-dash {
+      background: $light;
+    }
+    footer h3 {
+      color: $light;
+    }
+    svg.svg_menu path {
+      stroke: $light;
+    }
+    .point3.black .svg_menu .svg_line {
+      stroke: $light;
+    }
+    .point3.black .svg_underline .svg_line {
+      stroke: $light;
+    }
+  // }
+}
+
+#change-theme-btn {
+  font: inherit;
+  // padding: 0.1em 0.25em;
+  padding: 0 0.5em;
+  border: 0;
+  border-radius: 5px;
+  outline: 0;
+  color: $light;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+  // position: relative;
+  background-color: transparent;
+  overflow: hidden;
+
+  position: absolute;
+  top: 30px;
+  left: calc(15% - 25px);
+  z-index: 2;
+
+  &::before, &::after {
+    content: '';
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: $dark;
+    transition: all 0.15s ease-out;
+  }
+  &::after {
+    background-color: $light;
+    left: 100%;
+  }
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.dark-theme #change-theme-btn {
+  color: $dark;
+
+  &::before {
+    left: -100%;
+  }
+  &::after {
+    left: 0;
+  }
+}
