@@ -28,9 +28,6 @@ UserAgent = {
         )
       )
     );
-  },
-  isMobile: () => {
-    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
   }
 };
 
@@ -38,37 +35,34 @@ var Theme = Theme || {};
 
 Theme = {
   button: null,
+  isToggled: !1,
   init: () => {
-    Theme.button = document.getElementById('change-theme-btn');
-
+    Theme.button = document.getElementById('change-theme-btn');1;
     if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
-    if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) Site.body.classList.add('dark-theme');
+    if (Theme.isToggled && JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) Site.body.classList.add('dark-theme');
   },
   lightStyle: () => {
+    // Theme.isToggled = !Theme.isToggled;
     Menu.button.classList.add('light');
     Menu.social.classList.add('light');
     Menu.logo.classList.add('light');
     // Site.about.classList.add('light');
     // Site.contact.classList.add('light');
-    // Site.about.style.display   = 'none';
-    // Site.contact.style.display = 'none';
-    TweenMax.set(Site.about, { display: 'none' });
-    TweenMax.set(Site.contact, { display: 'none' });
+    Site.hideSideNav();
   },
   darkStyle: () => {
+    // Theme.isToggled = !Theme.isToggled;
     Menu.button.classList.remove('light');
     Menu.social.classList.remove('light');
     Menu.logo.classList.remove('light');
     // Site.about.classList.remove('light');
     // Site.contact.classList.remove('light');
-    // Site.about.style.display   = 'block';
-    // Site.contact.style.display = 'block';
-    TweenMax.set(Site.about, { display: 'block' });
-    TweenMax.set(Site.contact, { display: 'block' });
+    Site.showSideNav();
   },
   enableDarkTheme: () => {
+    Theme.isToggled = !Theme.isToggled;
     let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
-    window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+    return darkThemeEnabled ? window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled) : null;
   }
 };
 
@@ -107,43 +101,12 @@ AboutRAFs = {
     if (!UserAgent.iOS) {
       TweenMax.to('.scaleA', 1.4, {
         scaleX: Site.intensity,
-        ease: Power2.easeOut
-        // onUpdate: () => console.log('onUpdate :: cancelAnimationFrame(AboutRAFs.rafScaleAbout) --->'),
-        // onComplete: () => console.log('onComplete :: cancelAnimationFrame(AboutRAFs.rafScaleAbout) --->')
+        ease: Power2.easeOut,
+        onUpdate: () => {},
+        onComplete: () => {}
       });
     }
   }
-  // skills: () => {
-  //   /* DOM Elements */
-  //   // const button = document.querySelector('.js-button');
-  //   const circle = document.querySelector('.js-circle');
-  //   const skills = document.querySelectorAll('.js-circle');
-  //   const text = document.querySelector('.js-text');
-
-  //   /* Circle radius, diameter and offset function */
-  //   const radius = circle.getAttribute('r');
-  //   const diameter = Math.round(Math.PI * radius * 2);
-
-  //   const getOffset = (val = 0) => {
-  //     Math.round((100 - val) / 100 * diameter);
-  //   };
-
-  //   /* Generate random number and set offset and percentage || get circle stroke-dashoffset value */
-  //   const run = (element) => {
-  //     // const val = Math.floor(Math.random() * 100);
-  //     const val = element.getAttribute('stroke-dashoffset');
-
-  //     // element.style.setProperty('--strokeDashOffset', val);
-  //     // const val = Math.floor(circle.getAttribute('stroke-dashoffset'));
-  //     circle.style.strokeDashoffset = getOffset(val);
-  //     // text.textContent = `${val}%`;
-  //   };
-
-  //   /* Event listeners */
-  //   // button.addEventListener('click', run);
-
-  //   skills.forEach((element) => setTimeout(run(element), 10));
-  // }
 };
 
 var Throttle = Throttle || {};
@@ -237,9 +200,8 @@ Menu = {
     Menu.logo = document.querySelector('.logo');
     Menu.navMenu = document.getElementById('nav__menu');
     Menu.social = document.getElementById('social');
-    // Menu.button.classList.toggle('opened');
-    Menu.button.isArrow = !1; // set init state to false
-    Menu.button.isOpen = !1; // set init state to false
+    Menu.button.isArrow = !1; // set initial state to false
+    Menu.button.isOpen = !1; // set initial state to false
     cancelAnimationFrame(MenuPixi.rafPixiMenu); // Fixes issue where when click on nav menu links when it is opened, pixi repple efffect doesn't intitiate due to bollean property set on INIT();
   },
   open: () => {
@@ -282,7 +244,7 @@ Menu = {
 
     /* menu_image0 returned by PixiJS */
     // eslint-disable-next-line camelcase
-    var imageSprite = menu_image0;
+    let imageSprite = menu_image0;
 
     Site.stageMenu.addChild(imageSprite);
     imageSprite.alpha = 1;
@@ -549,6 +511,7 @@ LazyLoad = {
 var Site = Site || {};
 
 Site = {
+  /* Set Initial State */
   directoryUri: './',
   lethargy: new Lethargy(),
   preload: new createjs.LoadQueue(true),
@@ -1315,7 +1278,6 @@ Site = {
 
     // event.state is equal to the data-attribute of the last image we clicked
     if (event.state !== null) {
-      // if (event.state) {
       // history changed because of pushState/replaceState
       Site.state = event.state;
       Site.onLoadPage(window.location.href);
@@ -1324,13 +1286,14 @@ Site = {
     // history changed because of a page load
   },
   onHashChangeHandler: (event) => {
+    console.log('[ onHashChangeHandler] - event', event);
+    console.log('[ onHashChangeHandler] - Site.main', Site.main);
     document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
   },
   onUnloadHandler: (event) => {
     event = event || window.event;
     event.preventDefault() || false;
     return window.scrollTo(0, 0); // scroll back to top when reloading page
-    // return window.scrollTo(Site.scrollMenuOpen, 0); // scroll back to top when reloading page
   },
   /*--------------------------------------------------------------------------*/
   /*                           Called On Page Load                            */
@@ -1362,10 +1325,7 @@ Site = {
     if (event.target.classList.contains('main__pagination')) Site.changePagination(event.target);
     else if (event.target.classList.contains('arrow-transition-in')) {
       Site.scrollBackUp(event.target);
-
-      /* display about and contact fixed links after clicking scrollBackUp() */
-      TweenMax.set(Site.about, { display: 'block' });
-      TweenMax.set(Site.contact, { display: 'block' });
+      Site.showSideNav(); // display about and contact fixed links after clicking scrollBackUp()
     }
     else if (event.target.classList.contains('to_next') && Site.blockedAction === !1) Site.nextSlide();
     else if (event.target.classList.contains('to_prev') && Site.blockedAction === !1) Site.prevSlide();
@@ -1378,7 +1338,7 @@ Site = {
           ? Site.scrolling.scrollTo(0) // Site.scrolling.scrollTo(0, !0);
           : Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad'); // Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
       }
-      document.querySelectorAll('.projects').forEach((obj) => obj.classList.toggle('opened')); // Takes a second argument => true || false |\ Condition
+      document.querySelectorAll('.projects').forEach((obj) => obj.classList.toggle('opened'));
       !Menu.button.isOpen ? Menu.open() : Menu.close();
     }
   },
@@ -1500,8 +1460,6 @@ Site = {
         Drag.cursorMain.classList.add('cursor_main-small');
       }
     }
-
-    return false;
   },
   handleMouseOut: (event) => {
     event = event || window.event;
@@ -1537,8 +1495,6 @@ Site = {
       }
     }
     else Site.mouseOverLinks.forEach((obj) => document.removeEventListener('mousemove', Site.handleMouseOver, false));
-
-    return false;
   },
   handlerMouseMove: (event) => {
     event = event || window.event;
@@ -1576,7 +1532,7 @@ Site = {
     let xDiff = Site.xDown - xUp;
     let yDiff = Site.yDown - yUp;
 
-    const expression = Site.body.classList.contains('home') && Site.blockedAction === !1;
+    let expression = Site.body.classList.contains('home') && Site.blockedAction === !1;
 
     /* most significant */
     if (Math.abs(xDiff) > Math.abs(yDiff)) {
@@ -1592,22 +1548,22 @@ Site = {
   },
   onHover: (event) => {
     event.target.classList.add('feature');
-    document.querySelector('.main__pagination.current').classList.add('temp');
+    return document.querySelector('.main__pagination.current').classList.add('temp');
   },
   offHover: (event) => {
     event.target.classList.remove('feature');
-    document.querySelector('.main__pagination.current').classList.remove('temp');
+    return document.querySelector('.main__pagination.current').classList.remove('temp');
   },
   scrollEventHandler: (event) => {
     event = event || window.event;
     event.type === 'wheel' ? Site.supportsWheel = !0 : Site.supportsWheel && true;
     let delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
-    const checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
+    let checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
     if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) delta > 0 ? Site.nextSlide() : (delta < 0) ? Site.prevSlide() : false;
   },
   onResizeHandler: () => {
     !UserAgent.iOS && Site.scrolling !== null
-      ? (Site.scrolling.resize(), console.log('Desktop'))
+      ? Site.scrolling.resize()
       : (
         console.log('iOS'),
         Site.about.style.top = (window.innerHeight / 2) - 50 + 'px',
@@ -1764,7 +1720,6 @@ Site = {
     //   TweenMax.set(Site.about, { display: 'block' });
     //   TweenMax.set(Site.contact, { display: 'block' });
     // }
-
     if (Site.scrolling.vars.target >= Math.round(Site.scrolling.vars.bounding - 34)) {
       Drag.cursorMain.classList.remove('vertical_scroll', 'black');
       Drag.cursorJunior.classList.remove('vertical_scroll', 'black');
@@ -1797,9 +1752,9 @@ Site = {
           window['menu_image' + index].alpha = Site.displace2.alpha;
         },
         onComplete: () => {
-          //   // to do : management suppression former child
-          //   // Site.stageMenu.removeChildren(2);
-          //   // addedLast = index;
+        // to do : management suppression former child
+        // Site.stageMenu.removeChildren(2);
+        // addedLast = index;
         },
         ease: Linear.easeNone
       });
@@ -2184,20 +2139,31 @@ Site = {
     TweenMax.staggerTo('.stag', 0.4, { opacity: 0, ease: Power2.easeOut }, 0.02);
   },
   /*--------------------------------------------------------------------------*/
-  /*                          HELP FUNCTIONS - START                          */
+  /*                    HELPER / UTILITY FUNCTIONS - START                    */
   /*--------------------------------------------------------------------------*/
   animateRandomElements: (element) => {
     Site.random = [];
     document.querySelectorAll(element).forEach((obj) => Site.random.push(obj));
-    Site.random.sort(() => 0.5 - Math.random());
+    return Site.random.sort(() => 0.5 - Math.random());
+  },
+  showSideNav: () => {
+    TweenMax.set([Site.about, Site.contact], { display: 'block' });
+  },
+  hideSideNav: () => {
+    TweenMax.set([Site.about, Site.contact], { display: 'none' });
   },
   addRandomClass: (item, index) => {
     return item.classList.add('random');
-    // item.classList.add('random');
   },
   mousePositionHandler: (event) => {
     Site.currentMousePos.x = event.pageX;
     Site.currentMousePos.y = event.pageY;
+  },
+  handleOverallProgress: (event) => {
+    return console.log('[ handleOverallProgress ]', 1 - event.progress);
+  },
+  handleComplete: (event) => {
+    return console.log('[ handleComplete ]', event.complete);
   },
   scrollToTop: (destination, duration, easing, callback) => {
     const easings = {
@@ -2272,12 +2238,6 @@ Site = {
     }
 
     scroll();
-  },
-  handleOverallProgress: (event) => {
-    return console.log('[ handleOverallProgress ]', 1 - event.progress);
-  },
-  handleComplete: (event) => {
-    return console.log('[ handleComplete ]', event.complete);
   }
 };
 

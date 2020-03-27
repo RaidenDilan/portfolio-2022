@@ -23,10 +23,22 @@ body.dark-theme {
   background-color: $dark;
   color: $light;
 
-  a, span {
-    color: $light !important;
+  header .logo {
+    color: $light;
   }
-
+  #main__content {
+    span.random {
+      color: $light;
+    }
+    a {
+      color: $light;
+    }
+  }
+  #social {
+    a {
+      color: $light;
+    }
+  }
   #about.black .all_work text,
   #contact.black .all_work text {
     fill: $light;
@@ -35,16 +47,23 @@ body.dark-theme {
   #contact.black .all_work .cls-1 {
     stroke: $light;
   }
+
   header .projects.black .feature1,
+
   .black .feature2,
   .black .feature3 {
     background: $light;
   }
+
   #main__content .inner_img {
     background: $dark;
   }
+
   #nav__menu {
     background: $dark;
+    a {
+      color: $light;
+    }
   }
   #nav__menu ol#nav__menu__links li::before {
     color: $light;
@@ -57,6 +76,7 @@ body.dark-theme {
     -webkit-text-stroke: 1px $light;
     color: $light;
   }
+
   .cursor_main {
     border: 2px solid $light;
 
@@ -77,46 +97,62 @@ body.dark-theme {
     }
   }
 
-  // .about {
-    .background_intro {
-      background: #222222
-    }
-    .madein div {
-      color: $light;
-    }
-    .city div:first-child {
-      background: -webkit-gradient(left top, left bottom, color-stop(0%, $light), color-stop(58%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 1)));
-      background: -webkit-linear-gradient(top, $light 0%, rgba(255, 255, 255, 1) 58%, rgba(255, 255, 255, 1) 100%);
+  .background_intro {
+    background: #222222
+  }
+  .madein div {
+    color: $light;
+  }
+  .city div:first-child {
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, $light), color-stop(58%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 1)));
+    background: -webkit-linear-gradient(top, $light 0%, rgba(255, 255, 255, 1) 58%, rgba(255, 255, 255, 1) 100%);
 
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .city {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .city {
+    fill: $light;
+
+    #inner_svg {
       fill: $light;
 
-      #inner_svg {
+      svg g {
         fill: $light;
-
-        svg g {
-          fill: $light;
-        }
       }
     }
-    .deets-dash {
-      background: $light;
-    }
-    footer h3 {
-      color: $light;
-    }
-    svg.svg_menu path {
-      stroke: $light;
-    }
-    .point3.black .svg_menu .svg_line {
-      stroke: $light;
-    }
-    .point3.black .svg_underline .svg_line {
-      stroke: $light;
-    }
+  }
+  .deets-dash {
+    background: $light;
+  }
+  .intro2 h1 {
+    color: $light;
+  }
+  .intro2 h2 span {
+    color: $light;
+  }
+  footer h3 {
+    color: $light;
+  }
+
+  svg.svg_menu path {
+    stroke: $light;
+  }
+  .point3.black .svg_menu .svg_line {
+    stroke: $light;
+  }
+  .point3.black .svg_underline .svg_line {
+    stroke: $light;
+  }
+
+  // #main__content #next_proj {
+  //   background: $light;
+  //
+  //   > div a span {
+  //     color: $dark;
+  //   }
+  //   > div div {
+  //     color: $dark;
+  //   }
   // }
 }
 
