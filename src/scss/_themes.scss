@@ -1,5 +1,6 @@
-$dark: #111111;
-$light: #FFFFFF;
+$dark: #1d1d1f;
+$light: #f2f2f7;
+$shadow: #d9d9d9;
 
 :root {
   // font-size: 25vmin;
@@ -158,50 +159,93 @@ body.dark-theme {
 
 #change-theme-btn {
   font: inherit;
-  // padding: 0.1em 0.25em;
-  padding: 0 0.5em;
-  border: 0;
-  border-radius: 5px;
   outline: 0;
-  color: $light;
-  cursor: pointer;
-  transition: all 0.15s ease-out;
-  // position: relative;
-  background-color: transparent;
-  overflow: hidden;
-
+  border-radius: 40px;
+  width: 46px;
+  height: 21px;
+  margin: 0 auto;
   position: absolute;
-  top: 30px;
-  left: calc(15% - 25px);
+  top: 39px;
+  left: 125px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.15s ease-out;
   z-index: 2;
 
-  &::before, &::after {
-    content: '';
-    z-index: -1;
+  span {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    overflow: hidden;
+    opacity: 1;
+    background-color: $dark;
+    box-shadow: 0px 1px 3px $dark;
+    border-radius: 40px;
+    transition: 0.2s ease background-color, 0.2s ease opacity;
+
+    &:after, &:before {
+      content: '';
+      position: absolute;
+      top: 3px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      transition: 0.5s ease transform, 0.2s ease background-color;
+    }
+    &:after {
+      background-color: $light;
+      transform: translate(4px, 0px);
+      z-index: 0;
+    }
+    &:before {
+      background-color: $dark;
+      transform: translate(-18px, 0px);
+      z-index: 1;
+    }
+  }
+  input[type="checkbox"] {
+    width: 100%;
+    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: $dark;
-    transition: all 0.15s ease-out;
-  }
-  &::after {
-    background-color: $light;
-    left: 100%;
-  }
-  &:hover {
-    text-decoration: none;
-  }
-}
+    right: 0;
+    bottom: 0;
+    cursor: pointer;
+    opacity: 0;
+    z-index: 2;
 
-.dark-theme #change-theme-btn {
-  color: $dark;
-
-  &::before {
-    left: -100%;
+    // &:checked + span {
+    //   background-color: $dark;
+    // }
+    // &:active + span {
+    //   opacity: 0.5;
+    // }
+    // &:checked + span:before {
+    //   background-color: $dark;
+    //   transform: translate(65px, -10px);
+    // }
+    // &:checked + span:after {
+    //   background-color: $light;
+    //   transform: translate(79px, 0px);
+    // }
   }
-  &::after {
-    left: 0;
+
+  &.dark-mode {
+    span {
+      background-color: $light;
+      box-shadow: 0px 1px 3px $light;
+
+      &:after {
+        background-color: $dark;
+        transform: translate(27px, 0);
+      }
+      &:before {
+        background-color: $light;
+        transform: translate(23px, -3px);
+      }
+    }
   }
 }

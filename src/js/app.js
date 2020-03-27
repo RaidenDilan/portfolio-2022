@@ -213,7 +213,10 @@ Theme = {
   init: () => {
     Theme.button = document.getElementById('change-theme-btn');
     if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
-    if (Theme.isToggled && JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) Site.body.classList.add('dark-theme');
+    if (Theme.isToggled && JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
+      Site.body.classList.add('dark-theme');
+      Theme.button.classList.add('dark');
+    }
 
     let startTime = SunMoon.sunrise.toLocaleTimeString('en-GB');
     let endTime = SunMoon.sunset.toLocaleTimeString('en-GB');
@@ -247,9 +250,13 @@ Theme = {
     // console.log('[Theme] - now', now.toLocaleDateString());
 
     isSunrise
-      ? Site.body.classList.remove('dark-theme')
+      ? (
+        Site.body.classList.remove('dark-theme'),
+        Theme.button.classList.remove('dark-mode'))
       : !isSunrise
-        ? Site.body.classList.add('dark-theme')
+        ? (
+          Site.body.classList.add('dark-theme'),
+          Theme.button.classList.add('dark-mode'))
         : console.log('Can\'t detect sun position');
   },
   checkTime: (i) => {
@@ -284,6 +291,7 @@ Theme = {
   enableDarkTheme: () => {
     Theme.isToggled = !Theme.isToggled;
     let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
+    Theme.button.classList.toggle('dark-mode');
     return darkThemeEnabled ? window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled) : null;
   }
 };
