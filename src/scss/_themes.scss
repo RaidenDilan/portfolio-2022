@@ -34,30 +34,47 @@ body.dark-theme {
     a {
       color: $light;
     }
+    .inner_img {
+      background: $dark;
+    }
+    #next_proj > div a {
+      color: $light;
+      -webkit-text-stroke: 1px $dark;
+
+      &.changing {
+        span {
+          color: $light;
+          @include stroke(1px, $light);
+        }
+      }
+    }
   }
+
   #social {
     a {
       color: $light;
     }
   }
-  #about.black .all_work text,
-  #contact.black .all_work text {
-    fill: $light;
+
+  #about.black .all_work, #contact.black .all_work {
+    text {
+      fill: $light;
+    }
   }
-  #about.black .all_work .cls-1,
-  #contact.black .all_work .cls-1 {
-    stroke: $light;
+  #about.black .all_work, #contact.black .all_work {
+    .cls-1 {
+      stroke: $light;
+    }
   }
 
   header .projects.black .feature1,
 
-  .black .feature2,
-  .black .feature3 {
-    background: $light;
-  }
-
-  #main__content .inner_img {
-    background: $dark;
+  .black {
+    .feature1,
+    .feature2,
+    .feature3 {
+      background: $light;
+    }
   }
 
   #nav__menu {
@@ -65,17 +82,25 @@ body.dark-theme {
     a {
       color: $light;
     }
-  }
-  #nav__menu ol#nav__menu__links li::before {
-    color: $light;
-  }
-  #nav__menu ol#nav__menu__links li a::after {
-    -webkit-text-stroke: 0px $light;
-    color: $light;
-  }
-  #nav__menu ol#nav__menu__links li.active a {
-    -webkit-text-stroke: 1px $light;
-    color: $light;
+    ol#nav__menu__links li {
+      &::before {
+        color: $light;
+      }
+      a {
+        &::after {
+          -webkit-text-stroke: 0px $light;
+          color: $light;
+        }
+      }
+      .active a {
+        -webkit-text-stroke: 1px $light;
+        color: $light;
+      }
+      &.active a {
+        -webkit-text-stroke: 1px $light;
+        color: $light;
+      }
+    }
   }
 
   .cursor_main {
@@ -104,15 +129,16 @@ body.dark-theme {
   .madein div {
     color: $light;
   }
-  .city div:first-child {
-    background: -webkit-gradient(left top, left bottom, color-stop(0%, $light), color-stop(58%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 1)));
-    background: -webkit-linear-gradient(top, $light 0%, rgba(255, 255, 255, 1) 58%, rgba(255, 255, 255, 1) 100%);
-
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
   .city {
     fill: $light;
+
+    div:first-child {
+      background: -webkit-gradient(left top, left bottom, color-stop(0%, $light), color-stop(58%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 1)));
+      background: -webkit-linear-gradient(top, $light 0%, rgba(255, 255, 255, 1) 58%, rgba(255, 255, 255, 1) 100%);
+
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
     #inner_svg {
       fill: $light;
@@ -125,11 +151,15 @@ body.dark-theme {
   .deets-dash {
     background: $light;
   }
-  .intro2 h1 {
-    color: $light;
-  }
-  .intro2 h2 span {
-    color: $light;
+  .intro2 {
+    h1 {
+      color: $light;
+    }
+    h2 {
+      span {
+        color: $light;
+      }
+    }
   }
   footer h3 {
     color: $light;
@@ -244,7 +274,7 @@ body.dark-theme {
       }
       &:before {
         background-color: $light;
-        transform: translate(23px, -3px);
+        transform: translate(22px, -2px);
       }
     }
   }
