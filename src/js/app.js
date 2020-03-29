@@ -488,16 +488,6 @@ Site = {
   attributes2: {},
   attributes3: {},
   historyState: {},
-  // historyState: {
-  //   toggleStatus: null,
-  //   isToggled: null,
-  //   isToggledByClient: null
-  // },
-  // historyState: {
-  //   toggleStatus: '',
-  //   isToggled: !1,
-  //   isToggledByClient: !1
-  // },
   blockedAction: !0,
   passOnce: !1,
   playOnce: !1,
@@ -524,7 +514,7 @@ Site = {
   stageMenu: null,
   deltaMenu: null,
   intensity: null,
-  rafLoading: null,
+  rafIsLoading: null,
   menuHeight: null,
   expression: null,
   multiplier: null,
@@ -561,7 +551,7 @@ Site = {
     // ---------------------------------------------------------------------- //
 
     Site.onRafLoading = function onRafLoading() {
-      Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
+      Site.rafIsLoading = requestAnimationFrame(Site.onRafLoading);
 
       if (Site.exitOk === !0 && Site.ajaxOk === !0) {
         if (Site.rafPixiHome !== null || undefined) cancelAnimationFrame(Site.rafPixiHome);
@@ -573,7 +563,7 @@ Site = {
         }
 
         Site.onUpdatePage(Site.newPageContent);
-        if (Site.rafLoading !== null || undefined) cancelAnimationFrame(Site.rafLoading);
+        if (Site.rafIsLoading !== null || undefined) cancelAnimationFrame(Site.rafIsLoading);
       }
     };
     Site.init = function init() {
@@ -602,8 +592,10 @@ Site = {
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
       UserAgent.init();
+
       // SunMoon.init();
-      Theme.init();
+      if (document.getElementById('change-theme-btn')) Theme.init();
+
       Drag.init();
       Menu.init();
       LazyLoad.init();
@@ -1086,27 +1078,33 @@ Site = {
       else Site.exitOk = !0;
     };
     Site.onUpdatePage = function onUpdatePage(html) {
-      let parser = new DOMParser();
+      const parser = new DOMParser();
       let doc = parser.parseFromString(html, 'text/html');
       let classList = doc.querySelectorAll('body')[0].getAttribute('class');
+
       document.title = doc.querySelector('title').innerHTML;
-      let res = classList.replace('is-loading', '');
-      Site.body.setAttribute('class', res);
-      (!UserAgent.iOS)
+
+      let isLoading = classList.replace('is-loading', '');
+
+      Site.body.setAttribute('class', isLoading);
+
+      !UserAgent.iOS
         ? Site.body.classList.add('desktop')
         : Site.body.classList.add('mobile');
+
       Site.main.innerHTML = doc.getElementById('main__content').innerHTML;
       Site.init();
     };
 
+    /**
+      * window.history.pushState([data], [title], [url])
+      * @params {Object} - The first parameter is the data we'll need if the state of the web page changes, for instance whenever someone presses the back or forwards button in their browser. Note that in Firefox this data is limited to 640k characters.
+      * @params {title} - title is the second parameter which can be a string, but at the time of writing, every browser simply ignores it.
+      * @params {url} - This final parameter is the URL we want to appear in the address bar.
+      */
     window.history.replaceState(Site.historyState, null, '');
-    // window.history.pushState(Site.historyState, null, '');
-    // window.history.pushState(Site.historyState, '', window.location);
 
-    // console.log('[Site - Initial State] -> Site.historyState', Site.historyState);
     Site.init();
-    // console.log('[Site - Updated State] -> Site.historyState', Site.historyState);
-    // Theme.init();
 
     if (!UserAgent.iOS) {
       Site.body.classList.add('desktop');
@@ -1153,8 +1151,6 @@ Site = {
     window.addEventListener('onunload', Site.onUnloadHandler);
     window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
     window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
-    // window.addEventListener('resize', Site.onResizeHandler, !1);
-    // window.addEventListener('keyup', Site.onKeydownHandler, !1);
     /* device giroscope event */
     if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1);
     /* scroll events */
@@ -1172,79 +1168,84 @@ Site = {
     /* Add the event listeners for each click/mousemove events. */
     document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
-    /* State Change Events: Add these events to window element */
+
+    window.resize = Site.onResizeHandler;
+    window.keydown = Site.onKeydownHandler;
     window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     window.onhashchange = Site.onHashChangeHandler;
 
-    window.resize = Site.onResizeHandler;
-    window.keydown = Site.onKeydownHandler;
-    /* Mouse events: Add these events to document element */
-    document.onmousedown = Site.projectChangedHandler;
-    document.onmousedown = Site.mousePositionHandler;
-    document.onmousedown = Site.scrollEventHandler;
-    document.onmousedown = Site.touchStartHandler;
-    document.onmousedown = Site.touchMoveHandler;
     document.onmousedown = Site.showHideArrow;
+    document.onmousedown = Site.touchMoveHandler;
+    document.onmousedown = Site.touchStartHandler;
+    document.onmousedown = Site.scrollEventHandler;
+    document.onmousedown = Site.mousePositionHandler;
+    document.onmousedown = Site.projectChangedHandler;
   },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
   onClickHandler: function(event) {
-    event = event || window.event;
-    event.preventDefault() || false;
-    // console.log('target ---)', event.target);
-    // console.log('currentTarget ---)', event.currentTarget);
+    // event = event || window.event;
+    // event.preventDefault() || false;
+
     // if (event.target !== event.currentTarget) {
     //   event = event || window.event;
     //   event.preventDefault() || false;
-    //   console.log('event.target !== event.currentTarget', event.target !== event.currentTarget);
-    // let data = event.target.getAttribute('data-template-ref');
-    // let url = data + '.html';
-    // console.log('url', url);
-    /*
-     * here we can fix the current classes
-     * and update text with the data variable
-     * and make an Ajax request for the .content element
-     * finally we can manually update the document’s title
-     */
+    //
+    //   let data = event.target.getAttribute('data-template-ref');
+    //   let url = data + '.html';
+    //   console.log('url', url);
+    // }
+    // event.stopPropagation();
+    // /*
+    //  * here we can fix the current classes
+    //  * and update text with the data variable
+    //  * and make an Ajax request for the .content element
+    //  * finally we can manually update the document’s title
+    //  */
     // window.history.pushState(data, null, url);
 
     /* If the event target doesn't match bail */
     if (!event.target.classList.contains('external')) {
+      event = event || window.event;
+      event.preventDefault() || false;
+      
       if (this.getAttribute('href') === '' || this.getAttribute('href').length === 0) return !1;
+
       if (Site.linkInProgress === !1) {
         Site.linkInProgress = !0;
+
         let targetHref = this.getAttribute('href');
         let targetHTML = this.innerHTML;
-        // let data = event.target.getAttribute('data-template-ref');
-        // let url = data + '.html';
-        // event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
-        this.classList.contains('bottom_link') ? (Site.bottomLink = !0, this.classList.add('changing')) : Site.bottomLink = !1;
+
+        this.classList.contains('bottom_link')
+          ? (Site.bottomLink = !0, this.classList.add('changing'))
+          : Site.bottomLink = !1;
 
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
-        /*
-          * Remove hash from URL and replace with desired StateObject + mainContent + URL
-          * Only do this if history.pushState is supported by the browser
-          */
-        Site.historyState = { isToggledByClient: Theme.isToggledByClient, isToggled: Theme.isToggled, toggleStatus: Theme.toggleStatus };
+
+        Site.historyState = {
+          isTouched: Theme.isTouched,
+          dataTheme: Theme.dataTheme,
+          toggleStatus: Theme.toggleStatus
+        };
 
         if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref);
+
+        console.log('[ onClickHandler ] -+-> Site.historyState', Site.historyState);
+
         Site.onLoadPage(targetHref);
         Site.onRafLoading();
+
         return !1;
       }
     }
-    /* Otherwise, run your code... */
-
     if (event.target.classList.contains('external')) {
       window.open(event.target.href, '_blank');
       window.history.pushState(Site.historyState, null, '');
-      // window.history.pushState(null, null, '');
       return !1;
     }
-    // }
-    // event.stopPropagation();
   },
   /*--------------------------------------------------------------------------*/
   /*                           State Change Events                            */
@@ -2377,53 +2378,64 @@ SunMoon = {
 var Theme = Theme || {};
 
 Theme = {
-  button: null,
-  isToggled: !1,
-  toggleStatus: '' || null,
-  isToggledByClient: Site.historyState.isToggledByClient || !1,
+  // button: null,
+  dataTheme: Site.historyState.isToggledByClient || null,
+  isTouched: Site.historyState.isToggledByClient || !1,
+  toggleStatus: Site.historyState.isToggledByClient || '',
+  // isToggledByClient: Site.historyState.isToggledByClient || !1,
   rafAutoChange: null,
   init: () => {
     SunMoon.init();
-    // Theme.isToggledByClient = Site.historyState.isToggledByClient || !1;
-    // Theme.toggleStatus = Site.historyState.toggleStatus;
-    Theme.isDayOrNight();
-
     Theme.button = document.getElementById('change-theme-btn');
 
     if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
 
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
-      if (Theme.isToggledByClient === false) {
-        console.log('Theme.toggleStatus', Theme.toggleStatus);
-        console.log('Site.historyState.toggleStatus', Site.historyState.toggleStatus);
+      console.log('[ Theme.init - window.localStorage ] -+->', JSON.parse(window.localStorage.getItem('dark-theme-enabled')));
 
-        if (Theme.toggleStatus !== Site.historyState.toggleStatus) {
-          // console.log('Theme.toggleStatus !== Site.historyState.toggleStatus', Theme.toggleStatus !== Site.historyState.toggleStatus);
-          console.log('ELSE - Theme.autoChange is called');
-          Theme.autoChange();
-          cancelAnimationFrame(Theme.rafAutoChange);
-        }
-        else {
-          console.log('ELSE - Theme.autoChange not called');
-        }
-      }
-      else if (Theme.isToggledByClient === true) {
-        Theme.toggleStatus === 'night'
-          ? (Site.body.classList.add('dark-theme'), Theme.button.classList.add('dark-mode'))
-          : (Site.body.classList.remove('dark-theme'), Theme.button.classList.remove('dark-mode'));
+      if (Theme.isTouched === !1) {
+        Theme.autoChange();
+        // Theme.isDayOrNight();
+        cancelAnimationFrame(Theme.rafAutoChange);
       }
     }
   },
   autoChange: () => {
     Theme.rafAutoChange = requestAnimationFrame(Theme.autoChange);
     const timeout = setTimeout(() => {
-      Site.body.classList.toggle('dark-theme');
-      Theme.button.classList.toggle('dark');
-      // Theme.toggleStatus = 'night';
       Theme.calculateDaylight();
-      console.log('[autoChange] -> timeout');
       clearTimeout(timeout);
     }, 500);
+  },
+  darkTheme: () => {
+    // if (!Site.body.classList.contains('dark-theme')) {
+    // console.log('darkTheme - body contains dark-theme class', !Site.body.classList.contains('dark-theme'));
+
+    Site.body.classList.add('dark-theme');
+
+    Theme.toggleStatus = 'night';
+    Theme.button.setAttribute('data-theme', 'night');
+    Theme.button.classList.add('dark-mode');
+
+    Theme.dataTheme = Theme.button.getAttribute('data-theme');
+
+    console.log('[ Theme.darkTheme ] -+->', Theme);
+    // }
+  },
+  lightTheme: () => {
+    // if (Site.body.classList.contains('dark-theme')) {
+    // console.log('lightTheme - body contains dark-theme class', Site.body.classList.contains('dark-theme'));
+
+    Site.body.classList.remove('dark-theme');
+
+    Theme.toggleStatus = 'day';
+    Theme.button.setAttribute('data-theme', 'day');
+    Theme.button.classList.remove('dark-mode');
+
+    Theme.dataTheme = Theme.button.getAttribute('data-theme');
+
+    console.log('[ Theme.lightTheme ] -+->', Theme);
+    // }
   },
   calculateDaylight: () => {
     let startTime = SunMoon.sunrise.toLocaleTimeString('en-GB');
@@ -2448,12 +2460,63 @@ Theme = {
     let isDaylight = startDate < currentDate && endDate > currentDate;
     // let isNight = endDate > currentDate && startDate > currentDate;
 
-    // console.log('isDaylight', isDaylight);
-    // console.log('isNight', isNight);
+    isDaylight ? Theme.lightTheme() : Theme.darkTheme();
+    // isNight ? Theme.darkTheme() : Theme.lightTheme();
+  },
+  isDayOrNight: () => {
 
-    isDaylight
-      ? (Site.body.classList.remove('dark-theme'), Theme.button.classList.remove('dark-mode'), Theme.toggleStatus = 'day')
-      : (Site.body.classList.add('dark-theme'), Theme.button.classList.add('dark-mode'), Theme.toggleStatus = 'night');
+    // if (Site.historyState.dataTheme === undefined) {
+    // console.log('1', Site.historyState.dataTheme === undefined);
+    console.log('1', Theme.dataTheme);
+
+    Theme.dataTheme = Theme.button.getAttribute('data-theme');
+
+    if (Theme.dataTheme === 'day') {
+      console.log('2', Theme.dataTheme);
+      Theme.lightTheme();
+    }
+    else if (Theme.dataTheme === 'night') {
+      console.log('3', Theme.dataTheme);
+      Theme.darkTheme();
+    }
+    // }
+    // if (Site.historyState.dataTheme !== undefined) {
+    //   console.log('4', Site.historyState.dataTheme !== undefined);
+    //   // Theme.dataTheme = Theme.button.getAttribute('data-theme');
+    //
+    //   if (Site.historyState.dataTheme === 'day') {
+    //     console.log('3', Site.historyState.dataTheme);
+    //     Theme.darkTheme();
+    //   }
+    //   else {
+    //     console.log('6', Site.historyState.dataTheme);
+    //     Theme.lightTheme();
+    //   }
+    // }
+  },
+  enableDarkTheme: () => {
+    Theme.isTouched = !0;
+
+    // if (Theme.isTouched === !0) {}
+    // Theme.dataTheme = Theme.button.getAttribute('data-theme');
+    Theme.isDayOrNight();
+    // Theme.button.classList.toggle('dark-mode');
+
+    // console.log('[ enableDarkTheme ] BEFORE -+-> Site.historyState -+->', Site.historyState);
+
+    Site.historyState = {
+      isTouched: Theme.isTouched,
+      dataTheme: Theme.dataTheme,
+      toggleStatus: Theme.toggleStatus
+    };
+
+    console.log('[ enableDarkTheme ] AFTER -+-> Site.historyState -+->', Site.historyState);
+
+    let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
+    if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+    // return darkThemeEnabled
+    //   ? window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled)
+    //   : window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
   },
   lightStyle: () => {
     // Theme.isToggled = !Theme.isToggled;
@@ -2472,27 +2535,6 @@ Theme = {
     // Site.about.classList.remove('light');
     // Site.contact.classList.remove('light');
     Site.showSideNav();
-  },
-  isDayOrNight: () => {
-    return Theme.isToggled === !1 ? Theme.toggleStatus = 'night' : Theme.toggleStatus = 'day';
-  },
-  enableDarkTheme: () => {
-    Theme.isToggled = !Theme.isToggled;
-    Theme.isToggledByClient = !0;
-    Theme.isToggled === !1 ? Theme.toggleStatus = 'night' : Theme.toggleStatus = 'day';
-    // Theme.isDayOrNight();
-
-    Site.historyState = {
-      isToggledByClient: !0,
-      isToggled: !Theme.isToggled,
-      toggleStatus: Theme.toggleStatus
-    };
-
-    Theme.button.classList.toggle('dark-mode');
-
-    let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
-
-    return darkThemeEnabled ? window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled) : window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
   }
 };
 
