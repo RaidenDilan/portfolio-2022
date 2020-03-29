@@ -1377,6 +1377,7 @@ Site = {
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
 
         Site.historyState = {
+          stateChanged: Theme.stateChanged,
           dataTheme: Theme.dataTheme,
           isTouched: Theme.isTouched,
           toggleStatus: Theme.toggleStatus
@@ -2373,6 +2374,7 @@ Theme = {
   button: null,
   dataTheme: null,
   isTouched: !1,
+  stateChanged: !1,
   toggleStatus: null,
   rafAutoChange: null,
   init: () => {
@@ -2383,18 +2385,20 @@ Theme = {
 
     if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
-
-      /**
-        * @note Need to run this Theme.isTouched if statement once
-       **/
       if (Theme.isTouched === !1) {
-        Theme.updateDarkMode();
-        cancelAnimationFrame(Theme.rafAutoChange);
+        if (Theme.stateChanged === !1) {
+          Theme.updateDarkMode();
+          cancelAnimationFrame(Theme.rafAutoChange);
+        }
       }
-      if (Site.historyState.isTouched === true) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      if (Site.historyState.isTouched === !0) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      if (Site.historyState.stateChanged === !0) {
+        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      }
     }
   },
   updateDarkMode: () => {
+    Theme.stateChanged = !0;
     if (Theme.rafAutoChange) cancelAnimationFrame(Theme.rafAutoChange);
     Theme.rafAutoChange = requestAnimationFrame(Theme.updateDarkMode);
 
@@ -2463,6 +2467,7 @@ Theme = {
     Theme.isTouched = !0;
     Theme.dataTheme === 'day' ? Theme.darkTheme() : Theme.lightTheme();
     Site.historyState = {
+      stateChanged: Theme.stateChanged,
       dataTheme: Theme.dataTheme,
       isTouched: Theme.isTouched,
       toggleStatus: Theme.toggleStatus
