@@ -4,7 +4,7 @@ const config = require('../package').gulp;
 
 const cleanDest = () => {
   return gulp
-    .src(config.destDir, { 'read': false })
+    .src(config.destDir, { read: false }) // .src(config.destDir, { 'read': false })
     .pipe(clean());
 };
 

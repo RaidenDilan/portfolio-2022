@@ -27,12 +27,12 @@ const validateLocalJs = () => {
     .src(`${config.src.js}${config.selectors.js}`)
     .pipe(eslint())
     .pipe(eslint.format());
-  // .pipe(eslint.result((result) => console.log(`ESLint result: ${result.filePath}`)))
-  // .pipe(eslint.results((results) => {
-  //   console.log(`Total Results: ${results.length}`);
-  //   console.log(`Total Warnings: ${results.warningCount}`);
-  //   console.log(`Total Errors: ${results.errorCount}`);
-  // }));
+    // .pipe(eslint.result((result) => console.log(`ESLint result: ${result.filePath}`)))
+    // .pipe(eslint.results((results) => {
+    //   console.log(`Total Results: ${results.length}`);
+    //   console.log(`Total Warnings: ${results.warningCount}`);
+    //   console.log(`Total Errors: ${results.errorCount}`);
+    // }));
   // .pipe(eslint.failAfterError());
   // .pipe(jshint())
   // .pipe(jshint.reporter('jshint-stylish', { beep: true }));
@@ -54,8 +54,8 @@ const buildJs = () => {
     .pipe(gulpIf(global.production, replace('http://localhost:4000', process.env.API_URL)))
     .pipe(concat(config.output.js))
     .pipe(sourcemaps.init())
-    .pipe(gulpIf(global.production, uglify({ output: { max_line_len: false } })))
-    .pipe(gulpIf(global.production, rename({ suffix: '.min' })))
+    .pipe(uglify({ output: { max_line_len: false } }))
+    .pipe(rename({ suffix: '.min' }))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(config.dest.js))
     .pipe(gulpIf(!global.production, browserSync.stream()));

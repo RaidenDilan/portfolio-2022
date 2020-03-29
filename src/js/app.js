@@ -522,7 +522,7 @@ SunMoon = {
       /** Combined with geolocation. Sunset tonight at your location. */
       lat = position.coords.latitude;
       lng = position.coords.longitude;
-    }, (error) => console.error('Geolocation error', error));
+    }, (error) => console.log('Geolocation error', error));
 
     SunMoon.sunset = SunMoon.getSunset(lat, lng); /** Sunset tonight at the Triggertrap office for today */
     SunMoon.sunrise = SunMoon.getSunrise(lat, lng); /** Sunrise at London on Spring day 2020 */
