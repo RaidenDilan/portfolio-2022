@@ -487,17 +487,12 @@ Site = {
   attributes: {},
   attributes2: {},
   attributes3: {},
-  historyState: {},
-  // historyState: {
-  //   toggleStatus: null,
-  //   isToggled: null,
-  //   isToggledByClient: null
-  // },
-  // historyState: {
-  //   toggleStatus: '',
-  //   isToggled: !1,
-  //   isToggledByClient: !1
-  // },
+  // historyState: {},
+  historyState: {
+    darkTheme: null,
+    isTouched: null,
+    toggleStatus: null
+  },
   blockedAction: !0,
   passOnce: !1,
   playOnce: !1,
@@ -594,6 +589,7 @@ Site = {
       this.about = document.getElementById('about');
       this.contact = document.getElementById('contact');
       this.pixiMenuCover = document.getElementById('pixi_menu');
+      this.themeBtn = document.getElementById('change-theme-btn');
 
       this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
       this.vsDivs = document.querySelectorAll('.vs-div');
@@ -602,8 +598,7 @@ Site = {
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
       UserAgent.init();
-      // SunMoon.init();
-      Theme.init();
+      if (Site.themeBtn !== null) Theme.init();
       Drag.init();
       Menu.init();
       LazyLoad.init();
@@ -1193,22 +1188,6 @@ Site = {
   onClickHandler: function(event) {
     event = event || window.event;
     event.preventDefault() || false;
-    // console.log('target ---)', event.target);
-    // console.log('currentTarget ---)', event.currentTarget);
-    // if (event.target !== event.currentTarget) {
-    //   event = event || window.event;
-    //   event.preventDefault() || false;
-    //   console.log('event.target !== event.currentTarget', event.target !== event.currentTarget);
-    // let data = event.target.getAttribute('data-template-ref');
-    // let url = data + '.html';
-    // console.log('url', url);
-    /*
-     * here we can fix the current classes
-     * and update text with the data variable
-     * and make an Ajax request for the .content element
-     * finally we can manually update the document’s title
-     */
-    // window.history.pushState(data, null, url);
 
     /* If the event target doesn't match bail */
     if (!event.target.classList.contains('external')) {
@@ -1217,17 +1196,24 @@ Site = {
         Site.linkInProgress = !0;
         let targetHref = this.getAttribute('href');
         let targetHTML = this.innerHTML;
-        // let data = event.target.getAttribute('data-template-ref');
-        // let url = data + '.html';
-        // event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
         this.classList.contains('bottom_link') ? (Site.bottomLink = !0, this.classList.add('changing')) : Site.bottomLink = !1;
 
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
+
         /*
           * Remove hash from URL and replace with desired StateObject + mainContent + URL
           * Only do this if history.pushState is supported by the browser
           */
-        Site.historyState = { isToggledByClient: Theme.isToggledByClient, isToggled: Theme.isToggled, toggleStatus: Theme.toggleStatus };
+        console.log('[ Site.onClickHandler() ] - (2) -+-> Site.historyState <-+-', Site.historyState);
+        Site.historyState = {
+          // isToggledByClient: Theme.isToggledByClient,
+          // isToggled: Theme.isToggled,
+          dataTheme: Theme.dataTheme,
+          isTouched: Theme.isTouched,
+          toggleStatus: Theme.toggleStatus
+        };
+        console.log('[ Site.onClickHandler() ] - (2) -+-> Site.historyState <-+-', Site.historyState);
+
 
         if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref);
         Site.onLoadPage(targetHref);
@@ -2377,64 +2363,63 @@ SunMoon = {
 var Theme = Theme || {};
 
 Theme = {
-  // button: null,
-  dataTheme: Site.historyState.isToggledByClient || null,
-  isTouched: Site.historyState.isToggledByClient || !1,
-  toggleStatus: Site.historyState.isToggledByClient || '',
-  // isToggledByClient: Site.historyState.isToggledByClient || !1,
+  button: null,
+  dataTheme: null,
+  isTouched: !1,
+  toggleStatus: null,
   rafAutoChange: null,
   init: () => {
-    SunMoon.init();
     Theme.button = document.getElementById('change-theme-btn');
+    SunMoon.init();
 
     if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
 
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
-      console.log('[ Theme.init - window.localStorage ] -+->', JSON.parse(window.localStorage.getItem('dark-theme-enabled')));
-
       if (Theme.isTouched === !1) {
-        Theme.autoChange();
-        // Theme.isDayOrNight();
+        Theme.updateDarkMode();
         cancelAnimationFrame(Theme.rafAutoChange);
+        // console.log('[ Theme.init() ] - (if false) -+-> Theme.isTouched <-+-', Theme.isTouched);
+        // console.log('[ Theme.init() ] (1) -+-> Theme <-+-', Theme);
+        // console.log('[ Theme.init() ] (1) -+-> Site.historyState <-+-', Site.historyState);
+      }
+      if (Site.historyState.isTouched === true) {
+        // console.log('[ Theme.init() ] - (if true) -+-> Site.historyState <-+-', Site.historyState);
+        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
       }
     }
   },
-  autoChange: () => {
-    Theme.rafAutoChange = requestAnimationFrame(Theme.autoChange);
+  updateDarkMode: () => {
+    Theme.rafAutoChange = requestAnimationFrame(Theme.updateDarkMode);
     const timeout = setTimeout(() => {
       Theme.calculateDaylight();
       clearTimeout(timeout);
     }, 500);
   },
   darkTheme: () => {
-    // if (!Site.body.classList.contains('dark-theme')) {
-    // console.log('darkTheme - body contains dark-theme class', !Site.body.classList.contains('dark-theme'));
-
     Site.body.classList.add('dark-theme');
+    let darkThemeEnabled = Site.body.classList.contains('dark-theme');
+    if (darkThemeEnabled) {
+      window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+      console.log('window.localStorage (darkTheme) -+->', window.localStorage);
+    }
 
     Theme.toggleStatus = 'night';
     Theme.button.setAttribute('data-theme', 'night');
     Theme.button.classList.add('dark-mode');
-
     Theme.dataTheme = Theme.button.getAttribute('data-theme');
-
-    console.log('[ Theme.darkTheme ] -+->', Theme);
-    // }
   },
   lightTheme: () => {
-    // if (Site.body.classList.contains('dark-theme')) {
-    // console.log('lightTheme - body contains dark-theme class', Site.body.classList.contains('dark-theme'));
-
     Site.body.classList.remove('dark-theme');
+    let darkThemeEnabled = Site.body.classList.contains('dark-theme');
+    if (darkThemeEnabled) {
+      window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+      console.log('window.localStorage (lightTheme) -+->', window.localStorage);
+    }
 
     Theme.toggleStatus = 'day';
     Theme.button.setAttribute('data-theme', 'day');
     Theme.button.classList.remove('dark-mode');
-
     Theme.dataTheme = Theme.button.getAttribute('data-theme');
-
-    console.log('[ Theme.lightTheme ] -+->', Theme);
-    // }
   },
   calculateDaylight: () => {
     let startTime = SunMoon.sunrise.toLocaleTimeString('en-GB');
@@ -2463,59 +2448,39 @@ Theme = {
     // isNight ? Theme.darkTheme() : Theme.lightTheme();
   },
   isDayOrNight: () => {
-
-    // if (Site.historyState.dataTheme === undefined) {
-    // console.log('1', Site.historyState.dataTheme === undefined);
-    console.log('1', Theme.dataTheme);
-
     Theme.dataTheme = Theme.button.getAttribute('data-theme');
-
-    if (Theme.dataTheme === 'day') {
-      console.log('2', Theme.dataTheme);
-      Theme.lightTheme();
-    }
-    else if (Theme.dataTheme === 'night') {
-      console.log('3', Theme.dataTheme);
-      Theme.darkTheme();
-    }
-    // }
-    // if (Site.historyState.dataTheme !== undefined) {
-    //   console.log('4', Site.historyState.dataTheme !== undefined);
-    //   // Theme.dataTheme = Theme.button.getAttribute('data-theme');
-    //
-    //   if (Site.historyState.dataTheme === 'day') {
-    //     console.log('3', Site.historyState.dataTheme);
-    //     Theme.darkTheme();
-    //   }
-    //   else {
-    //     console.log('6', Site.historyState.dataTheme);
-    //     Theme.lightTheme();
-    //   }
-    // }
+    Theme.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
   },
   enableDarkTheme: () => {
     Theme.isTouched = !0;
+    Theme.dataTheme === 'day'
+      ? (
+        Theme.toggleStatus = 'night',
+        Theme.button.setAttribute('data-theme', 'night'),
+        Theme.button.classList.add('dark-mode'),
+        Theme.dataTheme = Theme.button.getAttribute('data-theme')
+      ) : (
+        Theme.toggleStatus = 'day',
+        Theme.button.setAttribute('data-theme', 'day'),
+        Theme.button.classList.remove('dark-mode'),
+        Theme.dataTheme = Theme.button.getAttribute('data-theme')
+      );
 
-    // if (Theme.isTouched === !0) {}
-    // Theme.dataTheme = Theme.button.getAttribute('data-theme');
-    Theme.isDayOrNight();
-    // Theme.button.classList.toggle('dark-mode');
+    let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
+    if (darkThemeEnabled) {
+      window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+      console.log('window.localStorage (enableDarkTheme) -+->', window.localStorage);
+    }
 
-    // console.log('[ enableDarkTheme ] BEFORE -+-> Site.historyState -+->', Site.historyState);
+    console.log('[ Theme.enableDarkTheme() ] (1) -+-> Site.historyState <-+-', Site.historyState);
 
     Site.historyState = {
-      isTouched: Theme.isTouched,
       dataTheme: Theme.dataTheme,
+      isTouched: Theme.isTouched,
       toggleStatus: Theme.toggleStatus
     };
 
-    console.log('[ enableDarkTheme ] AFTER -+-> Site.historyState -+->', Site.historyState);
-
-    let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
-    if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-    // return darkThemeEnabled
-    //   ? window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled)
-    //   : window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+    console.log('[ Theme.enableDarkTheme() ] (2) -+-> Site.historyState <-+-', Site.historyState);
   },
   lightStyle: () => {
     // Theme.isToggled = !Theme.isToggled;
@@ -2524,6 +2489,7 @@ Theme = {
     Menu.logo.classList.add('light');
     // Site.about.classList.add('light');
     // Site.contact.classList.add('light');
+    Theme.button.classList.add('light');
     Site.hideSideNav();
   },
   darkStyle: () => {
@@ -2533,6 +2499,7 @@ Theme = {
     Menu.logo.classList.remove('light');
     // Site.about.classList.remove('light');
     // Site.contact.classList.remove('light');
+    Theme.button.classList.remove('light');
     Site.showSideNav();
   }
 };
