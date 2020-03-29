@@ -41,7 +41,7 @@ const validateLocalJs = () => {
 const fetchLocalJs = () => {
   return validateLocalJs()
     .pipe(order([config.main.js, config.selectors.js]))
-    .pipe(babel({ presets: ['env'], ignore: '**/*/pixi.js' }));
+    .pipe(babel({ presets: ['env'], ignore: ['**/*/pixi.js'] }));
 };
 
 const buildJs = () => {
