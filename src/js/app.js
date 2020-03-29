@@ -719,13 +719,13 @@ Site = {
   displacementFilter2: null,
   displacementFilter3: null,
   clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
-  currentMousePos: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
-
+  currentMousePos: {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
+  },
   setup: () => {
-    // ---------------------------- PRELOAD PART ---------------------------- //
     Site.preload.on('progress', Site.handleOverallProgress);
     Site.preload.on('complete', Site.handleComplete);
-    // ---------------------------------------------------------------------- //
 
     Site.onRafLoading = function onRafLoading() {
       Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
@@ -809,11 +809,15 @@ Site = {
       /* removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
         obj.removeEventListener('click', Site.onClickHandler, !1);
+        obj.removeEventListener('touchstart', Site.onClickHandler, !1);
         obj.onclick = null;
+        obj.ontouchstart = null;
       });
       Site.links.forEach((obj) => {
         obj.addEventListener('click', Site.onClickHandler, !1);
+        obj.addEventListener('touchstart', Site.onClickHandler, !1);
         obj.onclick = Site.onClickHandler;
+        obj.ontouchstart = Site.onClickHandler;
       });
 
       // if (!Menu.button.classList.contains('.point3.black')) Menu.button.style.setProperty('--button-color', 'blue'); // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
@@ -1269,13 +1273,8 @@ Site = {
     };
 
     window.history.replaceState(Site.historyState, null, '');
-    // window.history.pushState(Site.historyState, null, '');
-    // window.history.pushState(Site.historyState, '', window.location);
 
-    // console.log('[Site - Initial State] -> Site.historyState', Site.historyState);
     Site.init();
-    // console.log('[Site - Updated State] -> Site.historyState', Site.historyState);
-    // Theme.init();
 
     if (!UserAgent.iOS) {
       Site.body.classList.add('desktop');
@@ -1322,34 +1321,47 @@ Site = {
     window.addEventListener('onunload', Site.onUnloadHandler);
     window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
     window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
-    // window.addEventListener('resize', Site.onResizeHandler, !1);
-    // window.addEventListener('keyup', Site.onKeydownHandler, !1);
+
     /* device giroscope event */
     if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1);
+
     /* scroll events */
     document.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
     document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
     document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+
     /* touch events */
-    document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
-    document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
-    /* Show Hide Menu Arrow events */
-    // if (Site.body.classList.contains('single')) {
+    window.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
+    window.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
+
+    /**
+      * Show Hide Menu Arrow events
+      * COULD ADD -+-> if (Site.body.classList.contains('single')) {}
+    **/
     document.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1); // shows/hides menu arrow when scrolling on mobile devices
-    // }
-    /* Add the event listeners for each click/mousemove events. */
+
+    /* Add the event listeners for each click / mousemove events. */
     document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
-    document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+    document.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
+    // document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+
+    /* click / touch / mouse events */
+    document.onmousedown = Site.onClickHandler;
+    document.ontouchstart = Site.touchStartHandler;
+    document.ontouchmove = Site.touchMoveHandler;
+
     /* State Change Events: Add these events to window element */
     window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     window.onhashchange = Site.onHashChangeHandler;
 
+    /* Utility events */
     window.resize = Site.onResizeHandler;
     window.keydown = Site.onKeydownHandler;
+
     /* Mouse events: Add these events to document element */
     document.onmousedown = Site.projectChangedHandler;
     document.onmousedown = Site.mousePositionHandler;
@@ -1362,19 +1374,26 @@ Site = {
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
   onClickHandler: function(event) {
-    event = event || window.event;
-    event.preventDefault() || false;
+    if (!UserAgent.iOS) {
+      event = event || window.event;
+      event.preventDefault() || false;
+    }
 
     /* If the event target doesn't match bail */
     if (!event.target.classList.contains('external')) {
-      if (this.getAttribute('href') === '' || this.getAttribute('href').length === 0) return !1;
+      if ((this.getAttribute('href') === '') || (this.getAttribute('href').length === 0)) return !1;
+
       if (Site.linkInProgress === !1) {
         Site.linkInProgress = !0;
+
         let targetHref = this.getAttribute('href');
         let targetHTML = this.innerHTML;
 
-        this.classList.contains('bottom_link') ? (Site.bottomLink = !0, this.classList.add('changing')) : Site.bottomLink = !1;
-        Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
+        this.classList.contains('bottom_link')
+          ? (Site.bottomLink = !0, this.classList.add('changing'))
+          : Site.bottomLink = !1;
+
+        Site.scrolling !== null && Site.scrolling.scrollTo(0, 0);
 
         Site.historyState = {
           stateChanged: Theme.stateChanged,
@@ -1389,15 +1408,11 @@ Site = {
         return !1;
       }
     }
-    /* Otherwise, run your code... */
-
     if (event.target.classList.contains('external')) {
       window.open(event.target.href, '_blank');
       window.history.pushState(Site.historyState, null, '');
-      // window.history.pushState(null, null, '');
       return !1;
     }
-    // }
     // event.stopPropagation();
   },
   /*--------------------------------------------------------------------------*/
@@ -1653,7 +1668,8 @@ Site = {
     Site.yDown = event.touches[0].clientY;
   },
   touchMoveHandler: (event) => {
-    !!(!Site.xDown || !Site.yDown); // return if touch props are valid
+    // !!(!Site.xDown || !Site.yDown); // return if touch props are valid
+    if (Site.xDown && Site.yDown) return;
 
     let xUp = event.touches[0].clientX;
     let yUp = event.touches[0].clientY;
@@ -2379,11 +2395,13 @@ Theme = {
   rafAutoChange: null,
   init: () => {
     Theme.button = document.getElementById('change-theme-btn');
-    // Site.body.classList.contains('home') ? Theme.button.style.display = 'none' : Theme.button.style.display = 'block';
-
     SunMoon.init();
 
-    if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
+    if (Theme.button) {
+      Theme.button.addEventListener('click', Theme.enableDarkTheme, !1);
+      Theme.button.addEventListener('touchstart', Theme.enableDarkTheme, !1);
+    }
+
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
       if (Theme.isTouched === !1) {
         if (Theme.stateChanged === !1) {
