@@ -488,6 +488,16 @@ Site = {
   attributes2: {},
   attributes3: {},
   historyState: {},
+  // historyState: {
+  //   toggleStatus: null,
+  //   isToggled: null,
+  //   isToggledByClient: null
+  // },
+  // historyState: {
+  //   toggleStatus: '',
+  //   isToggled: !1,
+  //   isToggledByClient: !1
+  // },
   blockedAction: !0,
   passOnce: !1,
   playOnce: !1,
@@ -514,7 +524,7 @@ Site = {
   stageMenu: null,
   deltaMenu: null,
   intensity: null,
-  rafIsLoading: null,
+  rafLoading: null,
   menuHeight: null,
   expression: null,
   multiplier: null,
@@ -551,7 +561,7 @@ Site = {
     // ---------------------------------------------------------------------- //
 
     Site.onRafLoading = function onRafLoading() {
-      Site.rafIsLoading = requestAnimationFrame(Site.onRafLoading);
+      Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
 
       if (Site.exitOk === !0 && Site.ajaxOk === !0) {
         if (Site.rafPixiHome !== null || undefined) cancelAnimationFrame(Site.rafPixiHome);
@@ -563,7 +573,7 @@ Site = {
         }
 
         Site.onUpdatePage(Site.newPageContent);
-        if (Site.rafIsLoading !== null || undefined) cancelAnimationFrame(Site.rafIsLoading);
+        if (Site.rafLoading !== null || undefined) cancelAnimationFrame(Site.rafLoading);
       }
     };
     Site.init = function init() {
@@ -592,10 +602,8 @@ Site = {
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
       UserAgent.init();
-
       // SunMoon.init();
-      if (document.getElementById('change-theme-btn')) Theme.init();
-
+      Theme.init();
       Drag.init();
       Menu.init();
       LazyLoad.init();
@@ -1078,33 +1086,27 @@ Site = {
       else Site.exitOk = !0;
     };
     Site.onUpdatePage = function onUpdatePage(html) {
-      const parser = new DOMParser();
+      let parser = new DOMParser();
       let doc = parser.parseFromString(html, 'text/html');
       let classList = doc.querySelectorAll('body')[0].getAttribute('class');
-
       document.title = doc.querySelector('title').innerHTML;
-
-      let isLoading = classList.replace('is-loading', '');
-
-      Site.body.setAttribute('class', isLoading);
-
-      !UserAgent.iOS
+      let res = classList.replace('is-loading', '');
+      Site.body.setAttribute('class', res);
+      (!UserAgent.iOS)
         ? Site.body.classList.add('desktop')
         : Site.body.classList.add('mobile');
-
       Site.main.innerHTML = doc.getElementById('main__content').innerHTML;
       Site.init();
     };
 
-    /**
-      * window.history.pushState([data], [title], [url])
-      * @params {Object} - The first parameter is the data we'll need if the state of the web page changes, for instance whenever someone presses the back or forwards button in their browser. Note that in Firefox this data is limited to 640k characters.
-      * @params {title} - title is the second parameter which can be a string, but at the time of writing, every browser simply ignores it.
-      * @params {url} - This final parameter is the URL we want to appear in the address bar.
-      */
     window.history.replaceState(Site.historyState, null, '');
+    // window.history.pushState(Site.historyState, null, '');
+    // window.history.pushState(Site.historyState, '', window.location);
 
+    // console.log('[Site - Initial State] -> Site.historyState', Site.historyState);
     Site.init();
+    // console.log('[Site - Updated State] -> Site.historyState', Site.historyState);
+    // Theme.init();
 
     if (!UserAgent.iOS) {
       Site.body.classList.add('desktop');
@@ -1151,6 +1153,8 @@ Site = {
     window.addEventListener('onunload', Site.onUnloadHandler);
     window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
     window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
+    // window.addEventListener('resize', Site.onResizeHandler, !1);
+    // window.addEventListener('keyup', Site.onKeydownHandler, !1);
     /* device giroscope event */
     if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1);
     /* scroll events */
@@ -1168,84 +1172,79 @@ Site = {
     /* Add the event listeners for each click/mousemove events. */
     document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
-
-    window.resize = Site.onResizeHandler;
-    window.keydown = Site.onKeydownHandler;
+    /* State Change Events: Add these events to window element */
     window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     window.onhashchange = Site.onHashChangeHandler;
 
-    document.onmousedown = Site.showHideArrow;
-    document.onmousedown = Site.touchMoveHandler;
-    document.onmousedown = Site.touchStartHandler;
-    document.onmousedown = Site.scrollEventHandler;
-    document.onmousedown = Site.mousePositionHandler;
+    window.resize = Site.onResizeHandler;
+    window.keydown = Site.onKeydownHandler;
+    /* Mouse events: Add these events to document element */
     document.onmousedown = Site.projectChangedHandler;
+    document.onmousedown = Site.mousePositionHandler;
+    document.onmousedown = Site.scrollEventHandler;
+    document.onmousedown = Site.touchStartHandler;
+    document.onmousedown = Site.touchMoveHandler;
+    document.onmousedown = Site.showHideArrow;
   },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
   onClickHandler: function(event) {
-    // event = event || window.event;
-    // event.preventDefault() || false;
-
+    event = event || window.event;
+    event.preventDefault() || false;
+    // console.log('target ---)', event.target);
+    // console.log('currentTarget ---)', event.currentTarget);
     // if (event.target !== event.currentTarget) {
     //   event = event || window.event;
     //   event.preventDefault() || false;
-    //
-    //   let data = event.target.getAttribute('data-template-ref');
-    //   let url = data + '.html';
-    //   console.log('url', url);
-    // }
-    // event.stopPropagation();
-    // /*
-    //  * here we can fix the current classes
-    //  * and update text with the data variable
-    //  * and make an Ajax request for the .content element
-    //  * finally we can manually update the document’s title
-    //  */
+    //   console.log('event.target !== event.currentTarget', event.target !== event.currentTarget);
+    // let data = event.target.getAttribute('data-template-ref');
+    // let url = data + '.html';
+    // console.log('url', url);
+    /*
+     * here we can fix the current classes
+     * and update text with the data variable
+     * and make an Ajax request for the .content element
+     * finally we can manually update the document’s title
+     */
     // window.history.pushState(data, null, url);
 
     /* If the event target doesn't match bail */
     if (!event.target.classList.contains('external')) {
-      event = event || window.event;
-      event.preventDefault() || false;
-      
       if (this.getAttribute('href') === '' || this.getAttribute('href').length === 0) return !1;
-
       if (Site.linkInProgress === !1) {
         Site.linkInProgress = !0;
-
         let targetHref = this.getAttribute('href');
         let targetHTML = this.innerHTML;
-
-        this.classList.contains('bottom_link')
-          ? (Site.bottomLink = !0, this.classList.add('changing'))
-          : Site.bottomLink = !1;
+        // let data = event.target.getAttribute('data-template-ref');
+        // let url = data + '.html';
+        // event.target.classList.contains('bottom_link') ? (Site.bottomLink = !0, event.target.classList.add('changing')) : Site.bottomLink = !1;
+        this.classList.contains('bottom_link') ? (Site.bottomLink = !0, this.classList.add('changing')) : Site.bottomLink = !1;
 
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
-
-        Site.historyState = {
-          isTouched: Theme.isTouched,
-          dataTheme: Theme.dataTheme,
-          toggleStatus: Theme.toggleStatus
-        };
+        /*
+          * Remove hash from URL and replace with desired StateObject + mainContent + URL
+          * Only do this if history.pushState is supported by the browser
+          */
+        Site.historyState = { isToggledByClient: Theme.isToggledByClient, isToggled: Theme.isToggled, toggleStatus: Theme.toggleStatus };
 
         if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref);
-
-        console.log('[ onClickHandler ] -+-> Site.historyState', Site.historyState);
-
         Site.onLoadPage(targetHref);
         Site.onRafLoading();
-
         return !1;
       }
     }
+    /* Otherwise, run your code... */
+
     if (event.target.classList.contains('external')) {
       window.open(event.target.href, '_blank');
       window.history.pushState(Site.historyState, null, '');
+      // window.history.pushState(null, null, '');
       return !1;
     }
+    // }
+    // event.stopPropagation();
   },
   /*--------------------------------------------------------------------------*/
   /*                           State Change Events                            */
