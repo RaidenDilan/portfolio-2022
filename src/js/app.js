@@ -770,7 +770,11 @@ Site = {
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
       UserAgent.init();
-      if (Site.themeBtn !== null) Theme.init();
+      if ((Site.themeBtn !== null) && (!Site.body.classList.contains('home'))) {
+        Theme.init();
+        Theme.button.classList.remove('light');
+      }
+      Site.body.classList.contains('home') ? Site.themeBtn.style.display = 'none' : Site.themeBtn.style.display = 'block';
       Drag.init();
       Menu.init();
       LazyLoad.init();
@@ -788,7 +792,7 @@ Site = {
       Menu.button.classList.remove('opened');
       /* Reset lightButtonStyles */
       Menu.darkFooter();
-      if (Site.themeBtn) Theme.button.classList.remove('light');
+      // if (Site.themeBtn) Theme.button.classList.remove('light');
       Drag.cursorMain.classList.remove('menu_opened');
       Site.about.style.display = 'block';
       Site.contact.style.display = 'block';
@@ -2373,12 +2377,16 @@ Theme = {
   rafAutoChange: null,
   init: () => {
     Theme.button = document.getElementById('change-theme-btn');
-    Site.body.classList.contains('home') ? Theme.button.style.display = 'none' : Theme.button.style.display = 'block';
+    // Site.body.classList.contains('home') ? Theme.button.style.display = 'none' : Theme.button.style.display = 'block';
 
     SunMoon.init();
 
     if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
+
+      /**
+        * @note Need to run this Theme.isTouched if statement once
+       **/
       if (Theme.isTouched === !1) {
         Theme.updateDarkMode();
         cancelAnimationFrame(Theme.rafAutoChange);
