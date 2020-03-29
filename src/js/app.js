@@ -341,6 +341,20 @@ Menu = {
         else if (Site.body.classList.contains('about')) window.pageYOffset >= 10 ? Menu.showArrow() : Menu.hideArrow();
       }
     }
+  },
+  lightFooter: () => {
+    Menu.button.classList.add('light');
+    Menu.social.classList.add('light');
+    Menu.logo.classList.add('light');
+    // Site.about.classList.add('light');
+    // Site.contact.classList.add('light');
+  },
+  darkFooter: () => {
+    Menu.button.classList.remove('light');
+    Menu.social.classList.remove('light');
+    Menu.logo.classList.remove('light');
+    // Site.about.classList.remove('light');
+    // Site.contact.classList.remove('light');
   }
 };
 
@@ -473,10 +487,169 @@ LazyLoad = {
   }
 };
 
+/**
+ * Sunrise/sunset script. By Matt Kane. Adopted for NPM use by Alexey Udivankin.
+ *
+ * Based loosely and indirectly on Kevin Boone's SunTimes Java implementation
+ * of the US Naval Observatory's algorithm.
+ *
+ * Copyright © 2012 Triggertrap Ltd. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
+ * details.
+ * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
+ * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA,
+ * or connect to: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
+ */
+var SunMoon = SunMoon || {};
+
+SunMoon = {
+  DEFAULT_ZENITH: 90.8333, /** Default zenith */
+  DEGREES_PER_HOUR: 360 / 24, /** Degrees per hour */
+  MSEC_IN_HOUR: 60 * 60 * 1000, /** Msec in hour */
+  // sunset: null,
+  // sunrise: null,
+  init: () => {
+    let lat = null;
+    let lng = null;
+
+    navigator.geolocation.getCurrentPosition((position) => {
+      /** Combined with geolocation. Sunset tonight at your location. */
+      lat = position.coords.latitude;
+      lng = position.coords.longitude;
+    }, (error) => console.error('Geolocation error', error));
+
+    SunMoon.sunset = SunMoon.getSunset(lat, lng); /** Sunset tonight at the Triggertrap office for today */
+    SunMoon.sunrise = SunMoon.getSunrise(lat, lng); /** Sunrise at London on Spring day 2020 */
+  },
+  getDayOfYear: (date) => {
+    /**
+    * Get day of year
+    * @param {Date} date
+    * @returns {Number}
+    */
+    return Math.ceil((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) / 8.64e7);
+  },
+  sinDeg: (deg) => {
+    /**
+    * Get sin of value in deg
+    * @param {Number} deg
+    * @returns {Number}
+    */
+    return Math.sin(deg * 2.0 * Math.PI / 360.0);
+  },
+  acosDeg: (x) => {
+    /**
+    * Get acos of value in deg
+    * @param {Number} x
+    * @returns {Number}
+    */
+    return Math.acos(x) * 360.0 / (2 * Math.PI);
+  },
+  asinDeg: (x) => {
+    /**
+    * Get asin of value in deg
+    * @param {Number} x
+    * @returns {Number}
+    */
+    return Math.asin(x) * 360.0 / (2 * Math.PI);
+  },
+  tanDeg: (deg) => {
+    /**
+    * Get tan of value in deg
+    * @param {Number} deg
+    * @returns {Number}
+    */
+    return Math.tan(deg * 2.0 * Math.PI / 360.0);
+  },
+  cosDeg: (deg) => {
+    /**
+    * Get cos of value in deg
+    * @param {Number} deg
+    * @returns {Number}
+    */
+    return Math.cos(deg * 2.0 * Math.PI / 360.0);
+  },
+  mod: (a, b) => {
+    /**
+    * Get ramainder
+    * @param {Number} a
+    * @param {Number} b
+    * @returns {Number}
+    */
+    const result = a % b;
+    return result < 0 ? result + b : result;
+  },
+  calculate: (latitude, longitude, isSunrise, zenith, date) => {
+    /**
+    * Calculate Date for either sunrise or sunset
+    * @param {Number} latitude
+    * @param {Number} longitude
+    * @param {boolean} isSunrise
+    * @param {Number} zenith
+    * @param {Date} date
+    * @returns {Date}
+    */
+
+    const dayOfYear = SunMoon.getDayOfYear(date);
+    const hoursFromMeridian = longitude / SunMoon.DEGREES_PER_HOUR;
+    const approxTimeOfEventInDays = isSunrise ? dayOfYear + ((6 - hoursFromMeridian) / 24) : dayOfYear + ((18.0 - hoursFromMeridian) / 24);
+
+    const sunMeanAnomaly = (0.9856 * approxTimeOfEventInDays) - 3.289;
+    const sunTrueLongitude = SunMoon.mod(sunMeanAnomaly + (1.916 * SunMoon.sinDeg(sunMeanAnomaly)) + (0.020 * SunMoon.sinDeg(2 * sunMeanAnomaly)) + 282.634, 360);
+    const ascension = 0.91764 * SunMoon.tanDeg(sunTrueLongitude);
+
+    let rightAscension;
+    rightAscension = 360 / (2 * Math.PI) * Math.atan(ascension);
+    rightAscension = SunMoon.mod(rightAscension, 360);
+
+    const lQuadrant = Math.floor(sunTrueLongitude / 90) * 90;
+    const raQuadrant = Math.floor(rightAscension / 90) * 90;
+    rightAscension = rightAscension + (lQuadrant - raQuadrant);
+    rightAscension /= SunMoon.DEGREES_PER_HOUR;
+
+    const sinDec = 0.39782 * SunMoon.sinDeg(sunTrueLongitude);
+    const cosDec = SunMoon.cosDeg(SunMoon.asinDeg(sinDec));
+    const cosLocalHourAngle = ((SunMoon.cosDeg(zenith)) - (sinDec * (SunMoon.sinDeg(latitude)))) / (cosDec * (SunMoon.cosDeg(latitude)));
+    const localHourAngle = isSunrise ? 360 - SunMoon.acosDeg(cosLocalHourAngle) : SunMoon.acosDeg(cosLocalHourAngle);
+    const localHour = localHourAngle / SunMoon.DEGREES_PER_HOUR;
+    const localMeanTime = localHour + rightAscension - (0.06571 * approxTimeOfEventInDays) - 6.622;
+    const time = SunMoon.mod(localMeanTime - (longitude / SunMoon.DEGREES_PER_HOUR), 24);
+    const utcMidnight = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+
+    // Created date will be set to local (system) time zone.
+    return new Date(utcMidnight + (time * SunMoon.MSEC_IN_HOUR));
+  },
+  getSunrise: (latitude, longitude, date = new Date()) => {
+    /**
+    * Calculate Sunrise time for given longitude, latitude, zenith and date
+    * @param {Number} latitude
+    * @param {Number} longitude
+    * @param {Date} [date]
+    * @returns {Date}
+    */
+    return SunMoon.calculate(latitude, longitude, true, SunMoon.DEFAULT_ZENITH, date);
+  },
+  getSunset: (latitude, longitude, date = new Date()) => {
+    /**
+    * Calculate Sunset time for given longitude, latitude, zenith and date
+    * @param {Number} latitude
+    * @param {Number} longitude
+    * @param {Date} [date]
+    * @returns {Date}
+    */
+    return SunMoon.calculate(latitude, longitude, false, SunMoon.DEFAULT_ZENITH, date);
+  }
+};
+
 var Site = Site || {};
 
 Site = {
-  /* Set Initial State */
   directoryUri: './',
   lethargy: new Lethargy(),
   preload: new createjs.LoadQueue(true),
@@ -487,7 +660,6 @@ Site = {
   attributes: {},
   attributes2: {},
   attributes3: {},
-  // historyState: {},
   historyState: {
     darkTheme: null,
     isTouched: null,
@@ -615,11 +787,9 @@ Site = {
       /* close Nav Menu when anchor click events */
       Menu.button.classList.remove('opened');
       /* Reset lightButtonStyles */
-      Menu.button.classList.remove('light');
-      Menu.social.classList.remove('light');
-      Menu.logo.classList.remove('light');
+      Menu.darkFooter();
+      if (Site.themeBtn) Theme.button.classList.remove('light');
       Drag.cursorMain.classList.remove('menu_opened');
-
       Site.about.style.display = 'block';
       Site.contact.style.display = 'block';
 
@@ -1160,10 +1330,12 @@ Site = {
     document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
     document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
     /* Show Hide Menu Arrow events */
+    // if (Site.body.classList.contains('single')) {
     document.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1); // shows/hides menu arrow when scrolling on mobile devices
+    // }
     /* Add the event listeners for each click/mousemove events. */
     document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
@@ -1196,24 +1368,15 @@ Site = {
         Site.linkInProgress = !0;
         let targetHref = this.getAttribute('href');
         let targetHTML = this.innerHTML;
-        this.classList.contains('bottom_link') ? (Site.bottomLink = !0, this.classList.add('changing')) : Site.bottomLink = !1;
 
+        this.classList.contains('bottom_link') ? (Site.bottomLink = !0, this.classList.add('changing')) : Site.bottomLink = !1;
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0); // Site.scrolling.scrollTo(0, !0);
 
-        /*
-          * Remove hash from URL and replace with desired StateObject + mainContent + URL
-          * Only do this if history.pushState is supported by the browser
-          */
-        console.log('[ Site.onClickHandler() ] - (2) -+-> Site.historyState <-+-', Site.historyState);
         Site.historyState = {
-          // isToggledByClient: Theme.isToggledByClient,
-          // isToggled: Theme.isToggled,
           dataTheme: Theme.dataTheme,
           isTouched: Theme.isTouched,
           toggleStatus: Theme.toggleStatus
         };
-        console.log('[ Site.onClickHandler() ] - (2) -+-> Site.historyState <-+-', Site.historyState);
-
 
         if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref);
         Site.onLoadPage(targetHref);
@@ -2200,166 +2363,6 @@ Site = {
   }
 };
 
-/**
- * Sunrise/sunset script. By Matt Kane. Adopted for NPM use by Alexey Udivankin.
- *
- * Based loosely and indirectly on Kevin Boone's SunTimes Java implementation
- * of the US Naval Observatory's algorithm.
- *
- * Copyright © 2012 Triggertrap Ltd. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details.
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA,
- * or connect to: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- */
-var SunMoon = SunMoon || {};
-
-SunMoon = {
-  DEFAULT_ZENITH: 90.8333, /** Default zenith */
-  DEGREES_PER_HOUR: 360 / 24, /** Degrees per hour */
-  MSEC_IN_HOUR: 60 * 60 * 1000, /** Msec in hour */
-  // sunset: null,
-  // sunrise: null,
-  init: () => {
-    let lat = null;
-    let lng = null;
-
-    navigator.geolocation.getCurrentPosition((position) => {
-      /** Combined with geolocation. Sunset tonight at your location. */
-      lat = position.coords.latitude;
-      lng = position.coords.longitude;
-    }, (error) => console.error('error', error));
-
-    SunMoon.sunset = SunMoon.getSunset(lat, lng); /** Sunset tonight at the Triggertrap office for today */
-    SunMoon.sunrise = SunMoon.getSunrise(lat, lng); /** Sunrise at London on Spring day 2020 */
-  },
-  getDayOfYear: (date) => {
-    /**
-    * Get day of year
-    * @param {Date} date
-    * @returns {Number}
-    */
-    return Math.ceil((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) / 8.64e7);
-  },
-  sinDeg: (deg) => {
-    /**
-    * Get sin of value in deg
-    * @param {Number} deg
-    * @returns {Number}
-    */
-    return Math.sin(deg * 2.0 * Math.PI / 360.0);
-  },
-  acosDeg: (x) => {
-    /**
-    * Get acos of value in deg
-    * @param {Number} x
-    * @returns {Number}
-    */
-    return Math.acos(x) * 360.0 / (2 * Math.PI);
-  },
-  asinDeg: (x) => {
-    /**
-    * Get asin of value in deg
-    * @param {Number} x
-    * @returns {Number}
-    */
-    return Math.asin(x) * 360.0 / (2 * Math.PI);
-  },
-  tanDeg: (deg) => {
-    /**
-    * Get tan of value in deg
-    * @param {Number} deg
-    * @returns {Number}
-    */
-    return Math.tan(deg * 2.0 * Math.PI / 360.0);
-  },
-  cosDeg: (deg) => {
-    /**
-    * Get cos of value in deg
-    * @param {Number} deg
-    * @returns {Number}
-    */
-    return Math.cos(deg * 2.0 * Math.PI / 360.0);
-  },
-  mod: (a, b) => {
-    /**
-    * Get ramainder
-    * @param {Number} a
-    * @param {Number} b
-    * @returns {Number}
-    */
-    const result = a % b;
-    return result < 0 ? result + b : result;
-  },
-  calculate: (latitude, longitude, isSunrise, zenith, date) => {
-    /**
-    * Calculate Date for either sunrise or sunset
-    * @param {Number} latitude
-    * @param {Number} longitude
-    * @param {boolean} isSunrise
-    * @param {Number} zenith
-    * @param {Date} date
-    * @returns {Date}
-    */
-
-    const dayOfYear = SunMoon.getDayOfYear(date);
-    const hoursFromMeridian = longitude / SunMoon.DEGREES_PER_HOUR;
-    const approxTimeOfEventInDays = isSunrise ? dayOfYear + ((6 - hoursFromMeridian) / 24) : dayOfYear + ((18.0 - hoursFromMeridian) / 24);
-
-    const sunMeanAnomaly = (0.9856 * approxTimeOfEventInDays) - 3.289;
-    const sunTrueLongitude = SunMoon.mod(sunMeanAnomaly + (1.916 * SunMoon.sinDeg(sunMeanAnomaly)) + (0.020 * SunMoon.sinDeg(2 * sunMeanAnomaly)) + 282.634, 360);
-    const ascension = 0.91764 * SunMoon.tanDeg(sunTrueLongitude);
-
-    let rightAscension;
-    rightAscension = 360 / (2 * Math.PI) * Math.atan(ascension);
-    rightAscension = SunMoon.mod(rightAscension, 360);
-
-    const lQuadrant = Math.floor(sunTrueLongitude / 90) * 90;
-    const raQuadrant = Math.floor(rightAscension / 90) * 90;
-    rightAscension = rightAscension + (lQuadrant - raQuadrant);
-    rightAscension /= SunMoon.DEGREES_PER_HOUR;
-
-    const sinDec = 0.39782 * SunMoon.sinDeg(sunTrueLongitude);
-    const cosDec = SunMoon.cosDeg(SunMoon.asinDeg(sinDec));
-    const cosLocalHourAngle = ((SunMoon.cosDeg(zenith)) - (sinDec * (SunMoon.sinDeg(latitude)))) / (cosDec * (SunMoon.cosDeg(latitude)));
-    const localHourAngle = isSunrise ? 360 - SunMoon.acosDeg(cosLocalHourAngle) : SunMoon.acosDeg(cosLocalHourAngle);
-    const localHour = localHourAngle / SunMoon.DEGREES_PER_HOUR;
-    const localMeanTime = localHour + rightAscension - (0.06571 * approxTimeOfEventInDays) - 6.622;
-    const time = SunMoon.mod(localMeanTime - (longitude / SunMoon.DEGREES_PER_HOUR), 24);
-    const utcMidnight = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-
-    // Created date will be set to local (system) time zone.
-    return new Date(utcMidnight + (time * SunMoon.MSEC_IN_HOUR));
-  },
-  getSunrise: (latitude, longitude, date = new Date()) => {
-    /**
-    * Calculate Sunrise time for given longitude, latitude, zenith and date
-    * @param {Number} latitude
-    * @param {Number} longitude
-    * @param {Date} [date]
-    * @returns {Date}
-    */
-    return SunMoon.calculate(latitude, longitude, true, SunMoon.DEFAULT_ZENITH, date);
-  },
-  getSunset: (latitude, longitude, date = new Date()) => {
-    /**
-    * Calculate Sunset time for given longitude, latitude, zenith and date
-    * @param {Number} latitude
-    * @param {Number} longitude
-    * @param {Date} [date]
-    * @returns {Date}
-    */
-    return SunMoon.calculate(latitude, longitude, false, SunMoon.DEFAULT_ZENITH, date);
-  }
-};
-
 var Theme = Theme || {};
 
 Theme = {
@@ -2370,26 +2373,23 @@ Theme = {
   rafAutoChange: null,
   init: () => {
     Theme.button = document.getElementById('change-theme-btn');
+    Site.body.classList.contains('home') ? Theme.button.style.display = 'none' : Theme.button.style.display = 'block';
+
     SunMoon.init();
 
     if (Theme.button) Theme.button.addEventListener('click', Theme.enableDarkTheme);
-
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
       if (Theme.isTouched === !1) {
         Theme.updateDarkMode();
         cancelAnimationFrame(Theme.rafAutoChange);
-        // console.log('[ Theme.init() ] - (if false) -+-> Theme.isTouched <-+-', Theme.isTouched);
-        // console.log('[ Theme.init() ] (1) -+-> Theme <-+-', Theme);
-        // console.log('[ Theme.init() ] (1) -+-> Site.historyState <-+-', Site.historyState);
       }
-      if (Site.historyState.isTouched === true) {
-        // console.log('[ Theme.init() ] - (if true) -+-> Site.historyState <-+-', Site.historyState);
-        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
-      }
+      if (Site.historyState.isTouched === true) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
     }
   },
   updateDarkMode: () => {
+    if (Theme.rafAutoChange) cancelAnimationFrame(Theme.rafAutoChange);
     Theme.rafAutoChange = requestAnimationFrame(Theme.updateDarkMode);
+
     const timeout = setTimeout(() => {
       Theme.calculateDaylight();
       clearTimeout(timeout);
@@ -2400,7 +2400,7 @@ Theme = {
     let darkThemeEnabled = Site.body.classList.contains('dark-theme');
     if (darkThemeEnabled) {
       window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-      console.log('window.localStorage (darkTheme) -+->', window.localStorage);
+      // console.log('window.localStorage (darkTheme) -+->', window.localStorage);
     }
 
     Theme.toggleStatus = 'night';
@@ -2413,7 +2413,7 @@ Theme = {
     let darkThemeEnabled = Site.body.classList.contains('dark-theme');
     if (darkThemeEnabled) {
       window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-      console.log('window.localStorage (lightTheme) -+->', window.localStorage);
+      // console.log('window.localStorage (lightTheme) -+->', window.localStorage);
     }
 
     Theme.toggleStatus = 'day';
@@ -2453,53 +2453,23 @@ Theme = {
   },
   enableDarkTheme: () => {
     Theme.isTouched = !0;
-    Theme.dataTheme === 'day'
-      ? (
-        Theme.toggleStatus = 'night',
-        Theme.button.setAttribute('data-theme', 'night'),
-        Theme.button.classList.add('dark-mode'),
-        Theme.dataTheme = Theme.button.getAttribute('data-theme')
-      ) : (
-        Theme.toggleStatus = 'day',
-        Theme.button.setAttribute('data-theme', 'day'),
-        Theme.button.classList.remove('dark-mode'),
-        Theme.dataTheme = Theme.button.getAttribute('data-theme')
-      );
-
-    let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
-    if (darkThemeEnabled) {
-      window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-      console.log('window.localStorage (enableDarkTheme) -+->', window.localStorage);
-    }
-
-    console.log('[ Theme.enableDarkTheme() ] (1) -+-> Site.historyState <-+-', Site.historyState);
-
+    Theme.dataTheme === 'day' ? Theme.darkTheme() : Theme.lightTheme();
     Site.historyState = {
       dataTheme: Theme.dataTheme,
       isTouched: Theme.isTouched,
       toggleStatus: Theme.toggleStatus
     };
-
-    console.log('[ Theme.enableDarkTheme() ] (2) -+-> Site.historyState <-+-', Site.historyState);
+    // let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
+    // if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
   },
   lightStyle: () => {
-    // Theme.isToggled = !Theme.isToggled;
-    Menu.button.classList.add('light');
-    Menu.social.classList.add('light');
-    Menu.logo.classList.add('light');
-    // Site.about.classList.add('light');
-    // Site.contact.classList.add('light');
-    Theme.button.classList.add('light');
+    if (Theme.button) Theme.button.classList.add('light');
+    Menu.lightFooter();
     Site.hideSideNav();
   },
   darkStyle: () => {
-    // Theme.isToggled = !Theme.isToggled;
-    Menu.button.classList.remove('light');
-    Menu.social.classList.remove('light');
-    Menu.logo.classList.remove('light');
-    // Site.about.classList.remove('light');
-    // Site.contact.classList.remove('light');
-    Theme.button.classList.remove('light');
+    if (Theme.button) Theme.button.classList.remove('light');
+    Menu.darkFooter();
     Site.showSideNav();
   }
 };
