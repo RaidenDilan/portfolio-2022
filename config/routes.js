@@ -28,6 +28,10 @@ router
   .route('/ads')
   .get((req, res) => res.render('ads.html'));
 
-// router.all('*', (req, res) => res.render('404'));
+// router
+//   .route('/404')
+//   .get((req, res) => res.render('404.html'));
+
+// router.all('*', (req, res) => res.render('404.html'));
 
 module.exports = router;

@@ -9,6 +9,10 @@
   padding: 0;
   border: 0;
   cursor: none !important;
+
+  &.404, &.500 {
+    cursor: pointer;
+  }
 }
 
 html, body {
@@ -17,55 +21,37 @@ html, body {
   font: 400 normal 20px/42px 'Montserrat';
 }
 
-// #main__content {
-// body, header, footer {
-//   // padding: 50px;
-//   // padding-left: env(safe-area-inset-left); /* Apply safe area */
-//   // padding-right: env(safe-area-inset-right);
-//   // padding-top: env(safe-area-inset-top); /* Apply safe area */
-//   // padding-bottom: env(safe-area-inset-bottom);
-//   padding:
-//     env(safe-area-inset-left)
-//     env(safe-area-inset-right)
-//     env(safe-area-inset-top)
-//     env(safe-area-inset-bottom);
-// }
-
-body.home {
-  // padding: 50px;
-  // padding-left: env(safe-area-inset-left); /* Apply safe area */
-  // padding-right: env(safe-area-inset-right);
-  // padding-top: env(safe-area-inset-top); /* Apply safe area */
-  // padding-bottom: env(safe-area-inset-bottom);
-  padding:
-    env(safe-area-inset-left)
-    env(safe-area-inset-right)
-    env(safe-area-inset-top)
-    env(safe-area-inset-bottom);
-}
-
 body {
   position: relative;
 
   &.is-loading * {
-    // -webkit-transition: all 0ms 0ms linear !important;
-            transition: all 0ms 0ms linear !important;
+    transition: all 0ms 0ms linear !important;
   }
   &.desktop {
     overflow: hidden;
   }
   &.home {
     overflow: hidden;
+    // padding: 50px;
+    // padding-left: env(safe-area-inset-left); /* Apply safe area */
+    // padding-right: env(safe-area-inset-right);
+    // padding-top: env(safe-area-inset-top); /* Apply safe area */
+    // padding-bottom: env(safe-area-inset-bottom);
+    padding:
+      env(safe-area-inset-left)
+      env(safe-area-inset-right)
+      env(safe-area-inset-top)
+      env(safe-area-inset-bottom);
 
     &.temp {
       overflow: scroll;
     }
   }
-  // &.dragging {
-  //   overflow-x: scroll;
-  //   overflow-y: hidden;
-  //   will-change: transform;
-  // }
+  &.dragging {
+    // overflow-x: scroll;
+    // overflow-y: hidden;
+    // will-change: transform;
+  }
 }
 
 input, textarea {
@@ -79,8 +65,8 @@ a {
 @media (max-width: 1024px) {
   * {
     // cursor: none !important;
-  //   overflow-y: scroll; /* has to be scroll, not auto */
-  //   -webkit-overflow-scrolling: touch;
+    // overflow-y: scroll; /* has to be scroll, not auto */
+    // -webkit-overflow-scrolling: touch;
   }
   // html {
   //   scroll-behavior: smooth;

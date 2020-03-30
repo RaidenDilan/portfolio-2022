@@ -954,9 +954,11 @@ Site = {
         && (!Site.body.classList.contains('home'))
         && (Theme.init(), Theme.button.classList.remove('light'));
 
-      Site.body.classList.contains('home')
-        ? Site.themeBtn.style.display = 'none'
-        : Site.themeBtn.style.display = 'block';
+      if (Site.themeBtn) {
+        Site.body.classList.contains('home')
+          ? Site.themeBtn.style.display = 'none'
+          : Site.themeBtn.style.display = 'block';
+      }
 
       Drag.init();
       Menu.init();
@@ -1491,6 +1493,7 @@ Site = {
       Site.mouseOverLinks.forEach((obj) => {
         document.documentElement.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500), !1);
         document.documentElement.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500), !1);
+
         document.documentElement.onmouseout = Site.handleMouseOver;
         document.documentElement.onmouseover = Site.handleMouseOut;
       });
@@ -1850,11 +1853,13 @@ Site = {
         }
       }
       else {
-        if (Site.scrolling.vars.target <= Math.round(Site.scrolling.vars.bounding - 500)) {
-          Drag.cursorMain.classList.add('vertical_scroll');
-          Drag.cursorJunior.classList.add('vertical_scroll');
-          Drag.cursorMain.classList.remove('cursor_main-small');
-          Drag.cursorMain.classList.remove('menu_opened');
+        if (Site.scrolling !== null) {
+          if (Site.scrolling.vars.target <= Math.round(Site.scrolling.vars.bounding - 500)) {
+            Drag.cursorMain.classList.add('vertical_scroll');
+            Drag.cursorJunior.classList.add('vertical_scroll');
+            Drag.cursorMain.classList.remove('cursor_main-small');
+            Drag.cursorMain.classList.remove('menu_opened');
+          }
         }
         if (Menu.button.isOpen) {
           Drag.cursorMain.classList.remove('vertical_scroll');
