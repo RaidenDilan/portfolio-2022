@@ -775,7 +775,7 @@ footer {
 }
 
 @media (max-width: 767px) {
-  .svg_menu {
+  .svg_menu, .svg_underline {
     display: none;
   }
   .awards {
@@ -883,7 +883,7 @@ footer {
     }
   }
   .background_intro {
-    width: calc(100% - 33px);
+    width: calc(100% - 38px);
   }
 
   #about, #contact {
@@ -973,6 +973,9 @@ footer {
     padding: 25vw 0 26vw 10%;
     // padding: 25vw 0 26vw 21px;
 
+    a {
+      font: 400 normal 18px/18px $graphik;
+    }
     h3 {
       display: none;
     }

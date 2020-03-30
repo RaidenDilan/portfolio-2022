@@ -228,10 +228,7 @@ Menu = {
     // cancelAnimationFrame(timer);
     // timer = requestAnimationFrame(() => loop(number + 1));
 
-    if (Menu.menuClosingTimeout !== null) {
-      clearTimeout(Menu.menuClosingTimeout);
-      Menu.arrowHidingTimeout = null;
-    }
+    if (Menu.menuClosingTimeout !== null) clearTimeout(Menu.menuClosingTimeout);
 
     Menu.menuClosingTimeout = setTimeout(() => {
       Menu.button.classList.remove('closing');
@@ -249,11 +246,8 @@ Menu = {
     // }
     // loop(1);
 
-    Site.scrolling !== null
-      ? Site.scrolling.on()
-      : Site.body.classList.contains('home')
-        ? document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'))
-        : null;
+    if (Site.scrolling !== null) Site.scrolling.on();
+    else if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
 
     TweenMax.to('#nav__menu', 0.2, {
       opacity: 0,
@@ -276,14 +270,14 @@ Menu = {
     Site.stageMenu.removeChildren();
     cancelAnimationFrame(MenuPixi.rafPixiMenu); // do not remove
 
-    Site.body.classList.contains('home')
-      ? Site.homePixi()
-      : Site.body.classList.contains('single')
-        ? Site.singlePixi()
-        : null;
+    if (document.querySelector('body').classList.contains('home')) Site.homePixi();
+    else if (document.querySelector('body').classList.contains('single')) Site.singlePixi();
+    // if (Site.body.classList.contains('home')) Site.homePixi();
+    // else if (Site.body.classList.contains('single')) Site.singlePixi();
 
-    Site.body.classList.contains('about') ? AboutRAFs.init() : null;
-    Menu.button.isOpen = !1;
+    if (Site.body.classList.contains('about')) AboutRAFs.init();
+
+    Menu.button.isOpen = !1; // false
   },
   showArrow: () => {
     Menu.button.isArrow || (Menu.button.isArrow = !0);
@@ -326,11 +320,11 @@ Menu = {
   showHideArrow: () => {
     if (!Menu.button.isOpen) {
       if (!UserAgent.iOS) {
-        Site.body.classList.contains('single')
-          ? (Menu.arrowUpdateHandler(), Site.footerInView())
-          : Site.body.classList.contains('about')
-            ? Menu.arrowUpdateHandler()
-            : null;
+        if (Site.body.classList.contains('single')) {
+          Menu.arrowUpdateHandler();
+          Site.footerInView();
+        }
+        else if (Site.body.classList.contains('about')) Menu.arrowUpdateHandler();
       }
       else {
         if (Site.body.classList.contains('single')) {
@@ -344,11 +338,7 @@ Menu = {
             ? Theme.lightStyle()
             : Theme.darkStyle();
         }
-        else if (Site.body.classList.contains('about')) {
-          window.pageYOffset >= 10
-            ? Menu.showArrow()
-            : Menu.hideArrow();
-        }
+        else if (Site.body.classList.contains('about')) window.pageYOffset >= 10 ? Menu.showArrow() : Menu.hideArrow();
       }
     }
   },
