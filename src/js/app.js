@@ -156,7 +156,7 @@ MenuPixi = {
 var Menu = Menu || {};
 
 Menu = {
-  isOpen: !1, // false
+  isOpen: !1,
   button: null,
   arrowHidingTimeout: null,
   menuClosingTimeout: null,
@@ -165,9 +165,11 @@ Menu = {
     Menu.logo = document.querySelector('.logo');
     Menu.navMenu = document.getElementById('nav__menu');
     Menu.social = document.getElementById('social');
-    Menu.button.isArrow = !1; // set initial state to false
-    Menu.button.isOpen = !1; // set initial state to false
-    cancelAnimationFrame(MenuPixi.rafPixiMenu); // Fixes issue where when click on nav menu links when it is opened, pixi repple efffect doesn't intitiate due to bollean property set on INIT();
+
+    Menu.button.isArrow = !1;
+    Menu.button.isOpen = !1;
+
+    MenuPixi.rafPixiMenu && cancelAnimationFrame(MenuPixi.rafPixiMenu); // Fixes issue where when click on nav menu links when it is opened, pixi repple efffect doesn't intitiate due to bollean property set on INIT();
   },
   open: () => {
     Menu.button.classList.remove('closing');
@@ -176,8 +178,9 @@ Menu = {
     Drag.cursorMain.classList.remove('vertical_scroll');
     Drag.cursorJunior.classList.remove('vertical_scroll');
 
-    if (Site.scrolling !== null) Site.scrolling.off();
-    else Site.scrollMenuOpen = window.pageYOffset;
+    Site.scrolling !== null
+      ? Site.scrolling.off()
+      : Site.scrollMenuOpen = window.pageYOffset;
 
     document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.add('black'));
     document.getElementById('nav__menu').style.display = 'block';
@@ -189,11 +192,11 @@ Menu = {
       display: 'none',
       ease: Power2.easeIn,
       onComplete: () => {
-        if (UserAgent.iOS) {
-          window.scrollTo(Site.scrollMenuOpen, 0);
-          Site.main.classList.add('black');
-          Site.body.classList.add('temp');
-        }
+        UserAgent.iOS && (
+          window.scrollTo(Site.scrollMenuOpen, 0),
+          Site.main.classList.add('black'),
+          Site.body.classList.add('temp')
+        );
       }
     });
 
@@ -214,37 +217,25 @@ Menu = {
     Site.stageMenu.addChild(imageSprite);
     imageSprite.alpha = 1;
 
-    cancelAnimationFrame(Site.rafPixiHome);
-    cancelAnimationFrame(Site.rafPixiSingle);
-    cancelAnimationFrame(AboutRAFs.rafScaleAbout);
+    Site.rafPixiHome && cancelAnimationFrame(Site.rafPixiHome);
+    Site.rafPixiSingle && cancelAnimationFrame(Site.rafPixiSingle);
+    AboutRAFs.rafScaleAbout && cancelAnimationFrame(AboutRAFs.rafScaleAbout);
 
-    Menu.button.isOpen = !0; // true
+    Menu.button.isOpen = !0;
+
     MenuPixi.init();
   },
   close: () => {
     Menu.button.classList.remove('opened');
     Menu.button.classList.add('closing');
 
-    // cancelAnimationFrame(timer);
-    // timer = requestAnimationFrame(() => loop(number + 1));
-
-    if (Menu.menuClosingTimeout !== null) clearTimeout(Menu.menuClosingTimeout);
+    Menu.menuClosingTimeout && clearTimeout(Menu.menuClosingTimeout);
 
     Menu.menuClosingTimeout = setTimeout(() => {
       Menu.button.classList.remove('closing');
       clearTimeout(Menu.menuClosingTimeout);
       Menu.menuClosingTimeout = null;
     }, 1250); // delay is unusally long
-
-    // let timer = null;
-    // function loop(number) {
-    //   console.log(number);
-    //   // stop looping when 'number' is greater than 9
-    //   if (number > 9) return;
-    //   cancelAnimationFrame(timer);
-    //   timer = requestAnimationFrame(() => loop(number + 1));
-    // }
-    // loop(1);
 
     if (Site.scrolling !== null) Site.scrolling.on();
     else if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
@@ -268,38 +259,27 @@ Menu = {
     // TweenMax.to('.feature1', 0.2, { scaleY: 1, delay: 0.2, ease: Power2.easeIn });
 
     Site.stageMenu.removeChildren();
-    cancelAnimationFrame(MenuPixi.rafPixiMenu); // do not remove
+    MenuPixi.rafPixiMenu && cancelAnimationFrame(MenuPixi.rafPixiMenu); // do not remove
 
     if (document.querySelector('body').classList.contains('home')) Site.homePixi();
     else if (document.querySelector('body').classList.contains('single')) Site.singlePixi();
-    // if (Site.body.classList.contains('home')) Site.homePixi();
-    // else if (Site.body.classList.contains('single')) Site.singlePixi();
 
-    if (Site.body.classList.contains('about')) AboutRAFs.init();
-
+    Site.body.classList.contains('about') && AboutRAFs.init();
     Menu.button.isOpen = !1; // false
   },
   showArrow: () => {
-    Menu.button.isArrow || (Menu.button.isArrow = !0);
+    Menu.arrowHidingTimeout && (clearTimeout(Menu.arrowHidingTimeout), Menu.arrowHidingTimeout = null);
+    Menu.button.isArrow && (Menu.button.isArrow = !0);
     Menu.button.classList.remove('arrow-transition-out');
     Menu.button.classList.add('arrow-transition-in');
-
-    if (Menu.arrowHidingTimeout) {
-      clearTimeout(Menu.arrowHidingTimeout);
-      Menu.arrowHidingTimeout = null;
-    }
   },
   hideArrow: () => {
     Menu.button.isArrow && (Menu.button.isArrow = !1);
 
     if (Menu.button.classList.contains('arrow-transition-in')) {
+      Menu.arrowHidingTimeout && (clearTimeout(Menu.arrowHidingTimeout), Menu.arrowHidingTimeout = null);
       Menu.button.classList.remove('arrow-transition-in');
       Menu.button.classList.add('arrow-transition-out');
-
-      if (Menu.arrowHidingTimeout) {
-        clearTimeout(Menu.arrowHidingTimeout);
-        Menu.arrowHidingTimeout = null;
-      }
 
       Menu.arrowHidingTimeout = setTimeout(() => {
         Menu.button.classList.remove('arrow-transition-out');
@@ -332,7 +312,7 @@ Menu = {
             ? Menu.showArrow()
             : window.pageYOffset <= 10
               ? Menu.hideArrow()
-              : console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement // : null; // --- OR --- return Menu.hideArrow() as final block statement
+              : console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement // : null;
 
           window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34)
             ? Theme.lightStyle()
@@ -372,13 +352,13 @@ Drag = {
     Drag.isScroll = !1;
 
     if (Site.body.classList.contains('home')) {
-      document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500), !1); // touchStart
-      document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500), !1); // touchMove
-      document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500), !1); // touchEnd
+      document.documentElement.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500), !1); // touchStart
+      document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500), !1); // touchMove
+      document.documentElement.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500), !1); // touchEnd
 
-      document.onmousedown = Drag.start;
-      document.onmousemove = Drag.move;
-      document.onmouseup = Drag.end;
+      document.documentElement.onmousedown = Drag.start;
+      document.documentElement.onmousemove = Drag.move;
+      document.documentElement.onmouseup = Drag.end;
     }
   },
   start: (event) => {
@@ -791,6 +771,7 @@ Site = {
 
       /** @note -> close Nav Menu when anchor click events */
       Menu.button.classList.remove('opened');
+
       /** @note -> Reset lightButtonStyles */
       Menu.darkFooter();
 
@@ -811,13 +792,11 @@ Site = {
       /** @note -> removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
         obj.removeEventListener(Site.clickEvent, Site.onClickHandler, !1);
-        // obj.removeEventListener('ontouchstart', Site.onClickHandler, !1);
         obj.onclick = null;
         obj.ontouchstart = null;
       });
       Site.links.forEach((obj) => {
         obj.addEventListener(Site.clickEvent, Site.onClickHandler, !1);
-        // obj.addEventListener('ontouchstart', Site.onClickHandler, !1);
         obj.onclick = Site.onClickHandler;
         obj.ontouchstart = Site.onClickHandler;
       });
@@ -834,11 +813,11 @@ Site = {
       if (!UserAgent.iOS) {
         /** @note -> adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
         Site.mouseOverLinks.forEach((obj) => {
-          document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500), !1);
-          document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500), !1);
+          document.documentElement.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500), !1);
+          document.documentElement.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500), !1);
 
-          document.onmouseover = Site.handleMouseOver;
-          document.onmouseout = Site.handleMouseOut;
+          document.documentElement.onmouseover = Site.handleMouseOver;
+          document.documentElement.onmouseout = Site.handleMouseOut;
         });
 
         Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
@@ -1149,12 +1128,12 @@ Site = {
       Site.sendHttpRequest(href);
 
       if (Menu.button.isOpen) {
-        cancelAnimationFrame(Site.rafPixiMenu);
-        cancelAnimationFrame(AboutRAFs.rafScaleAbout); // TESTING <---|
-        /* reset projMenu when changing states/clicking on anchor elements */
-        Menu.button.classList.add('closing');
+        Site.rafPixiMenu && cancelAnimationFrame(Site.rafPixiMenu);
+        Site.rafPixiMenu && cancelAnimationFrame(AboutRAFs.rafScaleAbout);
 
-        if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
+        /** @NOTE -> reset projMenu when changing states/clicking on anchor elements */
+        Menu.button.classList.add('closing');
+        Menu.arrowHidingTimeout !== null && clearTimeout(Menu.arrowHidingTimeout);
 
         Menu.arrowHidingTimeout = setTimeout(() => {
           Menu.button.classList.remove('closing');
@@ -1308,13 +1287,15 @@ Site = {
         * @note -> add mouse events to each element with the class of link_hover and animate the cursor accordingly
        **/
       Site.mouseOverLinks.forEach((obj) => {
-        document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500), !1);
-        document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500), !1);
-        document.onmouseout = Site.handleMouseOver;
-        document.onmouseover = Site.handleMouseOut;
+        document.documentElement.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500), !1);
+        document.documentElement.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500), !1);
+        document.documentElement.onmouseout = Site.handleMouseOver;
+        document.documentElement.onmouseover = Site.handleMouseOut;
       });
 
-      Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
+      Site.body.classList.contains('home')
+        ? Drag.show()
+        : Drag.hide();
     }
 
     Site.body.classList.add('mobile');
@@ -1328,7 +1309,7 @@ Site = {
     Site.rendererMenu = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
     // Site.rendererMenu = PIXI.autoDetectRenderer(0.24 * window.innerWidth, window.innerHeight - 0.074 * window.innerWidth, { transparent: !0 });
 
-    if (Site.pixiMenuCover) Site.pixiMenuCover.appendChild(Site.rendererMenu.view);
+    Site.pixiMenuCover && Site.pixiMenuCover.appendChild(Site.rendererMenu.view);
 
     /** @note -> RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
     Site.rendererMenu.view.width = window.innerWidth;
@@ -1351,10 +1332,11 @@ Site = {
     Site.displacementSprite3.scale.x = 0.4;
 
     window.addEventListener('onpopstate', Site.onPopStateHandler);
-    window.addEventListener('onunload', Site.onUnloadHandler);
+    // window.addEventListener('onunload', Site.onUnloadHandler);
     window.addEventListener('onhashchange', Site.onHashChangeHandler);
+
     /** @note -> State Change Events: Add these events to window element */
-    window.onunload = Site.onUnloadHandler;
+    // window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     window.onhashchange = Site.onHashChangeHandler;
 
@@ -1365,42 +1347,45 @@ Site = {
     window.keyup = Site.onKeydownHandler;
     // window.keydown = Site.onKeydownHandler;
 
-    window.DeviceOrientationEvent && (window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1), window.ondeviceorientation = Site.circleHandler);
+    window.DeviceOrientationEvent && (
+      window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1)
+      // window.ondeviceorientation = Site.circleHandler
+    );
 
-    document.addEventListener('onwheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    document.documentElement.addEventListener('onwheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    document.documentElement.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    document.documentElement.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
 
-    document.onwheel = Site.scrollEventHandler;
-    document.onmousewheel = Site.scrollEventHandler;
-    document.onmousedown = Site.scrollEventHandler;
+    // document.documentElement.onwheel = Site.scrollEventHandler;
+    // document.documentElement.onmousewheel = Site.scrollEventHandler;
+    // document.documentElement.onmousedown = Site.scrollEventHandler;
 
     /**
       * Show Hide Menu Arrow events
       * @note -> COULD ADD -+-> if (Site.body.classList.contains('single')) {}
     **/
-    document.addEventListener('onwheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.documentElement.addEventListener('onwheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.documentElement.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.documentElement.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
 
-    document.onwheel = Site.showHideArrow;
-    document.onmousewheel = Site.showHideArrow;
-    document.onmousedown = Site.showHideArrow;
-    document.ontouchmove = Site.showHideArrow;
+    // document.documentElement.onwheel = Site.showHideArrow;
+    // document.documentElement.onmousewheel = Site.showHideArrow;
+    // document.documentElement.onmousedown = Site.showHideArrow;
+    // document.documentElement.ontouchmove = Site.showHideArrow;
 
-    document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
-    document.onmousemove = Site.mousePositionHandler;
+    document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
+    // document.documentElement.onmousemove = Site.mousePositionHandler;
 
-    document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
-    // document.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
-    document.onmousedown = Site.projectChangedHandler;
+    document.documentElement.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+    // document.documentElement.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
+    // document.documentElement.onmousedown = Site.projectChangedHandler;
 
-    document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
-    document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
+    document.documentElement.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
+    document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
 
-    document.ontouchstart = Site.touchStartHandler;
-    document.ontouchmove = Site.touchMoveHandler;
+    // document.documentElement.ontouchstart = Site.touchStartHandler;
+    // document.documentElement.ontouchmove = Site.touchMoveHandler;
   },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
@@ -1507,7 +1492,6 @@ Site = {
     console.log('[ onUnloadHandler ] -+-> event', event);
     event = event || window.event;
     event.preventDefault() || false;
-
     return window.scrollTo(0, 0); // scroll back to top when reloading page
   },
   /*--------------------------------------------------------------------------*/
@@ -1615,9 +1599,9 @@ Site = {
       if (Math.round(Site.scrolling.vars.bounding / 7)) {
         if (Site.scrolling !== null) {
           Site.scrolling.scrollTo(0);
-          var delay = Math.round(Site.scrolling.vars.current / 7);
+          let delay = Math.round(Site.scrolling.vars.current / 7);
+          Menu.arrowHidingTimeout && clearTimeout(Menu.arrowHidingTimeout);
 
-          if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
           Menu.arrowHidingTimeout = setTimeout(() => {
             Menu.hideArrow();
             clearTimeout(Menu.arrowHidingTimeout);
@@ -1632,17 +1616,14 @@ Site = {
     else {
       Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad');
       // Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
-
       // setTimeout(() => window.scrollTo({ top: Site.scrollMenuOpen, left: 0, behavior: 'smooth' }), 1);
       // Menu.button.addEventListener('click', () => Site.scrollToTop(Site.vsSection, 300, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`)));
       // Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`));
       // Menu.button.addEventListener('click', () => scrollToTop(50000));
-
       // window.scrollTo({ top: Site.scrollMenuOpen, left: 0, behavior: 'smooth' });
 
-      var mobDelay = Math.round(window.pageYOffset / 7);
-
-      if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
+      let mobDelay = Math.round(window.pageYOffset / 7);
+      Menu.arrowHidingTimeout && clearTimeout(Menu.arrowHidingTimeout);
 
       Menu.arrowHidingTimeout = setTimeout(() => {
         Menu.hideArrow();
@@ -1707,7 +1688,10 @@ Site = {
         Drag.cursorMain.classList.remove('cursor_main-small');
       }
     }
-    else Site.mouseOverLinks.forEach((obj) => document.removeEventListener('onmousemove', Site.handleMouseOver, false));
+    else Site.mouseOverLinks.forEach((obj) => {
+      document.documentElement.removeEventListener('onmousemove', Site.handleMouseOver, !1);
+      document.documentElement = Site.handleMouseOver;
+    });
   },
   handlerMouseMove: (event) => {
     event = event || window.event;
