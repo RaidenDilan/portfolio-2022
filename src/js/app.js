@@ -63,14 +63,14 @@ AboutRAFs = {
     }
   },
   updateScaleX: () => {
-    if (!UserAgent.iOS) {
-      TweenMax.to('.scaleA', 1.4, {
+    // TEST CODE BELLOW
+    !UserAgent.iOS
+      && TweenMax.to('.scaleA', 1.4, {
         scaleX: Site.intensity,
         ease: Power2.easeOut,
         onUpdate: () => {},
         onComplete: () => {}
       });
-    }
   }
 };
 
@@ -84,7 +84,7 @@ Throttle = {
     * if there has been a given delay (in ms)
     * since the last time the event was triggered.
     */
-    var timeout;
+    let timeout;
 
     return function(event) {
       if (timeout) cancelAnimationFrame(timeout);
@@ -97,7 +97,7 @@ Throttle = {
     * that will prevent the main listener from running
     * if it has previously run within the given delay (in ms).
     */
-    var timeout;
+    let timeout;
 
     return function(event) {
       if (!timeout) { // no timer running
@@ -119,7 +119,7 @@ MenuPixi = {
     Site.displacementSprite3.x += 2;
     MenuPixi.calculateMousePosition();
     MenuPixi.updateNavLinksPos();
-    if (window.innerWidth > 767) MenuPixi.updatePixiDisplacement();
+    window.innerWidth > 767 && MenuPixi.updatePixiDisplacement();
     Site.deltaMenu = Site.theDeltaMenu;
   },
   calculateMousePosition: () => {
@@ -128,6 +128,7 @@ MenuPixi = {
       : Site.intensity = 1.8;
   },
   updateNavLinksPos: () => {
+    // TEST CODE BELLOW
     if (!UserAgent.iOS) {
       Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100) / 100;
       Site.theDeltaMenu = Site.currentMousePos.y;
@@ -141,7 +142,8 @@ MenuPixi = {
     }
   },
   updatePixiDisplacement: () => {
-    if (Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin)) Site.pixiMenuLinks.forEach(Site.checkMenu);
+    // TEST CODE BELLOW
+    Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin) && Site.pixiMenuLinks.forEach(Site.checkMenu);
     Site.displace.intensity = Site.displacementFilter3.scale.x;
     TweenMax.to(Site.displace, 0.3, {
       intensity: 4 * (Site.theDeltaMenu - Site.deltaMenu),
@@ -246,6 +248,7 @@ Menu = {
       onComplete: () => {
         document.getElementById('nav__menu').style.display = 'none';
 
+        // TEST CODE BELLOW
         if (UserAgent.iOS) {
           Site.main.classList.remove('black');
           Site.body.classList.remove('temp');
@@ -261,8 +264,12 @@ Menu = {
     Site.stageMenu.removeChildren();
     MenuPixi.rafPixiMenu && cancelAnimationFrame(MenuPixi.rafPixiMenu); // do not remove
 
-    if (document.querySelector('body').classList.contains('home')) Site.homePixi();
-    else if (document.querySelector('body').classList.contains('single')) Site.singlePixi();
+    // TEST CODE BELLOW
+    document.querySelector('body').classList.contains('home')
+      ? Site.homePixi()
+      : document.querySelector('body').classList.contains('single')
+        ? Site.singlePixi()
+        : null;
 
     Site.body.classList.contains('about') && AboutRAFs.init();
     Menu.button.isOpen = !1; // false
@@ -288,7 +295,6 @@ Menu = {
       }, 500);
     }
   },
-  // REFACTOR METHODS BELLOW...
   arrowUpdateHandler: () => {
     // return Site.scrolling && Site.scrolling.vars.target >= 10 ? Menu.showArrow() : Menu.hideArrow();
     return Site.scrolling && Site.scrolling.vars.target >= 10
@@ -298,6 +304,7 @@ Menu = {
         : false;
   },
   showHideArrow: () => {
+    // TEST CODE BELLOW
     if (!Menu.button.isOpen) {
       if (!UserAgent.iOS) {
         if (Site.body.classList.contains('single')) {
@@ -350,16 +357,15 @@ Drag = {
     Drag.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
     Drag.isDrag = !1;
     Drag.isScroll = !1;
+    Site.body.classList.contains('home') && (
+      document.documentElement.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500), !1), // touchStart
+      document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500), !1), // touchMove
+      document.documentElement.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500), !1), // touchEnd
 
-    if (Site.body.classList.contains('home')) {
-      document.documentElement.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500), !1); // touchStart
-      document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500), !1); // touchMove
-      document.documentElement.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500), !1); // touchEnd
-
-      document.documentElement.onmousedown = Drag.start;
-      document.documentElement.onmousemove = Drag.move;
-      document.documentElement.onmouseup = Drag.end;
-    }
+      document.documentElement.onmousedown = Drag.start,
+      document.documentElement.onmousemove = Drag.move,
+      document.documentElement.onmouseup = Drag.end
+    );
   },
   start: (event) => {
     event = event || window.event;
@@ -369,12 +375,13 @@ Drag = {
     Site.startPosition = event.pageX;
     Site.body.classList.add('dragging'); // IS THIS NECESSARY?
 
-    if (event.type === 'ontouchstart') Site.posX1 = event.touches[0].clientX;
-    else {
-      Site.posX1 = event.clientX;
-      document.onmouseup = Drag.end;
-      document.onmousemove = Drag.move;
-    }
+    event.type === 'ontouchstart'
+      ? Site.posX1 = event.touches[0].clientX
+      : (
+        Site.posX1 = event.clientX,
+        document.onmouseup = Drag.end,
+        document.onmousemove = Drag.move
+      );
   },
   move: (event) => {
     event = event || window.event;
@@ -382,14 +389,14 @@ Drag = {
 
     if (!Drag.isDown) return;
 
-    if (event.type === 'ontouchmove') {
-      Site.posX2 = Site.posX1 - event.touches[0].clientX;
-      Site.posX1 = event.touches[0].clientX;
-    }
-    else {
-      Site.posX2 = Site.posX1 - event.clientX;
-      Site.posX1 = event.clientX;
-    }
+    event.type === 'ontouchmove'
+      ? (
+        Site.posX2 = Site.posX1 - event.touches[0].clientX,
+        Site.posX1 = event.touches[0].clientX
+      ) : (
+        Site.posX2 = Site.posX1 - event.clientX,
+        Site.posX1 = event.clientX
+      );
   },
   end: (event) => {
     event = event || window.event;
@@ -405,8 +412,8 @@ Drag = {
         ? Site.prevSlide()
         : false;
 
-    document.onmouseup = null;
-    document.onmousemove = null;
+    document.documentElement.onmouseup = null;
+    document.documentElement.onmousemove = null;
   },
   toggleVisible: () => {
     Drag.cursorMain.classList.add('visible');
@@ -625,12 +632,198 @@ SunMoon = {
   }
 };
 
+var Preload = Preload || {};
+
+Preload = {
+  /** @NOTE - USAGE
+    * <p class="preload-counter"></p>
+    *
+    * <div id="state"></div>
+    * <div id="progressId">...</div>
+    * <div id="progressbar">
+    *   <div class="bar"></div>
+    * </div>
+   **/
+  init: () => {
+    // Preload.$state = document.querySelector('#state');
+    // Preload.$progress = document.querySelector('#progressId');
+    // Preload.$progressbar = document.querySelector('#progressbar .bar');
+    // Preload.allImages = document.querySelectorAll("[data-img^='../images']");
+
+    // console.log('Preload.allImages', Preload.allImages);
+
+    /*------------------------------------------------------------------------*/
+    /*                             PRELOAD ASSETS                             */
+    /*------------------------------------------------------------------------*/
+    // Site.preload.on('fileload', Site.handlePreloadFileLoad);
+    // Site.preload.on('progress', Site.handlePreloadProgress);
+    // Site.preload.on('fileprogress', Site.handlePreloadProgress);
+    // Site.preload.on('complete', Site.handleFileProgress);
+    // Site.preload.on('error', Site.handleFileError);
+
+    // Site.preload.on('complete', Preload.onComplete);
+    // Site.preload.on('error', Preload.onError);
+    // Site.preload.on('fileload', Preload.onFileLoad);
+    // Site.preload.on('fileprogress', Preload.onFileProgress);
+    // Site.preload.on('progress', Preload.onProgress);
+    // Site.preload.setMaxConnections(5);
+
+    // Push each item into our manifest
+    // Preload.manifest = [
+    //   'image0.jpg',
+    //   'image1.jpg',
+    //   'image2.jpg',
+    //   'image3.jpg',
+    //   'Autumn.png',
+    //   'BlueBird.png',
+    //   'Nepal.jpg',
+    //   'Texas.jpg'
+    // ];
+
+    // Site.preload.loadFile();
+
+    // Site.preload.loadManifest(Preload.allImages);
+    // Site.preload.loadManifest([{
+    //   id: '1',
+    //   src: 'http://upload.wikimedia.org/wikipedia/commons/a/a2/Polycyclic_Aromatic_Hydrocarbons_In_Space.jpg'
+    // }, {
+    //   id: '2',
+    //   src: 'http://upload.wikimedia.org/wikipedia/commons/c/cb/WA_-_Dry_Falls_-_Huge_Channel_v1.png'
+    // }]);
+
+    // If there is an open preload queue, close it.
+    // Site.preload != null && Site.preload.close();
+
+    // console.log('Site.preload', Site.preload);
+  },
+  stop: () => {
+    Site.preload != null && Site.preload.close();
+  },
+  loadAll: () => {
+    while (Preload.manifest.length > 0) loadAnother();
+  },
+  loadAnother: () => {
+    // Get the next Preload.manifest item, and load it
+    let item = Preload.manifest.shift();
+    Site.preload.loadFile(item);
+
+    // If we have no more items, disable the UI.
+    if (Preload.manifest.length === 0) {
+      $('#loadAnotherBtn').attr('disabled', 'disabled');
+      $('#loadAllBtn').attr('disabled', 'disabled');
+      $('#reloadBtn').css('display', 'inline');
+    }
+
+    // Create a new loader display item
+    let div = $('#template').clone();
+    div.attr('id', ''); // Wipe out the ID
+    div.addClass('box');
+    $('#container').append(div);
+    map[item] = div; // Store a reference to each item by its src
+  },
+  loadItem: (url) => {
+    // Add the event listener and handler
+    Site.preload.on('fileload', (event) => {
+      let type = event.item.type;
+
+      if (type === createjs.LoadQueue.IMAGE) {
+        // make a CreateJS Bitmap object from the result
+        let imgItem = event.result;
+        image = new createjs.Bitmap(imgItem.src);
+        stage.addChild(image);
+        stage.update();
+      }
+    }, null, true, options);
+
+    let item = new createjs.LoadItem().set({ src: url, crossOrigin: 'Anonymous' }); // create a LoadItem and set the crossOrigin property
+    Site.preload.loadFile(item); // load it
+  },
+  onComplete: (event) => {
+    console.log('Complete', event);
+    Preload.$state.innerHTML = Preload.$state.innerHTML + '[All loaded]';
+    Preload.$progressbar.classList.add('complete');
+  },
+  onError: (event) => {
+    console.log('Error', event);
+    Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item + ' errored] ';
+    // Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item.id + ' errored] ';
+  },
+  onFileLoad: (event) => {
+    console.log('File loaded', event);
+    Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item + ' loaded] ';
+    // Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item.id + ' loaded] ';
+  },
+  onFileProgress: (event) => {
+    console.log('File progress', event);
+  },
+  onProgress: (event) => {
+    let progress = Math.round(event.loaded * 100);
+    console.log('General progress', Math.round(event.loaded) * 100, event);
+    Preload.$progress.innerHTML = progress + '%';
+    Preload.$progressbar.style.widht = progress + '%';
+  },
+  /*--------------------------------------------------------------------------*/
+  /*                               PRELOAD JS                                 */
+  /*--------------------------------------------------------------------------*/
+  // File complete handler
+  handlePreloadFileLoad: (event) => {
+    console.log('[ handlePreloadFileLoad ] -+-> event -+->', event);
+
+    let div = map[event.item.id];
+    div.classList.add('complete');
+
+    // Get a reference to the loaded image (<img/>)
+    let img = event.result;
+
+    // Resize it to fit inside the item
+    let r = img.width / img.height;
+    let ir = w / h;
+
+    if (r > ir) {
+      img.width = w;
+      img.height = w / r;
+    }
+    else {
+      img.height = h;
+      img.width = h;
+    }
+    div.append(img); // Add it to the DOM
+  },
+  // File progress handler
+  handleFileProgress: (event) => {
+    let div = map[event.item.id]; // Lookup the related item
+    div.children('DIV').width(event.progress * div.width()); // Set the width the progress.
+  },
+  // Overall progress handler
+  handleOverallProgress: (event) => {
+    $('#mainProgress > .progress').width(preload.progress * $('#mainProgress').width());
+  },
+  // An error happened on a file
+  handleFileError: (event) => {
+    let div = map[event.item.id];
+    div.classList.add('error');
+  },
+  // File progress handler
+  handlePreloadProgress: (event) => {
+    let propgress = Site.preload.progress * 100;
+    document.querySelector('.preload-counter').textContent = ' ' + Math.round(propgress) + '%';
+    // return console.log('[ handlePreloadProgress ]', 1 - event.progress);
+  },
+  // File complete handler
+  handlePreloadComplete: (event) => {
+    // return console.log('[ handlePreloadComplete ]', event.complete);
+  }
+};
+
 var Site = Site || {};
 
 Site = {
   directoryUri: './',
   lethargy: new Lethargy(),
   preload: new createjs.LoadQueue(true),
+  // preload: new createjs.LoadQueue(false),
+  // preload: new createjs.LoadQueue(true, '..src/images/'), // Create a preloader. There is no manifest added to it up-front, we will add items on-demand.
+  // preload: new createjs.LoadQueue(true, null, true),
   stage: {},
   displace: {},
   mousePos: {},
@@ -642,6 +835,10 @@ Site = {
     darkTheme: null,
     isTouched: null,
     toggleStatus: null
+  },
+  currentMousePos: {
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
   },
   blockedAction: !0,
   passOnce: !1,
@@ -697,28 +894,28 @@ Site = {
   displacementFilter2: null,
   displacementFilter3: null,
   clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
-  currentMousePos: {
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2
-  },
   setup: () => {
-    Site.preload.on('progress', Site.handleOverallProgress);
-    Site.preload.on('complete', Site.handleComplete);
-
+    /*------------------------------------------------------------------------*/
+    /*                             PRELOAD ASSETS                             */
+    /*------------------------------------------------------------------------*/
+    /** @NOTE -> NOT COMPLETE AS IT'S NOT NECESSARY TO HAVE THIS IN THIS APP */
+    // Preload.init();
+    /*------------------------------------------------------------------------*/
+    /*                            CORE APP ANIMATION                          */
+    /*------------------------------------------------------------------------*/
     Site.onRafLoading = function onRafLoading() {
       Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
-
+      // TEST CODE BELLOW
       if (Site.exitOk === !0 && Site.ajaxOk === !0) {
-        if (Site.rafPixiHome !== null || undefined) cancelAnimationFrame(Site.rafPixiHome);
-        if (Site.rafPixiSingle !== null || undefined) cancelAnimationFrame(Site.rafPixiSingle);
-        if (Site.rafScaleAbout !== null || undefined) cancelAnimationFrame(AboutRAFs.rafScaleAbout);
-        if (Site.body.classList.contains('single') || Site.body.classList.contains('home')) {
-          Site.stage.destroy();
-          Site.renderer.destroy();
-        }
-
+        Site.rafPixiHome && cancelAnimationFrame(Site.rafPixiHome);
+        Site.rafPixiSingle && cancelAnimationFrame(Site.rafPixiSingle);
+        Site.rafScaleAbout && cancelAnimationFrame(AboutRAFs.rafScaleAbout);
+        Site.body.classList.contains('single') || Site.body.classList.contains('home') && (
+          Site.stage.destroy(),
+          Site.renderer.destroy()
+        );
         Site.onUpdatePage(Site.newPageContent);
-        if (Site.rafLoading) cancelAnimationFrame(Site.rafLoading);
+        Site.rafLoading && cancelAnimationFrame(Site.rafLoading);
       }
     };
     Site.init = function init() {
@@ -750,7 +947,11 @@ Site = {
 
       UserAgent.init();
 
-      (Site.themeBtn !== null) && (!Site.body.classList.contains('home')) && (Theme.init(), Theme.button.classList.remove('light'));
+      // TEST CODE BELLOW
+      Site.themeBtn
+        && (!Site.body.classList.contains('home'))
+        && (Theme.init(), Theme.button.classList.remove('light'));
+
       Site.body.classList.contains('home')
         ? Site.themeBtn.style.display = 'none'
         : Site.themeBtn.style.display = 'block';
@@ -781,13 +982,14 @@ Site = {
       Site.contact.style.display = 'block';
 
       /** @note -> classList of undefined when going from state to another => BUG!!! */
-      if (Site.body.classList.contains('is-loading')) {
+      Site.body.classList.contains('is-loading') && (
+        // TEST CODE BELLOW
         Site.loadingTimeout = setTimeout(() => {
-          Site.loading.classList.remove('is-loading');
-          clearTimeout(Site.loadingTimeout);
+          Site.loading.classList.remove('is-loading'),
+          clearTimeout(Site.loadingTimeout),
           Site.loadingTimeout = null;
-        }, 1000, !1);
-      }
+        }, 1000, !1)
+      );
 
       /** @note -> removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
@@ -795,6 +997,7 @@ Site = {
         obj.onclick = null;
         obj.ontouchstart = null;
       });
+
       Site.links.forEach((obj) => {
         obj.addEventListener(Site.clickEvent, Site.onClickHandler, !1);
         obj.onclick = Site.onClickHandler;
@@ -820,7 +1023,9 @@ Site = {
           document.documentElement.onmouseout = Site.handleMouseOut;
         });
 
-        Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
+        Site.body.classList.contains('home')
+          ? Drag.show()
+          : Drag.hide();
       }
 
       Site.animations();
@@ -830,13 +1035,13 @@ Site = {
       Site.ajaxOk = !0;
     };
     Site.animations = function animations() {
-      if (window.innerWidth < 768) Site.pixiMenuLinks.forEach((obj) => obj.classList.remove('active'));
+      window.innerWidth < 768 && Site.pixiMenuLinks.forEach((obj) => obj.classList.remove('active'));
 
       // IF STATEMENT CONDITION DOES THE SAME EXPRESSION AS THE ABOVE IF STATEMENT
-      if (UserAgent.iOS) {
-        window.scrollTo(Site.scrollMenuOpen, 0);
-        Site.main.classList.remove('black');
-      }
+      UserAgent.iOS && (
+        window.scrollTo(Site.scrollMenuOpen, 0),
+        Site.main.classList.remove('black')
+      );
 
       /* Page transitions/animations when navigating between states */
       if (Site.body.classList.contains('home')) {
@@ -959,7 +1164,6 @@ Site = {
             // else {}
           }
         });
-
         // Site.aboutSkills();
       }
       else if (Site.body.classList.contains('single')) {
@@ -1019,12 +1223,12 @@ Site = {
         // Site.ticker = new PIXI.Ticker();
 
         // document.querySelectorAll('#images div').forEach(Site.setDimensions);
-        var image = new PIXI.Sprite(PIXI.Texture.from(document.getElementById('cover').getAttribute('data-img')));
+        let image = new PIXI.Sprite(PIXI.Texture.from(document.getElementById('cover').getAttribute('data-img')));
 
         // DISABLED - Because PixiJS doesn't like duplicate resources saved into TextureCache. Therefore, we access our assets with Site.loader.resources
         // Site.loader.add('image', document.getElementById('cover').getAttribute('data-img'));
 
-        var img = new Image();
+        let img = new Image();
 
         img.src = document.getElementById('cover').getAttribute('data-img');
         img.onload = function() {
@@ -1106,8 +1310,6 @@ Site = {
           // REPLACE: the_imgs with a new class that iss more specific
           Site.ladderScale = (document.getElementById('the_imgs').clientHeight + (0.28 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight;
           Site.ladderScale = parseFloat(Math.round(Site.ladderScale * 100) / 100).toFixed(2);
-
-
         });
       }
       else if (Site.body.classList.contains('notFound')) document.getElementById('progress').style.display = 'none';
@@ -1193,7 +1395,6 @@ Site = {
 
           if (Site.scrolling !== null) {
             diff = Site.main.clientHeight - (Site.scrolling.vars.current + window.innerHeight);
-
             TweenMax.to('#main__content', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
 
             TweenMax.to('#next_proj > div', 1.2, {
@@ -1212,7 +1413,6 @@ Site = {
           }
           else {
             diff = Site.main.clientHeight - (window.pageYOffset + window.innerHeight);
-
             TweenMax.to('#next_proj, .inner_img', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
 
             TweenMax.to('#next_proj > div', 1.2, {
@@ -1280,8 +1480,8 @@ Site = {
     if (!UserAgent.iOS) {
       Site.body.classList.add('desktop');
 
-      window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
-      window.onmousemove = Site.handlerMouseMove;
+      document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
+      document.documentElement.onmousemove = Site.handlerMouseMove;
 
       /**
         * @note -> add mouse events to each element with the class of link_hover and animate the cursor accordingly
@@ -1347,16 +1547,13 @@ Site = {
     window.keyup = Site.onKeydownHandler;
     // window.keydown = Site.onKeydownHandler;
 
-    window.DeviceOrientationEvent && (
-      window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1)
-      // window.ondeviceorientation = Site.circleHandler
-    );
+    window.DeviceOrientationEvent && (window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1), window.ondeviceorientation = Site.circleHandler);
 
-    document.documentElement.addEventListener('onwheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    document.documentElement.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
     document.documentElement.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
     document.documentElement.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
 
-    // document.documentElement.onwheel = Site.scrollEventHandler;
+    // document.documentElement.wheel = Site.scrollEventHandler;
     // document.documentElement.onmousewheel = Site.scrollEventHandler;
     // document.documentElement.onmousedown = Site.scrollEventHandler;
 
@@ -1364,12 +1561,12 @@ Site = {
       * Show Hide Menu Arrow events
       * @note -> COULD ADD -+-> if (Site.body.classList.contains('single')) {}
     **/
-    document.documentElement.addEventListener('onwheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.documentElement.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.documentElement.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.documentElement.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
 
-    // document.documentElement.onwheel = Site.showHideArrow;
+    // document.documentElement.wheel = Site.showHideArrow;
     // document.documentElement.onmousewheel = Site.showHideArrow;
     // document.documentElement.onmousedown = Site.showHideArrow;
     // document.documentElement.ontouchmove = Site.showHideArrow;
@@ -1476,15 +1673,16 @@ Site = {
     event.preventDefault() || false;
 
     // event.state is equal to the data-attribute of the last image we clicked
-    if (event.state !== null) {
+    event.state !== null && (
       // history changed because of pushState/replaceState
-      Site.state = event.state;
-      Site.onLoadPage(window.location.href);
-      Site.onRafLoading();
-    }
+      Site.state = event.state,
+      Site.onLoadPage(window.location.href),
+      Site.onRafLoading()
+    );
     // history changed because of a page load
   },
   onHashChangeHandler: (event) => {
+    // TEST CODE BELLOW
     console.log('[ onHashChangeHandler ] -+-> event', event);
     document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
   },
@@ -1524,6 +1722,8 @@ Site = {
     else if (event.target.classList.contains('to_next') && Site.blockedAction === !1) Site.nextSlide();
     else if (event.target.classList.contains('to_prev') && Site.blockedAction === !1) Site.prevSlide();
     else if (event.target.classList.contains('projects')) {
+      // TEST CODE BELLOW
+
       // event = event || window.event;
       // event.preventDefault() || false;
 
@@ -1539,9 +1739,12 @@ Site = {
 
   setDimensions: (item, index) => {
     Site.totalSlides++;
+
     window['image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-url')));
     window['image' + index].alpha = 0;
+
     let img = new Image(); // equivalent to document.createElement('img')
+
     img.src = item.getAttribute('data-url');
     img.onload = function() {
       let width = this.width;
@@ -1566,6 +1769,7 @@ Site = {
   setMenuDimensions: (item, index) => {
     window['menu_image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-img')));
     window['menu_image' + index].alpha = 0;
+
     let frameWidth = 0.24 * window.innerWidth;
     let frameHeight = window.innerHeight - 0.074 * window.innerWidth;
     let img = new Image(); // equivalent to document.createElement('img')
@@ -1750,7 +1954,7 @@ Site = {
     event.preventDefault() || false;
 
     const escKey = event.key === 'Escape' || event.keyCode === 27;
-    (Menu.button.isOpen && escKey) && (Menu.close());
+    (Menu.button.isOpen && escKey) && Menu.close();
   },
   onResizeHandler: () => {
     !UserAgent.iOS && Site.scrolling !== null
@@ -1808,20 +2012,14 @@ Site = {
       },
       onComplete: () => {
         timeline.reverse();
-
-        if (Site.nextSlideTimeout !== null) clearTimeout(Site.nextSlideTimeout);
-
+        Site.nextSlideTimeout && clearTimeout(Site.nextSlideTimeout);
         Site.nextSlideTimeout = setTimeout(() => {
-          if (!UserAgent.iOS) {
-            Site.stage.removeChild(Site.displacementSprite2);
-            Site.stage.addChild(Site.displacementSprite);
-          }
+          !UserAgent.iOS && (Site.stage.removeChild(Site.displacementSprite2), Site.stage.addChild(Site.displacementSprite));
           Site.listenCursor = !0;
           Site.currentSlide === 0 ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
           Site.currentSlide < (Site.totalSlides - 1) ? Site.currentSlide++ : Site.currentSlide = 0;
           Site.displacementSprite.x = Site.currentMousePos.x;
           Site.blockedAction = !1;
-
           clearTimeout(Site.nextSlideTimeout);
           Site.nextSlideTimeout = null;
         }, 800);
@@ -1839,9 +2037,9 @@ Site = {
   },
   prevSlide: () => {
     Site.speed = -4;
-    // if (Site.body.classList.contains('home')) Site.commonTransition();
     Site.commonTransition();
     Site.updatePagination('prev');
+
     Site.currentSlide === 0 ? (
       window['image' + (Site.totalSlides - 2)].alpha = 0,
       Site.stage.addChild(window['image' + (Site.totalSlides - 2)])
@@ -1870,30 +2068,14 @@ Site = {
       },
       onComplete: () => {
         timeline.reverse();
-        // Site.attributes2.intensity = 150;
-        // Site.attributes2.x = -20;
-        // timeline.to(Site.attributes2, 0.9, {
-        //     intensity: 0,
-        //     x: 0,
-        //     ease: Power1.easeOut,
-        //     onUpdate: () => {
-        //         Site.displacementFilter2.scale.x = Site.attributes2.intensity;
-        //         speed = Site.attributes2.x;
-        //     }
-        // });
-        if (Site.prevSlideTimeout !== null) clearTimeout(Site.prevSlideTimeout);
-
+        Site.prevSlideTimeout && clearTimeout(Site.prevSlideTimeout);
         Site.prevSlideTimeout = setTimeout(() => {
-          if (!UserAgent.iOS) {
-            Site.stage.removeChild(Site.displacementSprite2);
-            Site.stage.addChild(Site.displacementSprite);
-          }
+          !UserAgent.iOS && (Site.stage.removeChild(Site.displacementSprite2), Site.stage.addChild(Site.displacementSprite));
           Site.listenCursor = !0;
           Site.currentSlide === 0 ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
           Site.currentSlide > 0 ? Site.currentSlide-- : Site.currentSlide = Site.totalSlides - 1;
           Site.displacementSprite.x = Site.currentMousePos.x;
           Site.blockedAction = !1;
-
           clearTimeout(Site.prevSlideTimeout);
           Site.prevSlideTimeout = null;
         }, 800);
@@ -1935,20 +2117,16 @@ Site = {
   },
 
   footerInView: () => {
-    // if (Site.scrolling.vars.target <= window.innerHeight) {
-    //   TweenMax.set(Site.about, { display: 'block' });
-    //   TweenMax.set(Site.contact, { display: 'block' });
-    // }
-    if (Site.scrolling.vars.target >= Math.round(Site.scrolling.vars.bounding - 34)) {
-      Drag.cursorMain.classList.remove('vertical_scroll', 'black');
-      Drag.cursorJunior.classList.remove('vertical_scroll', 'black');
-      Theme.lightStyle();
-    }
-    else {
-      Drag.cursorMain.classList.add('vertical_scroll', 'black');
-      Drag.cursorJunior.classList.add('vertical_scroll', 'black');
-      Theme.darkStyle();
-    }
+    Site.scrolling.vars.target >= Math.round(Site.scrolling.vars.bounding - 34)
+      ? (
+        Drag.cursorMain.classList.remove('vertical_scroll', 'black'),
+        Drag.cursorJunior.classList.remove('vertical_scroll', 'black'),
+        Theme.lightStyle()
+      ) : (
+        Drag.cursorMain.classList.add('vertical_scroll', 'black'),
+        Drag.cursorJunior.classList.add('vertical_scroll', 'black'),
+        Theme.darkStyle()
+      );
   },
 
   checkMenu: (item, index) => {
@@ -1972,9 +2150,9 @@ Site = {
           window['menu_image' + index].alpha = Site.displace2.alpha;
         },
         onComplete: () => {
-        // to do : management suppression former child
-        // Site.stageMenu.removeChildren(2);
-        // addedLast = index;
+          // to do : management suppression former child
+          // Site.stageMenu.removeChildren(2);
+          // addedLast = index;
         },
         ease: Linear.easeNone
       });
@@ -2087,12 +2265,18 @@ Site = {
   /*--------------------------------------------------------------------------*/
   changePagination: (element) => {
     !!element.classList.contains('current'); // return if element contains the 'current' class
+
     Site.lindex = Array.from(document.getElementById('num_letter').children).indexOf(element);
+
     let currentIndex = Array.from(document.getElementById('num_letter').children).indexOf(document.querySelector('#num_letter .current'));
+
     Site.speed = 4;
     Site.commonTransition();
+
     window['image' + Site.lindex].alpha = 0;
+
     Site.stage.addChild(window['image' + Site.lindex]);
+
     const timeline = new TimelineMax();
 
     timeline.to(Site.attributes2, 0.9, {
@@ -2131,6 +2315,7 @@ Site = {
         window['image' + Site.lindex].alpha = Site.attributes3.opacity;
       }
     });
+
     TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.lindex) / Site.totalSlides)), ease: Power4.easeInOut });
     Site.animateRandomElements('.random');
     TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.clickablePagination);
@@ -2155,10 +2340,8 @@ Site = {
 
   scrollablePagination: () => {
     document.querySelectorAll('.random.first').forEach((obj) => obj.classList.remove('first'));
-    // Added to prevent classList of null.
+    /** @NOTE -> Added to prevent classList of null. */
     if (document.querySelector('#num_letter .current')) document.querySelector('#num_letter .current').classList.add('after');
-    // TERNARY --->
-    // document.querySelector('#num_letter .current') ? document.querySelector('#num_letter .current').classList.add('after') : true;
 
     if (Site.multiplier === 1) {
       // Added to prevent classList of null.
@@ -2181,7 +2364,6 @@ Site = {
         }
         else {
           let first = document.querySelector('#num_letter div');
-
           first.classList.add('before');
 
           TweenMax.to('.current .letter', 0.4, { x: '100%', clearProps: 'x', ease: Power4.easeInOut });
@@ -2227,7 +2409,6 @@ Site = {
       }
       else {
         let last = document.querySelectorAll('#num_letter > div')[Site.totalSlides - 1];
-
         last.classList.add('before');
 
         TweenMax.to('.current .letter', 0.4, { x: '-100%', clearProps: 'x', ease: Power4.easeInOut });
@@ -2361,7 +2542,7 @@ Site = {
     TweenMax.staggerTo('.stag', 0.4, { opacity: 0, ease: Power2.easeOut }, 0.02);
   },
   /*--------------------------------------------------------------------------*/
-  /*                    HELPER / UTILITY FUNCTIONS - START                    */
+  /*                        HELPER / UTILITY FUNCTIONS                        */
   /*--------------------------------------------------------------------------*/
   animateRandomElements: (element) => {
     Site.random = [];
@@ -2380,12 +2561,6 @@ Site = {
   mousePositionHandler: (event) => {
     Site.currentMousePos.x = event.pageX;
     Site.currentMousePos.y = event.pageY;
-  },
-  handleOverallProgress: (event) => {
-    return console.log('[ handleOverallProgress ]', 1 - event.progress);
-  },
-  handleComplete: (event) => {
-    return console.log('[ handleComplete ]', event.complete);
   },
   scrollToTop: (destination, duration, easing, callback) => {
     const easings = {
@@ -2505,9 +2680,8 @@ Theme = {
   },
   updateDarkMode: () => {
     Theme.stateChanged = !0;
-    if (Theme.rafAutoChange) cancelAnimationFrame(Theme.rafAutoChange);
+    Theme.rafAutoChange && cancelAnimationFrame(Theme.rafAutoChange);
     Theme.rafAutoChange = requestAnimationFrame(Theme.updateDarkMode);
-
     const timeout = setTimeout(() => {
       Theme.calculateDaylight();
       clearTimeout(timeout);
@@ -2516,11 +2690,7 @@ Theme = {
   darkTheme: () => {
     Site.body.classList.add('dark-theme');
     let darkThemeEnabled = Site.body.classList.contains('dark-theme');
-    if (darkThemeEnabled) {
-      window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-      // console.log('window.localStorage (darkTheme) -+->', window.localStorage);
-    }
-
+    darkThemeEnabled && window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
     Theme.toggleStatus = 'night';
     Theme.button.setAttribute('data-theme', 'night');
     Theme.button.classList.add('dark-mode');
@@ -2529,11 +2699,7 @@ Theme = {
   lightTheme: () => {
     Site.body.classList.remove('dark-theme');
     let darkThemeEnabled = Site.body.classList.contains('dark-theme');
-    if (darkThemeEnabled) {
-      window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-      // console.log('window.localStorage (lightTheme) -+->', window.localStorage);
-    }
-
+    darkThemeEnabled && window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
     Theme.toggleStatus = 'day';
     Theme.button.setAttribute('data-theme', 'day');
     Theme.button.classList.remove('dark-mode');
@@ -2559,15 +2725,9 @@ Theme = {
     endDate.setMinutes(endTime.split(':')[1]);
     endDate.setSeconds(endTime.split(':')[2]);
 
-    let isDaylight = startDate < currentDate && endDate > currentDate;
-    // let isNight = endDate > currentDate && startDate > currentDate;
+    let isDaylight = startDate < currentDate && endDate > currentDate; // let isNight = endDate > currentDate && startDate > currentDate;
 
-    isDaylight ? Theme.lightTheme() : Theme.darkTheme();
-    // isNight ? Theme.darkTheme() : Theme.lightTheme();
-  },
-  isDayOrNight: () => {
-    // Theme.dataTheme = Theme.button.getAttribute('data-theme');
-    // Theme.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+    isDaylight ? Theme.lightTheme() : Theme.darkTheme(); // isNight ? Theme.darkTheme() : Theme.lightTheme();
   },
   enableDarkTheme: () => {
     Theme.isTouched = !0;
@@ -2578,16 +2738,14 @@ Theme = {
       isTouched: Theme.isTouched,
       toggleStatus: Theme.toggleStatus
     };
-    // let darkThemeEnabled = Site.body.classList.toggle('dark-theme');
-    // if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
   },
   lightStyle: () => {
-    if (Theme.button) Theme.button.classList.add('light');
+    Theme.button && Theme.button.classList.add('light');
     Menu.lightFooter();
     Site.hideSideNav();
   },
   darkStyle: () => {
-    if (Theme.button) Theme.button.classList.remove('light');
+    Theme.button && Theme.button.classList.remove('light');
     Menu.darkFooter();
     Site.showSideNav();
   }
