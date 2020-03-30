@@ -372,13 +372,13 @@ Drag = {
     Drag.isScroll = !1;
 
     if (Site.body.classList.contains('home')) {
-      document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500)); // touchStart
-      document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500)); // touchMove
-      document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500)); // touchEnd
+      document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500), !1); // touchStart
+      document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500), !1); // touchMove
+      document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500), !1); // touchEnd
 
       document.onmousedown = Drag.start;
-      document.onmousedown = Drag.move;
-      document.onmousedown = Drag.end;
+      document.onmousemove = Drag.move;
+      document.onmouseup = Drag.end;
     }
   },
   start: (event) => {
@@ -389,7 +389,7 @@ Drag = {
     Site.startPosition = event.pageX;
     Site.body.classList.add('dragging'); // IS THIS NECESSARY?
 
-    if (event.type === 'touchstart') Site.posX1 = event.touches[0].clientX;
+    if (event.type === 'ontouchstart') Site.posX1 = event.touches[0].clientX;
     else {
       Site.posX1 = event.clientX;
       document.onmouseup = Drag.end;
@@ -402,7 +402,7 @@ Drag = {
 
     if (!Drag.isDown) return;
 
-    if (event.type === 'touchmove') {
+    if (event.type === 'ontouchmove') {
       Site.posX2 = Site.posX1 - event.touches[0].clientX;
       Site.posX1 = event.touches[0].clientX;
     }
@@ -512,8 +512,6 @@ SunMoon = {
   DEFAULT_ZENITH: 90.8333, /** Default zenith */
   DEGREES_PER_HOUR: 360 / 24, /** Degrees per hour */
   MSEC_IN_HOUR: 60 * 60 * 1000, /** Msec in hour */
-  // sunset: null,
-  // sunrise: null,
   init: () => {
     let lat = null;
     let lng = null;
@@ -740,7 +738,7 @@ Site = {
         }
 
         Site.onUpdatePage(Site.newPageContent);
-        if (Site.rafLoading !== null || undefined) cancelAnimationFrame(Site.rafLoading);
+        if (Site.rafLoading) cancelAnimationFrame(Site.rafLoading);
       }
     };
     Site.init = function init() {
@@ -751,30 +749,32 @@ Site = {
       this.linkInProgress = !1;
 
       this.body = document.querySelector('body');
-      this.vsSection = document.querySelector('.vs-section');
       this.loading = document.querySelector('.is-loading');
+      this.vsSection = document.querySelector('.vs-section');
 
       this.innerH2 = document.getElementsByClassName('inner_h2');
       this.homeCanvas = document.getElementsByClassName('inner_h2')[0];
 
-      this.main = document.getElementById('main__content');
       this.about = document.getElementById('about');
       this.contact = document.getElementById('contact');
+      this.main = document.getElementById('main__content');
       this.pixiMenuCover = document.getElementById('pixi_menu');
       this.themeBtn = document.getElementById('change-theme-btn');
+      this.toNextProject = document.getElementById('to_next_project');
 
-      this.links = document.querySelectorAll('a'); // when clicking on a anchor link with class of '.link'
+      this.links = document.querySelectorAll('a');
       this.vsDivs = document.querySelectorAll('.vs-div');
-      this.pixiMenuLinks = document.querySelectorAll('#nav__menu__links li');
       this.mouseOverLinks = document.querySelectorAll('.link');
+      this.pixiMenuLinks = document.querySelectorAll('#nav__menu__links li');
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
 
       UserAgent.init();
-      if ((Site.themeBtn !== null) && (!Site.body.classList.contains('home'))) {
-        Theme.init();
-        Theme.button.classList.remove('light');
-      }
-      Site.body.classList.contains('home') ? Site.themeBtn.style.display = 'none' : Site.themeBtn.style.display = 'block';
+
+      (Site.themeBtn !== null) && (!Site.body.classList.contains('home')) && (Theme.init(), Theme.button.classList.remove('light'));
+      Site.body.classList.contains('home')
+        ? Site.themeBtn.style.display = 'none'
+        : Site.themeBtn.style.display = 'block';
+
       Drag.init();
       Menu.init();
       LazyLoad.init();
@@ -783,39 +783,41 @@ Site = {
       TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
       // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
 
-      // Resets header menu elements back to their defaults states/classes.
+      /** @note -> Resets header menu elements back to their defaults states/classes. */
       Menu.navMenu.style.display = 'none';
-      /* Update and Animate projMenu from arrow/Close(X) */
-      if (Menu.button.classList.contains('arrow-transition-in')) Menu.hideArrow();
 
-      /* close Nav Menu when anchor click events */
+      /** @note -> Update and Animate projMenu from arrow/Close(X) */
+      Menu.button.classList.contains('arrow-transition-in') && Menu.hideArrow();
+
+      /** @note -> close Nav Menu when anchor click events */
       Menu.button.classList.remove('opened');
-      /* Reset lightButtonStyles */
+      /** @note -> Reset lightButtonStyles */
       Menu.darkFooter();
+
       // if (Site.themeBtn) Theme.button.classList.remove('light');
       Drag.cursorMain.classList.remove('menu_opened');
       Site.about.style.display = 'block';
       Site.contact.style.display = 'block';
 
-      /* classList of undefined when going from state to another => BUG!!! */
+      /** @note -> classList of undefined when going from state to another => BUG!!! */
       if (Site.body.classList.contains('is-loading')) {
         Site.loadingTimeout = setTimeout(() => {
           Site.loading.classList.remove('is-loading');
           clearTimeout(Site.loadingTimeout);
           Site.loadingTimeout = null;
-        }, 1000, false);
+        }, 1000, !1);
       }
 
-      /* removes event listeners from elements with 'link' class before adding click events to each element */
+      /** @note -> removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
-        obj.removeEventListener('click', Site.onClickHandler, !1);
-        obj.removeEventListener('touchstart', Site.onClickHandler, !1);
+        obj.removeEventListener(Site.clickEvent, Site.onClickHandler, !1);
+        // obj.removeEventListener('ontouchstart', Site.onClickHandler, !1);
         obj.onclick = null;
         obj.ontouchstart = null;
       });
       Site.links.forEach((obj) => {
-        obj.addEventListener('click', Site.onClickHandler, !1);
-        obj.addEventListener('touchstart', Site.onClickHandler, !1);
+        obj.addEventListener(Site.clickEvent, Site.onClickHandler, !1);
+        // obj.addEventListener('ontouchstart', Site.onClickHandler, !1);
         obj.onclick = Site.onClickHandler;
         obj.ontouchstart = Site.onClickHandler;
       });
@@ -830,9 +832,14 @@ Site = {
       // });
 
       if (!UserAgent.iOS) {
-        /* adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
-        Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500)));
-        Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500)));
+        /** @note -> adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
+        Site.mouseOverLinks.forEach((obj) => {
+          document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500), !1);
+          document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500), !1);
+
+          document.onmouseover = Site.handleMouseOver;
+          document.onmouseout = Site.handleMouseOut;
+        });
 
         Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
       }
@@ -858,8 +865,8 @@ Site = {
 
         Site.hovers = document.querySelectorAll('.main__pagination');
 
-        Site.hovers.forEach((obj) => obj.addEventListener('mouseenter', Site.onHover, false));
-        Site.hovers.forEach((obj) => obj.addEventListener('mouseleave', Site.offHover, false));
+        Site.hovers.forEach((obj) => obj.addEventListener('mouseenter', Site.onHover, !1));
+        Site.hovers.forEach((obj) => obj.addEventListener('mouseleave', Site.offHover, !1));
 
         Site.currentSlide = 0;
         Site.totalSlides = 0;
@@ -914,18 +921,19 @@ Site = {
           if (!Menu.button.isOpen) Site.homePixi();
           Site.nextSlide();
 
-          //
-          //
-          //
-          // DISABLE elements with class of update_link (<a>) in home pixi slider
-          //
-          // if (Site.currentSlide === 0) {
-          //   document.querySelectorAll('.update_link').forEach((obj) => {
-          //     obj
-          //       .setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide]
-          //       .getAttribute('data-params'));
-          //   });
-          // }
+          /**
+            * @NOTE
+            *
+            * DISABLE elements with class of update_link (<a>) in home pixi slider
+            *
+            * if (Site.currentSlide === 0) {
+            *   document.querySelectorAll('.update_link').forEach((obj) => {
+            *     obj
+            *       .setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide]
+            *       .getAttribute('data-params'));
+            *   });
+            * }
+          **/
 
           document.getElementById('progress').style.display = 'none';
         });
@@ -988,8 +996,11 @@ Site = {
           Drag.cursorMain.classList.add('vertical_scroll');
           Drag.cursorJunior.classList.add('vertical_scroll');
 
-          document.getElementById('to_next_project').addEventListener('mouseover', Site.onHoverNext, false);
-          document.getElementById('to_next_project').addEventListener('mouseout', Site.offHoverNext, false);
+          Site.toNextProject.addEventListener('mouseover', Site.onHoverNext, !1);
+          Site.toNextProject.addEventListener('mouseout', Site.offHoverNext, !1);
+
+          Site.toNextProject.onmouseover = Site.onHoverNext;
+          Site.toNextProject.onmouseout = Site.offHoverNext;
 
           if (Site.scrolling !== null) Site.scrolling.destroy();
 
@@ -1004,7 +1015,7 @@ Site = {
           Site.scrolling.init();
         }
         else {
-          document.getElementById('to_next_project').innerHTML = document.getElementById('to_next_project').getAttribute('data-next');
+          Site.toNextProject.innerHTML = Site.toNextProject.getAttribute('data-next');
           TweenMax.set('#inner_project_name', { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px' });
           TweenMax.set('#project_name .stag', { opacity: 1 });
         }
@@ -1133,7 +1144,7 @@ Site = {
     Site.onLoadPage = function onLoadPage(href) {
       document.getElementById('progress').style.display = 'block';
 
-      if (Site.scrolling !== null) Site.scrolling.off();
+      Site.scrolling !== null && Site.scrolling.off();
 
       Site.sendHttpRequest(href);
 
@@ -1144,6 +1155,7 @@ Site = {
         Menu.button.classList.add('closing');
 
         if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
+
         Menu.arrowHidingTimeout = setTimeout(() => {
           Menu.button.classList.remove('closing');
           clearTimeout(Menu.arrowHidingTimeout);
@@ -1191,8 +1203,11 @@ Site = {
         });
       }
       else if (Site.body.classList.contains('single')) {
-        document.getElementById('to_next_project').removeEventListener('mouseover', Site.onHoverNext);
-        document.getElementById('to_next_project').removeEventListener('mouseout', Site.offHoverNext);
+        Site.toNextProject.removeEventListener('mouseover', Site.onHoverNext);
+        Site.toNextProject.removeEventListener('mouseout', Site.offHoverNext);
+
+        Site.onmouseover = null;
+        Site.onmouseout = null;
 
         if (Site.bottomLink) {
           let diff;
@@ -1259,16 +1274,23 @@ Site = {
       else Site.exitOk = !0;
     };
     Site.onUpdatePage = function onUpdatePage(html) {
-      let parser = new DOMParser();
+      const parser = new DOMParser();
+
       let doc = parser.parseFromString(html, 'text/html');
       let classList = doc.querySelectorAll('body')[0].getAttribute('class');
+
       document.title = doc.querySelector('title').innerHTML;
+
       let res = classList.replace('is-loading', '');
+
       Site.body.setAttribute('class', res);
-      (!UserAgent.iOS)
+
+      !UserAgent.iOS
         ? Site.body.classList.add('desktop')
         : Site.body.classList.add('mobile');
+
       Site.main.innerHTML = doc.getElementById('main__content').innerHTML;
+
       Site.init();
     };
 
@@ -1280,117 +1302,134 @@ Site = {
       Site.body.classList.add('desktop');
 
       window.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.handlerMouseMove, 500), !1);
-      /* add mouse events to each element with the class of link_hover and animate the cursor accordingly */
-      Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500)));
-      Site.mouseOverLinks.forEach((obj) => document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500)));
+      window.onmousemove = Site.handlerMouseMove;
+
+      /**
+        * @note -> add mouse events to each element with the class of link_hover and animate the cursor accordingly
+       **/
+      Site.mouseOverLinks.forEach((obj) => {
+        document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.handleMouseOver, 500), !1);
+        document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.handleMouseOut, 500), !1);
+        document.onmouseout = Site.handleMouseOver;
+        document.onmouseover = Site.handleMouseOut;
+      });
 
       Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
     }
 
     Site.body.classList.add('mobile');
+
     Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
     Site.contact.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
+
     Drag.toggleHidden();
 
-    /* pixi menu statement */
+    /** @note -> pixi menu statement */
     Site.rendererMenu = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
     // Site.rendererMenu = PIXI.autoDetectRenderer(0.24 * window.innerWidth, window.innerHeight - 0.074 * window.innerWidth, { transparent: !0 });
 
     if (Site.pixiMenuCover) Site.pixiMenuCover.appendChild(Site.rendererMenu.view);
 
-    /* RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
+    /** @note -> RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
     Site.rendererMenu.view.width = window.innerWidth;
     Site.rendererMenu.view.height = window.innerHeight;
     Site.stageMenu = new PIXI.Container();
     Site.pixiMenuAnchors.forEach(Site.setMenuDimensions);
 
-    /* displacement 2 */
+    /** @note -> displacement 2 */
     Site.displacementSprite3 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
     Site.displacementSprite3.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
     Site.displacementFilter3 = new PIXI.filters.DisplacementFilter(Site.displacementSprite3);
 
     Site.stageMenu.filters = [Site.displacementFilter3];
 
-    /* settings displacement2 - intensity */
+    /** @note -> settings displacement2 - intensity */
     Site.displacementFilter3.scale.x = 0;
     Site.displacementFilter3.scale.y = 0;
-    /* ladder x/y */
+
+    /** @note -> ladder x/y */
     Site.displacementSprite3.scale.x = 0.4;
 
     window.addEventListener('onpopstate', Site.onPopStateHandler);
     window.addEventListener('onunload', Site.onUnloadHandler);
-    window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
-    window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
-
-    /* device giroscope event */
-    if (window.DeviceOrientationEvent) window.addEventListener('deviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1);
-
-    /* scroll events */
-    document.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-
-    /* touch events */
-    window.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
-    window.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
-
-    /**
-      * Show Hide Menu Arrow events
-      * COULD ADD -+-> if (Site.body.classList.contains('single')) {}
-    **/
-    document.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1); // shows/hides menu arrow when scrolling on mobile devices
-
-    /* Add the event listeners for each click / mousemove events. */
-    document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
-    document.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
-    // document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
-
-    /* click / touch / mouse events */
-    document.onmousedown = Site.onClickHandler;
-    document.ontouchstart = Site.touchStartHandler;
-    document.ontouchmove = Site.touchMoveHandler;
-
-    /* State Change Events: Add these events to window element */
+    window.addEventListener('onhashchange', Site.onHashChangeHandler);
+    /** @note -> State Change Events: Add these events to window element */
     window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     window.onhashchange = Site.onHashChangeHandler;
 
-    /* Utility events */
+    window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
+    window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
+    // window.addEventListener('keydown', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
     window.resize = Site.onResizeHandler;
-    window.keydown = Site.onKeydownHandler;
+    window.keyup = Site.onKeydownHandler;
+    // window.keydown = Site.onKeydownHandler;
 
-    /* Mouse events: Add these events to document element */
-    document.onmousedown = Site.projectChangedHandler;
-    document.onmousedown = Site.mousePositionHandler;
+    window.DeviceOrientationEvent && (window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1), window.ondeviceorientation = Site.circleHandler);
+
+    document.addEventListener('onwheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+
+    document.onwheel = Site.scrollEventHandler;
+    document.onmousewheel = Site.scrollEventHandler;
     document.onmousedown = Site.scrollEventHandler;
-    document.onmousedown = Site.touchStartHandler;
-    document.onmousedown = Site.touchMoveHandler;
+
+    /**
+      * Show Hide Menu Arrow events
+      * @note -> COULD ADD -+-> if (Site.body.classList.contains('single')) {}
+    **/
+    document.addEventListener('onwheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+
+    document.onwheel = Site.showHideArrow;
+    document.onmousewheel = Site.showHideArrow;
     document.onmousedown = Site.showHideArrow;
+    document.ontouchmove = Site.showHideArrow;
+
+    document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
+    document.onmousemove = Site.mousePositionHandler;
+
+    document.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+    // document.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
+    document.onmousedown = Site.projectChangedHandler;
+
+    document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
+    document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
+
+    document.ontouchstart = Site.touchStartHandler;
+    document.ontouchmove = Site.touchMoveHandler;
   },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
-  onClickHandler: function(event) {
-    if (!UserAgent.iOS) {
-      event = event || window.event;
-      event.preventDefault() || false;
+  onClickHandler: (event) => {
+    event = event || window.event;
+    event.preventDefault() || false;
+
+    if (event.target.closest('.external')) {
+      window.open(event.target.href, '_blank');
+      console.log('EXTERNAL LINK -+->', event.target.getAttribute('href'));
+      // return !1;
     }
 
-    /* If the event target doesn't match bail */
-    if (!event.target.classList.contains('external')) {
-      if ((this.getAttribute('href') === '') || (this.getAttribute('href').length === 0)) return !1;
+    /* If the clicked element doesn't have the .external class, bail */
+    if (!event.target.closest('.external')) {
+      /**
+        * @note - This stops any click or touch events when user clicks on Projects that are 'Comming Soon'.
+       **/
+      if (event.target.getAttribute('href') === '' || event.target.getAttribute('href').length === 0) return !1;
 
       if (Site.linkInProgress === !1) {
         Site.linkInProgress = !0;
 
-        let targetHref = this.getAttribute('href');
-        let targetHTML = this.innerHTML;
+        let targetHref = event.target.getAttribute('href');
+        let targetHTML = event.target.innerHTML;
 
-        this.classList.contains('bottom_link')
-          ? (Site.bottomLink = !0, this.classList.add('changing'))
+        event.target.closest('.bottom_link')
+          ? (Site.bottomLink = !0, event.target.classList.add('changing'))
           : Site.bottomLink = !1;
 
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0);
@@ -1403,17 +1442,46 @@ Site = {
         };
 
         if (window.history && window.history.pushState) window.history.pushState(Site.historyState, targetHTML, targetHref);
+
         Site.onLoadPage(targetHref);
         Site.onRafLoading();
-        return !1;
+
+        // return !1;
       }
     }
-    if (event.target.classList.contains('external')) {
-      window.open(event.target.href, '_blank');
-      window.history.pushState(Site.historyState, null, '');
-      return !1;
-    }
+    // if (event.type === 'ontouchstart') {
+    //   console.log('ontouchstart event', event);
+    //   /**
+    //     * @param - {url}
+    //     * window.open(url, windowName, [windowFeatures]);
+    //    */
+    //   window.open(event.target.href, '_blank');
+    //   window.history.pushState(Site.historyState, null, '');
+    //   return !0;
+    // }
+
+    // if (event.type === 'click') {
+    //   console.log('click event', event);
+    //   window.open(event.target.href, '_blank');
+    //   window.history.pushState(Site.historyState, null, '');
+    //   return !1;
+    // }
+
+    // else {
+    //   /**
+    //     * @param - {url}
+    //     * window.open(url, windowName, [windowFeatures]);
+    //    */
+    //   window.open(event.target.href, '_blank');
+    //   window.history.pushState(Site.historyState, null, '');
+    //   return !1;
+    // }
+
+    /* Don't follow the link */
+    // event.preventDefault();
+
     // event.stopPropagation();
+    // return !1;
   },
   /*--------------------------------------------------------------------------*/
   /*                           State Change Events                            */
@@ -1432,22 +1500,19 @@ Site = {
     // history changed because of a page load
   },
   onHashChangeHandler: (event) => {
+    console.log('[ onHashChangeHandler ] -+-> event', event);
     document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
   },
   onUnloadHandler: (event) => {
+    console.log('[ onUnloadHandler ] -+-> event', event);
     event = event || window.event;
     event.preventDefault() || false;
+
     return window.scrollTo(0, 0); // scroll back to top when reloading page
   },
   /*--------------------------------------------------------------------------*/
   /*                           Called On Page Load                            */
   /*--------------------------------------------------------------------------*/
-  onKeydownHandler: (event) => {
-    event = event || window.event;
-    event.preventDefault() || false;
-    const escKey = event.key === 'Escape' || event.keyCode === 27;
-    (Menu.button.isOpen && escKey) && (Menu.close());
-  },
   sendHttpRequest: (url) => {
     const xhr = new XMLHttpRequest();
     const method = 'GET';
@@ -1462,6 +1527,7 @@ Site = {
     };
     xhr.send();
   },
+
   projectChangedHandler: (event) => {
     event = event || window.event;
     event.preventDefault() || false;
@@ -1486,6 +1552,7 @@ Site = {
       !Menu.button.isOpen ? Menu.open() : Menu.close();
     }
   },
+
   setDimensions: (item, index) => {
     Site.totalSlides++;
     window['image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-url')));
@@ -1540,6 +1607,7 @@ Site = {
       }
     };
   },
+
   scrollBackUp: (target) => {
     // Site.scrollingBackUpBtn = requestAnimationFrame(Site.scrollBackUp);
     // if (!UserAgent.iOS && Math.round(Site.scrolling.vars.bounding / 7)) {
@@ -1575,6 +1643,7 @@ Site = {
       var mobDelay = Math.round(window.pageYOffset / 7);
 
       if (Menu.arrowHidingTimeout !== null) clearTimeout(Menu.arrowHidingTimeout);
+
       Menu.arrowHidingTimeout = setTimeout(() => {
         Menu.hideArrow();
         clearTimeout(Menu.arrowHidingTimeout);
@@ -1638,7 +1707,7 @@ Site = {
         Drag.cursorMain.classList.remove('cursor_main-small');
       }
     }
-    else Site.mouseOverLinks.forEach((obj) => document.removeEventListener('mousemove', Site.handleMouseOver, false));
+    else Site.mouseOverLinks.forEach((obj) => document.removeEventListener('onmousemove', Site.handleMouseOver, false));
   },
   handlerMouseMove: (event) => {
     event = event || window.event;
@@ -1654,6 +1723,7 @@ Site = {
         TweenMax.to(Drag.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }) // Drag.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
       ) : false;
   },
+
   circleHandler: (event) => {
     window.orientation === 0
       ? Site.gamma = event.gamma
@@ -1663,13 +1733,13 @@ Site = {
           ? Site.gamma = -event.beta
           : window.orientation === 90 && (Site.gamma = event.beta); // this is the last conditional block OR 'else' statement
   },
+
   touchStartHandler: (event) => {
     Site.xDown = event.touches[0].clientX;
     Site.yDown = event.touches[0].clientY;
   },
   touchMoveHandler: (event) => {
-    // !!(!Site.xDown || !Site.yDown); // return if touch props are valid
-    if (Site.xDown && Site.yDown) return;
+    !!(!Site.xDown || !Site.yDown); // return if touch props are valid
 
     let xUp = event.touches[0].clientX;
     let yUp = event.touches[0].clientY;
@@ -1690,20 +1760,13 @@ Site = {
     Site.xDown = null;
     Site.yDown = null;
   },
-  onHover: (event) => {
-    event.target.classList.add('feature');
-    return document.querySelector('.main__pagination.current').classList.add('temp');
-  },
-  offHover: (event) => {
-    event.target.classList.remove('feature');
-    return document.querySelector('.main__pagination.current').classList.remove('temp');
-  },
-  scrollEventHandler: (event) => {
+
+  onKeydownHandler: (event) => {
     event = event || window.event;
-    event.type === 'wheel' ? Site.supportsWheel = !0 : Site.supportsWheel && true;
-    let delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
-    let checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
-    if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) delta > 0 ? Site.nextSlide() : (delta < 0) ? Site.prevSlide() : false;
+    event.preventDefault() || false;
+
+    const escKey = event.key === 'Escape' || event.keyCode === 27;
+    (Menu.button.isOpen && escKey) && (Menu.close());
   },
   onResizeHandler: () => {
     !UserAgent.iOS && Site.scrolling !== null
@@ -1713,6 +1776,33 @@ Site = {
         Site.contact.style.top = (window.innerHeight / 2) - 50 + 'px'
       );
   },
+
+  onHover: (event) => {
+    event.target.classList.add('feature');
+    return document.querySelector('.main__pagination.current').classList.add('temp');
+  },
+  offHover: (event) => {
+    event.target.classList.remove('feature');
+    return document.querySelector('.main__pagination.current').classList.remove('temp');
+  },
+
+  scrollEventHandler: (event) => {
+    event = event || window.event;
+    event.type === 'wheel'
+      ? Site.supportsWheel = !0
+      : Site.supportsWheel && true;
+
+    let delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
+    let checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
+    if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) {
+      delta > 0
+        ? Site.nextSlide()
+        : (delta < 0)
+          ? Site.prevSlide()
+          : false;
+    }
+  },
+
   nextSlide: () => {
     Site.speed = 4;
     // if (Site.body.classList.contains('home')) Site.commonTransition();
@@ -1839,6 +1929,7 @@ Site = {
       }
     });
   },
+
   commonTransition: () => {
     Site.listenCursor = !1;
     Site.blockedAction = !0;
@@ -1858,6 +1949,7 @@ Site = {
     Site.attributes2.width = Site.displacementSprite2.scale.x;
     Site.attributes3.opacity = 0;
   },
+
   footerInView: () => {
     // if (Site.scrolling.vars.target <= window.innerHeight) {
     //   TweenMax.set(Site.about, { display: 'block' });
@@ -1874,6 +1966,7 @@ Site = {
       Theme.darkStyle();
     }
   },
+
   checkMenu: (item, index) => {
     if (
       Site.cursorPercentage > (Site.heightMargin + (index * Site.entranceHeight))
@@ -2075,6 +2168,7 @@ Site = {
     Site.animateRandomElements('.random');
     TweenMax.staggerTo(Site.random, 0.4, { x: Site.multiplier * 24 + 'px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.scrollablePagination);
   },
+
   scrollablePagination: () => {
     document.querySelectorAll('.random.first').forEach((obj) => obj.classList.remove('first'));
     // Added to prevent classList of null.
@@ -2218,7 +2312,7 @@ Site = {
     TweenMax.staggerFromTo(Site.random, 1, { x: '-24px', opacity: 0 }, { x: '0px', opacity: 1, ease: Power2.easeOut }, 0.1);
   },
   /*--------------------------------------------------------------------------*/
-  /*           Pixi on mousemove/touchmove displacement intensity             */
+  /*           Pixi on mousemove/ontouchmove displacement intensity             */
   /*--------------------------------------------------------------------------*/
   increaseDisplacementIntensity: () => {
     Site.speed = 2;
@@ -2267,14 +2361,15 @@ Site = {
       TweenMax.staggerTo(Site.random, 0.4, { opacity: 0, ease: Power2.easeIn }, 0.05, Site.animateNextInnerBtn);
     }
   },
+
   animateNextBtn: () => {
-    document.getElementById('to_next_project').innerHTML = document.getElementById('to_next_project').getAttribute('data-next');
+    Site.toNextProject.innerHTML = document.getElementById('to_next_project').getAttribute('data-next');
     TweenMax.set('#to_next_project span', { opacity: 0 });
     Site.animateRandomElements('#to_next_project span');
     TweenMax.staggerTo(Site.random, 0.4, { opacity: 1, ease: Power2.easeOut }, 0.05);
   },
   animateNextInnerBtn: () => {
-    document.getElementById('to_next_project').innerHTML = '<span>N</span><span>e</span><span>x</span><span>t</span>';
+    Site.toNextProject.innerHTML = '<span>N</span><span>e</span><span>x</span><span>t</span>';
     TweenMax.set('#to_next_project span', { opacity: 0 });
     Site.animateRandomElements('#to_next_project span');
     TweenMax.staggerTo(Site.random, 0.4, { opacity: 1, ease: Power2.easeOut }, 0.05);
@@ -2399,7 +2494,10 @@ Theme = {
 
     if (Theme.button) {
       Theme.button.addEventListener('click', Theme.enableDarkTheme, !1);
-      Theme.button.addEventListener('touchstart', Theme.enableDarkTheme, !1);
+      Theme.button.addEventListener('ontouchstart', Theme.enableDarkTheme, !1);
+
+      Theme.button.click = Theme.enableDarkTheme;
+      Theme.button.ontouchstart = Theme.enableDarkTheme;
     }
 
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
@@ -2409,9 +2507,15 @@ Theme = {
           cancelAnimationFrame(Theme.rafAutoChange);
         }
       }
-      if (Site.historyState.isTouched === !0) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      if (Site.historyState.isTouched === !0) {
+        Site.historyState.dataTheme === 'day'
+          ? Theme.lightTheme()
+          : Theme.darkTheme();
+      }
       if (Site.historyState.stateChanged === !0) {
-        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+        Site.historyState.dataTheme === 'day'
+          ? Theme.lightTheme()
+          : Theme.darkTheme();
       }
     }
   },
@@ -2478,8 +2582,8 @@ Theme = {
     // isNight ? Theme.darkTheme() : Theme.lightTheme();
   },
   isDayOrNight: () => {
-    Theme.dataTheme = Theme.button.getAttribute('data-theme');
-    Theme.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+    // Theme.dataTheme = Theme.button.getAttribute('data-theme');
+    // Theme.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
   },
   enableDarkTheme: () => {
     Theme.isTouched = !0;

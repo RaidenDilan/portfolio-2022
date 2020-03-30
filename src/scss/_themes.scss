@@ -233,6 +233,8 @@ body.dark-theme {
       background-color: $dark;
       transform: translate(-18px, 0px);
       z-index: 1;
+      width: 13px;
+      height: 13px;
     }
   }
   input[type="checkbox"] {
@@ -287,7 +289,8 @@ body.dark-theme {
       }
       &:before {
         background-color: $light;
-        transform: translate(22px, -2px);
+        transform: translate(24px, -2px);
+        // transform: translate(22px, -2px);
       }
     }
   }
