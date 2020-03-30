@@ -635,7 +635,7 @@ SunMoon = {
 var Preload = Preload || {};
 
 Preload = {
-  /** @NOTE - USAGE
+  /** @note - USAGE
     * <p class="preload-counter"></p>
     *
     * <div id="state"></div>
@@ -898,7 +898,7 @@ Site = {
     /*------------------------------------------------------------------------*/
     /*                             PRELOAD ASSETS                             */
     /*------------------------------------------------------------------------*/
-    /** @NOTE -> NOT COMPLETE AS IT'S NOT NECESSARY TO HAVE THIS IN THIS APP */
+    /** @note -> DISABLED AS IT'S NOT NECESSARY TO USE IN THIS APP */
     // Preload.init();
     /*------------------------------------------------------------------------*/
     /*                            CORE APP ANIMATION                          */
@@ -1106,7 +1106,7 @@ Site = {
           Site.nextSlide();
 
           /**
-            * @NOTE
+            * @note
             *
             * DISABLE elements with class of update_link (<a>) in home pixi slider
             *
@@ -1333,7 +1333,7 @@ Site = {
         Site.rafPixiMenu && cancelAnimationFrame(Site.rafPixiMenu);
         Site.rafPixiMenu && cancelAnimationFrame(AboutRAFs.rafScaleAbout);
 
-        /** @NOTE -> reset projMenu when changing states/clicking on anchor elements */
+        /** @note -> reset projMenu when changing states/clicking on anchor elements */
         Menu.button.classList.add('closing');
         Menu.arrowHidingTimeout !== null && clearTimeout(Menu.arrowHidingTimeout);
 
@@ -1533,12 +1533,12 @@ Site = {
 
     window.addEventListener('onpopstate', Site.onPopStateHandler);
     // window.addEventListener('onunload', Site.onUnloadHandler);
-    window.addEventListener('onhashchange', Site.onHashChangeHandler);
+    // window.addEventListener('onhashchange', Site.onHashChangeHandler);
 
     /** @note -> State Change Events: Add these events to window element */
     // window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
-    window.onhashchange = Site.onHashChangeHandler;
+    // window.onhashchange = Site.onHashChangeHandler;
 
     window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
     window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
@@ -1559,6 +1559,7 @@ Site = {
 
     /**
       * Show Hide Menu Arrow events
+      *
       * @note -> COULD ADD -+-> if (Site.body.classList.contains('single')) {}
     **/
     document.documentElement.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
@@ -1588,13 +1589,23 @@ Site = {
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
   onClickHandler: (event) => {
-    event = event || window.event;
-    event.preventDefault() || false;
+    /** @note - Using Event Capturing **/
+    !UserAgent.iOS && (event = event || window.event, event.preventDefault() || false);
 
     if (event.target.closest('.external')) {
       window.open(event.target.href, '_blank');
-      console.log('EXTERNAL LINK -+->', event.target.getAttribute('href'));
-      // return !1;
+      window.focus();
+      /**
+        * window.open([data], [title], [url]);
+        * window.open(url, windowName, [windowFeatures]);
+        *
+        * @param - {data} - Object
+        * @param - {title} - String
+        * @param - {url} - String
+       **/
+      window.history.pushState(Site.historyState, null, '');
+      /** @bug ---> Intervention error on iOS devices */
+      !UserAgent.iOS ? !1 : !0;
     }
 
     /* If the clicked element doesn't have the .external class, bail */
@@ -1628,42 +1639,10 @@ Site = {
         Site.onLoadPage(targetHref);
         Site.onRafLoading();
 
-        // return !1;
+        /** @bug ---> Intervention error on iOS devices */
+        !UserAgent.iOS ? !1 : !0;
       }
     }
-    // if (event.type === 'ontouchstart') {
-    //   console.log('ontouchstart event', event);
-    //   /**
-    //     * @param - {url}
-    //     * window.open(url, windowName, [windowFeatures]);
-    //    */
-    //   window.open(event.target.href, '_blank');
-    //   window.history.pushState(Site.historyState, null, '');
-    //   return !0;
-    // }
-
-    // if (event.type === 'click') {
-    //   console.log('click event', event);
-    //   window.open(event.target.href, '_blank');
-    //   window.history.pushState(Site.historyState, null, '');
-    //   return !1;
-    // }
-
-    // else {
-    //   /**
-    //     * @param - {url}
-    //     * window.open(url, windowName, [windowFeatures]);
-    //    */
-    //   window.open(event.target.href, '_blank');
-    //   window.history.pushState(Site.historyState, null, '');
-    //   return !1;
-    // }
-
-    /* Don't follow the link */
-    // event.preventDefault();
-
-    // event.stopPropagation();
-    // return !1;
   },
   /*--------------------------------------------------------------------------*/
   /*                           State Change Events                            */
@@ -2340,7 +2319,7 @@ Site = {
 
   scrollablePagination: () => {
     document.querySelectorAll('.random.first').forEach((obj) => obj.classList.remove('first'));
-    /** @NOTE -> Added to prevent classList of null. */
+    /** @note -> Added to prevent classList of null. */
     if (document.querySelector('#num_letter .current')) document.querySelector('#num_letter .current').classList.add('after');
 
     if (Site.multiplier === 1) {

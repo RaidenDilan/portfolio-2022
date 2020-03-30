@@ -370,43 +370,43 @@ svg.svg_underline {
 //   height: 100px;
 // }
 
-#state {
-  color: rgb(200,200,200);
-  // font-family: Monaco;
-  font-size: 12px;
-  line-height: 1em;
-  padding: 20px;
-  text-align: center;
-}
-
-#progressId {
-  font-size: 50px;
-  left: 50%;
-  letter-spacing: 0.1em;
-  margin: -25px 0 0 -100px;
-  position: absolute;
-  text-align: center;
-  top: 50%;
-  width: 200px;
-}
-
-#progressbar {
-  left: 10%;
-  position: absolute;
-  text-align: center;
-  top: 55%;
-  right: 10%;
-
-  .bar {
-    // @include box-shadow(cyan 0 0 10px 1px);
-    // @include transition(all 300ms);
-    background-color: cyan;
-    height: 1px;
-    display: inline-block;
-    width: 0%;
-  }
-
-  .bar.complete {
-    // @include box-shadow(rgba(255, 0, 0, 0) 0 0 10px 10px);
-  }
-}
+// #state {
+//   color: rgb(200,200,200);
+//   // font-family: Monaco;
+//   font-size: 12px;
+//   line-height: 1em;
+//   padding: 20px;
+//   text-align: center;
+// }
+//
+// #progressId {
+//   font-size: 50px;
+//   left: 50%;
+//   letter-spacing: 0.1em;
+//   margin: -25px 0 0 -100px;
+//   position: absolute;
+//   text-align: center;
+//   top: 50%;
+//   width: 200px;
+// }
+//
+// #progressbar {
+//   left: 10%;
+//   position: absolute;
+//   text-align: center;
+//   top: 55%;
+//   right: 10%;
+//
+//   .bar {
+//     // @include box-shadow(cyan 0 0 10px 1px);
+//     // @include transition(all 300ms);
+//     background-color: cyan;
+//     height: 1px;
+//     display: inline-block;
+//     width: 0%;
+//   }
+//
+//   .bar.complete {
+//     // @include box-shadow(rgba(255, 0, 0, 0) 0 0 10px 10px);
+//   }
+// }
