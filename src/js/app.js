@@ -276,15 +276,16 @@ Menu = {
   },
   showArrow: () => {
     Menu.arrowHidingTimeout && (clearTimeout(Menu.arrowHidingTimeout), Menu.arrowHidingTimeout = null);
-    Menu.button.isArrow && (Menu.button.isArrow = !0);
+    Menu.button.isArrow === !1 && (Menu.button.isArrow = !0);
+
     Menu.button.classList.remove('arrow-transition-out');
     Menu.button.classList.add('arrow-transition-in');
   },
   hideArrow: () => {
-    Menu.button.isArrow && (Menu.button.isArrow = !1);
-
+    // Menu.button.isArrow === !0 && (Menu.button.isArrow = !1);
     if (Menu.button.classList.contains('arrow-transition-in')) {
       Menu.arrowHidingTimeout && (clearTimeout(Menu.arrowHidingTimeout), Menu.arrowHidingTimeout = null);
+
       Menu.button.classList.remove('arrow-transition-in');
       Menu.button.classList.add('arrow-transition-out');
 
@@ -292,11 +293,11 @@ Menu = {
         Menu.button.classList.remove('arrow-transition-out');
         clearTimeout(Menu.arrowHidingTimeout);
         Menu.arrowHidingTimeout = null;
+        Menu.button.isArrow === !0 && (Menu.button.isArrow = !1);
       }, 500);
     }
   },
   arrowUpdateHandler: () => {
-    // return Site.scrolling && Site.scrolling.vars.target >= 10 ? Menu.showArrow() : Menu.hideArrow();
     return Site.scrolling && Site.scrolling.vars.target >= 10
       ? Menu.showArrow()
       : Site.scrolling.vars.target <= 10
@@ -307,11 +308,11 @@ Menu = {
     // TEST CODE BELLOW
     if (!Menu.button.isOpen) {
       if (!UserAgent.iOS) {
-        if (Site.body.classList.contains('single')) {
-          Menu.arrowUpdateHandler();
-          Site.footerInView();
-        }
-        else if (Site.body.classList.contains('about')) Menu.arrowUpdateHandler();
+        Site.body.classList.contains('single')
+          ? (Menu.arrowUpdateHandler(), Site.footerInView())
+          : Site.body.classList.contains('about')
+            ? Menu.arrowUpdateHandler()
+            : null;
       }
       else {
         if (Site.body.classList.contains('single')) {
@@ -894,6 +895,7 @@ Site = {
   displacementFilter2: null,
   displacementFilter3: null,
   clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
+  // clickEvent: ('ontouchstart' in document ? 'touchend' : 'click'),
   setup: () => {
     /*------------------------------------------------------------------------*/
     /*                             PRELOAD ASSETS                             */
@@ -1532,11 +1534,11 @@ Site = {
     Site.displacementSprite3.scale.x = 0.4;
 
     window.addEventListener('onpopstate', Site.onPopStateHandler);
-    // window.addEventListener('onunload', Site.onUnloadHandler);
+    window.addEventListener('onunload', Site.onUnloadHandler);
     // window.addEventListener('onhashchange', Site.onHashChangeHandler);
 
     /** @note -> State Change Events: Add these events to window element */
-    // window.onunload = Site.onUnloadHandler;
+    window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     // window.onhashchange = Site.onHashChangeHandler;
 
@@ -1547,7 +1549,10 @@ Site = {
     window.keyup = Site.onKeydownHandler;
     // window.keydown = Site.onKeydownHandler;
 
-    window.DeviceOrientationEvent && (window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1), window.ondeviceorientation = Site.circleHandler);
+    window.DeviceOrientationEvent && (
+      window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1),
+      window.ondeviceorientation = Site.circleHandler
+    );
 
     document.documentElement.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
     document.documentElement.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
@@ -1575,7 +1580,10 @@ Site = {
     document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     // document.documentElement.onmousemove = Site.mousePositionHandler;
 
-    document.documentElement.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+    // document.documentElement.addEventListener(Site.clickEvent, Site.projectChangedHandler);
+    window.addEventListener(Site.clickEvent, Site.projectChangedHandler);
+    // document.documentElement.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
+    // document.documentElement.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500));
     // document.documentElement.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
     // document.documentElement.onmousedown = Site.projectChangedHandler;
 
@@ -1661,15 +1669,16 @@ Site = {
     // history changed because of a page load
   },
   onHashChangeHandler: (event) => {
-    // TEST CODE BELLOW
-    console.log('[ onHashChangeHandler ] -+-> event', event);
     document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
   },
   onUnloadHandler: (event) => {
-    console.log('[ onUnloadHandler ] -+-> event', event);
     event = event || window.event;
     event.preventDefault() || false;
-    return window.scrollTo(0, 0); // scroll back to top when reloading page
+
+    UserAgent.iOS
+      ? window.scrollTo(0, 0) // scroll back to top when reloading page
+      : null; // scroll back to top when reloading page
+    // : Site.scrolling.scroll(0, 0); // scroll back to top when reloading page
   },
   /*--------------------------------------------------------------------------*/
   /*                           Called On Page Load                            */
@@ -1775,21 +1784,16 @@ Site = {
     };
   },
 
-  scrollBackUp: (target) => {
-    // Site.scrollingBackUpBtn = requestAnimationFrame(Site.scrollBackUp);
-    // if (!UserAgent.iOS && Math.round(Site.scrolling.vars.bounding / 7)) {
+  scrollBackUp: (event) => {
     if (!UserAgent.iOS) {
       if (Math.round(Site.scrolling.vars.bounding / 7)) {
         if (Site.scrolling !== null) {
           Site.scrolling.scrollTo(0);
-          let delay = Math.round(Site.scrolling.vars.current / 7);
-          Menu.arrowHidingTimeout && clearTimeout(Menu.arrowHidingTimeout);
 
-          Menu.arrowHidingTimeout = setTimeout(() => {
-            Menu.hideArrow();
-            clearTimeout(Menu.arrowHidingTimeout);
-            Menu.arrowHidingTimeout = null;
-          }, delay);
+          let delay = Math.round(Site.scrolling.vars.current / 7);
+
+          Menu.arrowHidingTimeout && clearTimeout(Menu.arrowHidingTimeout);
+          Menu.arrowHidingTimeout = setTimeout(() => Menu.hideArrow(), delay);
 
           document.querySelectorAll('.light').forEach((obj) => obj.classList.remove('light'));
           document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
@@ -1798,21 +1802,11 @@ Site = {
     }
     else {
       Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad');
-      // Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
-      // setTimeout(() => window.scrollTo({ top: Site.scrollMenuOpen, left: 0, behavior: 'smooth' }), 1);
-      // Menu.button.addEventListener('click', () => Site.scrollToTop(Site.vsSection, 300, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`)));
-      // Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad', () => console.log(`Just finished scrolling to ${window.pageYOffset}px`));
-      // Menu.button.addEventListener('click', () => scrollToTop(50000));
-      // window.scrollTo({ top: Site.scrollMenuOpen, left: 0, behavior: 'smooth' });
 
       let mobDelay = Math.round(window.pageYOffset / 7);
-      Menu.arrowHidingTimeout && clearTimeout(Menu.arrowHidingTimeout);
 
-      Menu.arrowHidingTimeout = setTimeout(() => {
-        Menu.hideArrow();
-        clearTimeout(Menu.arrowHidingTimeout);
-        Menu.arrowHidingTimeout = null;
-      }, mobDelay);
+      Menu.arrowHidingTimeout && clearTimeout(Menu.arrowHidingTimeout);
+      Menu.arrowHidingTimeout = setTimeout(() => Menu.hideArrow(), mobDelay);
 
       document.querySelectorAll('.light').forEach((obj) => obj.classList.remove('light'));
       document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
