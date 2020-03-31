@@ -185,6 +185,13 @@ body.dark-theme {
   //     color: $dark;
   //   }
   // }
+
+  #nav__menu .first_line, #nav__menu .second_line, #nav__menu .third_line {
+    background: $light;
+  }
+  #nav__menu svg.svg-circle circle {
+    stroke: $light;
+  }
 }
 
 #change-theme-btn {
@@ -314,6 +321,12 @@ body.dark-theme {
       .cls-1 {
         stroke: none;
       }
+    }
+    #nav__menu .first_line, #nav__menu .second_line, #nav__menu .third_line {
+      background: $light;
+    }
+    #nav__menu svg.svg-circle circle {
+      stroke: $light;
     }
   }
   #change-theme-btn {
