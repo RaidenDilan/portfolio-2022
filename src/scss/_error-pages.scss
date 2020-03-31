@@ -41,7 +41,7 @@
       @include flexbox(flex, column, center, center, center);
 
       h1 {
-        font: 100 normal 15vw/15vw 'Avenir Next' ,sans-serif;
+        font: 100 normal 15vw/15vw 'Avenir Next', sans-serif;
         letter-spacing: 10px;
         color: $white;
       }
@@ -74,13 +74,33 @@
   .notFound, .internalServerError {
     #main__content {
       div {
-        font: 100 normal 35vw/35vw 'Avenir Next', sans-serif;
+        h1 {
+          font: 100 normal 35vw/35vw 'Avenir Next', sans-serif;
+        }
+        p {
+          font: 600 normal 4.5vw/10vw $italiana;
+        }
+        a {
+          font: 600 normal 5vw/10vw $italiana;
+        }
       }
-      p {
-        font: 600 normal 4vw/4vw $italiana;
-      }
-      a {
-        font: 600 normal 5vw/10vw $italiana;
+    }
+  }
+}
+
+@media (max-width: 414px) {
+  .notFound, .internalServerError {
+    #main__content {
+      div {
+        h1 {
+          font: 100 normal 35vw/35vw 'Avenir Next', sans-serif;
+        }
+        p {
+          font: 600 normal 4.5vw/10vw $italiana;
+        }
+        a {
+          font: 600 normal 5vw/10vw $italiana;
+        }
       }
     }
   }
