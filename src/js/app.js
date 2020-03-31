@@ -1691,7 +1691,10 @@ Site = {
     event = event || window.event;
     event.preventDefault() || false;
 
-    Site.scrolling.scrollTo(0);
+    /**
+      * @NOTE - Scroll back to top when reloading page
+     **/
+    (!UserAgent.iOS && Site.scrolling) && (Site.scrolling.scrollTo(0), console.log('HHHHHHHHHHHHHH'));
     window.scrollTo(0, 0);
 
     // !UserAgent.iOS ? Site.scrolling.scrollTo(0) : window.scrollTo(0, 0); // scroll back to top when reloading page
