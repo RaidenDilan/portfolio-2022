@@ -405,7 +405,7 @@ Drag = {
 
     Drag.isDown = !1;
     Site.finishPosition = event.pageX;
-    Site.body.classList.remove('dragging'); // IS THIS NECESSARY?
+    Site.body.classList.remove('dragging'); // Used when in developement
 
     (Site.finishPosition - Site.startPosition < -Drag.threshold) && Site.blockedAction === !1
       ? Site.nextSlide()
@@ -847,6 +847,7 @@ Site = {
   bottomLink: !1,
   listenCursor: !1,
   supportsWheel: !1,
+  supportsTouch: !1,
   tempImageNumber: -1,
   speed: 0,
   formerDelta: 0,
@@ -894,8 +895,12 @@ Site = {
   displacementSprite3: null,
   displacementFilter2: null,
   displacementFilter3: null,
-  clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
   // clickEvent: ('ontouchstart' in document ? 'touchend' : 'click'),
+  // clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
+  // touchEvent: ('ontouchstart' in window ? 'touchmove' : 'touchend'),
+  // mouseEvent: ('onmousedown' in window ? 'mousemove' : 'mouseup'),
+  // mouseOverEvent: ('onmouseover' in window ? 'mousemove' : 'mouseout'),
+  // mouseEnterEvent: ('onmouseenter' in window ? 'mousemove' : 'mouseleave'),
   setup: () => {
     /*------------------------------------------------------------------------*/
     /*                             PRELOAD ASSETS                             */
@@ -997,13 +1002,13 @@ Site = {
 
       /** @note -> removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
-        obj.removeEventListener(Site.clickEvent, Site.onClickHandler, !1);
+        obj.removeEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.onClickHandler, !1);
         obj.onclick = null;
         obj.ontouchstart = null;
       });
 
       Site.links.forEach((obj) => {
-        obj.addEventListener(Site.clickEvent, Site.onClickHandler, !1);
+        obj.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.onClickHandler, !1);
         obj.onclick = Site.onClickHandler;
         obj.ontouchstart = Site.onClickHandler;
       });
@@ -1385,6 +1390,9 @@ Site = {
         Site.hovers.forEach((obj) => {
           obj.removeEventListener('mouseenter', Site.onHover);
           obj.removeEventListener('mouseleave', Site.offHover);
+
+          obj.onmouseenter = null;
+          obj.onmouseleave = null;
         });
       }
       else if (Site.body.classList.contains('single')) {
@@ -1554,44 +1562,54 @@ Site = {
 
     window.DeviceOrientationEvent && (
       window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1),
-      window.ondeviceorientation = Site.circleHandler
+      window.addEventListener('onorientationchange', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1),
+
+      window.ondeviceorientation = Site.circleHandler,
+      window.onorientationchange = Site.circleHandler
     );
 
-    document.documentElement.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    document.documentElement.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    document.documentElement.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    // window.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    // window.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    // window.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
 
-    // document.documentElement.wheel = Site.scrollEventHandler;
-    // document.documentElement.onmousewheel = Site.scrollEventHandler;
-    // document.documentElement.onmousedown = Site.scrollEventHandler;
+    // window.wheel = Site.scrollEventHandler;
+    // window.onscroll = Site.scrollEventHandler;
+    // window.onmousewheel = Site.scrollEventHandler;
+    // window.onmousedown = Site.scrollEventHandler;
 
     /**
       * Show Hide Menu Arrow events
       *
       * @note -> COULD ADD -+-> if (Site.body.classList.contains('single')) {}
     **/
-    document.documentElement.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.documentElement.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.documentElement.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
-    document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    window.addEventListener('scroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    window.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    window.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    window.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
+    // document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
 
-    // document.documentElement.wheel = Site.showHideArrow;
-    // document.documentElement.onmousewheel = Site.showHideArrow;
-    // document.documentElement.onmousedown = Site.showHideArrow;
+    // window.wheel = Site.showHideArrow;
+    // window.onscroll = Site.showHideArrow;
+    // window.onmousewheel = Site.showHideArrow;
+    // window.onmousedown = Site.showHideArrow;
     // document.documentElement.ontouchmove = Site.showHideArrow;
 
     document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     // document.documentElement.onmousemove = Site.mousePositionHandler;
 
-    // document.documentElement.addEventListener(Site.clickEvent, Site.projectChangedHandler);
-    window.addEventListener(Site.clickEvent, Site.projectChangedHandler);
-    // document.documentElement.addEventListener(Site.clickEvent, Site.projectChangedHandler, !1);
-    // document.documentElement.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500));
-    // document.documentElement.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
+    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.projectChangedHandler);
+    window.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.projectChangedHandler);
+    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.projectChangedHandler, !1);
+    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500));
+    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
     // document.documentElement.onmousedown = Site.projectChangedHandler;
 
-    document.documentElement.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
-    document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
+    document.documentElement.addEventListener('ontouchstart' in document ? 'touchstart' : 'touchend', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
+    document.documentElement.addEventListener('ontouchstart' in document ? 'touchmove' : 'touchend', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
+    // document.documentElement.addEventListener('touchend', Throttle.actThenThrottleEvents(Site.touchEndHandler, 500), !1);
+    // document.documentElement.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
+    // document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
 
     // document.documentElement.ontouchstart = Site.touchStartHandler;
     // document.documentElement.ontouchmove = Site.touchMoveHandler;
@@ -1678,10 +1696,11 @@ Site = {
     event = event || window.event;
     event.preventDefault() || false;
 
+    // scroll back to top when reloading page
     UserAgent.iOS
-      ? window.scrollTo(0, 0) // scroll back to top when reloading page
-      : null; // scroll back to top when reloading page
-    // : Site.scrolling.scroll(0, 0); // scroll back to top when reloading page
+      ? window.scrollTo(0, 0)
+      : null;
+    // : Site.scrolling.scroll(0, 0);
   },
   /*--------------------------------------------------------------------------*/
   /*                           Called On Page Load                            */
@@ -1702,8 +1721,7 @@ Site = {
   },
 
   projectChangedHandler: (event) => {
-    event = event || window.event;
-    event.preventDefault() || false;
+    !UserAgent.iOS && (event = event || window.event, event.preventDefault() || false);
 
     if (event.target.classList.contains('main__pagination')) Site.changePagination(event.target);
     else if (event.target.classList.contains('arrow-transition-in')) {
@@ -1901,6 +1919,10 @@ Site = {
   },
 
   touchStartHandler: (event) => {
+    event.type === 'touchstart'
+      ? Site.supportsTouch = !0
+      : Site.supportsTouch && true;
+
     Site.xDown = event.touches[0].clientX;
     Site.yDown = event.touches[0].clientY;
   },
@@ -1926,6 +1948,25 @@ Site = {
     Site.xDown = null;
     Site.yDown = null;
   },
+  touchEndHandler: (event) => {
+    console.log('touchEndHandler', event);
+  },
+  scrollEventHandler: (event) => {
+    event = event || window.event;
+    event.type === 'wheel'
+      ? Site.supportsWheel = !0
+      : Site.supportsWheel && true;
+
+    let delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
+    let checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
+    if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) {
+      delta > 0
+        ? Site.nextSlide()
+        : (delta < 0)
+          ? Site.prevSlide()
+          : false;
+    }
+  },
 
   onKeydownHandler: (event) => {
     event = event || window.event;
@@ -1950,23 +1991,6 @@ Site = {
   offHover: (event) => {
     event.target.classList.remove('feature');
     return document.querySelector('.main__pagination.current').classList.remove('temp');
-  },
-
-  scrollEventHandler: (event) => {
-    event = event || window.event;
-    event.type === 'wheel'
-      ? Site.supportsWheel = !0
-      : Site.supportsWheel && true;
-
-    let delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
-    let checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
-    if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) {
-      delta > 0
-        ? Site.nextSlide()
-        : (delta < 0)
-          ? Site.prevSlide()
-          : false;
-    }
   },
 
   nextSlide: () => {
@@ -2631,10 +2655,10 @@ Theme = {
 
     if (Theme.button) {
       Theme.button.addEventListener('click', Theme.enableDarkTheme, !1);
-      Theme.button.addEventListener('ontouchstart', Theme.enableDarkTheme, !1);
+      Theme.button.addEventListener('touchstart', Theme.enableDarkTheme, !1);
 
-      Theme.button.click = Theme.enableDarkTheme;
-      Theme.button.ontouchstart = Theme.enableDarkTheme;
+      Theme.button.onlick = Theme.enableDarkTheme;
+      Theme.button.touchstart = Theme.enableDarkTheme;
     }
 
     if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
