@@ -502,18 +502,30 @@ SunMoon = {
   DEFAULT_ZENITH: 90.8333, /** Default zenith */
   DEGREES_PER_HOUR: 360 / 24, /** Degrees per hour */
   MSEC_IN_HOUR: 60 * 60 * 1000, /** Msec in hour */
+  lat: null,
+  lng: null,
+  options: {
+    enableHighAccuracy: false // enableHighAccuracy = should the device take extra time or power to return a really accurate result, or should it give you the quick (but less accurate) answer?
+    // timeout: 0, // timeout = how long does the device have, in milliseconds to return a result?
+    // maximumAge: 0 // maximumAge = maximum age for a possible previously-cached position. 0 = must return the current position, not a prior cached position
+  },
   init: () => {
-    let lat = null;
-    let lng = null;
-
-    navigator.geolocation.getCurrentPosition((position) => {
-      /** Combined with geolocation. Sunset tonight at your location. */
-      lat = position.coords.latitude;
-      lng = position.coords.longitude;
-    }, (error) => console.log('Geolocation error', error));
-
-    SunMoon.sunset = SunMoon.getSunset(lat, lng); /** Sunset tonight at the Triggertrap office for today */
-    SunMoon.sunrise = SunMoon.getSunrise(lat, lng); /** Sunrise at London on Spring day 2020 */
+    'geolocation' in navigator && (
+      SunMoon.requestLocation(),
+      SunMoon.sunset = SunMoon.getSunset(SunMoon.lat, SunMoon.lng), /** Sunset tonight at the Triggertrap office for today */
+      SunMoon.sunrise = SunMoon.getSunrise(SunMoon.lat, SunMoon.lng) /** Sunrise at London on Spring day 2020 */
+    );
+  },
+  requestLocation: () => {
+    navigator.geolocation.getCurrentPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options); // call getCurrentPosition()
+  },
+  onSuccess: (position) => {
+    /** Combined with geolocation. Sunset tonight at your location. */
+    SunMoon.lat = position.coords.latitude;
+    SunMoon.lng = position.coords.longitude;
+  },
+  onError: (position) => {
+    console.log('Geolocation error', error);
   },
   getDayOfYear: (date) => {
     /**
@@ -1445,7 +1457,7 @@ Site = {
                     // TweenMax.set('#main__content', { clearProps: 'y' });
                     Site.exitOk = !0;
                     // window.scrollTo(Site.scrollMenuOpen, 0);
-                    window.scrollTo(0, 0);
+                    !UserAgent.iOS ? Site.scrolling.scrollTo(0) : window.scrollTo(0, 0); // scroll back to top when reloading page
                   }
                 });
               }
@@ -1679,11 +1691,11 @@ Site = {
     event = event || window.event;
     event.preventDefault() || false;
 
-    // scroll back to top when reloading page
-    UserAgent.iOS
-      ? window.scrollTo(0, 0)
-      : null;
-    // : Site.scrolling.scroll(0, 0);
+    Site.scrolling.scrollTo(0);
+    window.scrollTo(0, 0);
+
+    // !UserAgent.iOS ? Site.scrolling.scrollTo(0) : window.scrollTo(0, 0); // scroll back to top when reloading page
+    // !UserAgent.iOS && Site.scrolling !== null ? Site.scrolling.scrollTo(0) : window.scrollTo(0, 0); // scroll back to top when reloading page
   },
   /*--------------------------------------------------------------------------*/
   /*                           Called On Page Load                            */
