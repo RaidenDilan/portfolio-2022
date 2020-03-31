@@ -195,7 +195,8 @@ Menu = {
       ease: Power2.easeIn,
       onComplete: () => {
         UserAgent.iOS && (
-          window.scrollTo(Site.scrollMenuOpen, 0),
+          window.scrollTo(0, 0),
+          // window.scrollTo(Site.scrollMenuOpen, 0),
           Site.main.classList.add('black'),
           Site.body.classList.add('temp')
         );
@@ -252,7 +253,8 @@ Menu = {
         if (UserAgent.iOS) {
           Site.main.classList.remove('black');
           Site.body.classList.remove('temp');
-          window.scrollTo(0, Site.scrollMenuOpen); // --- OR --- equivalent of => window.scrollTo({ left: 0, top: Site.scrollMenuOpen });
+          window.scrollTo(0, 0); // --- OR --- equivalent of => window.scrollTo({ left: 0, top: Site.scrollMenuOpen });
+          // window.scrollTo(0, Site.scrollMenuOpen); // --- OR --- equivalent of => window.scrollTo({ left: 0, top: Site.scrollMenuOpen });
           // window.scrollTo(Site.scrollMenuOpen, 0); // --- OR --- equivalent of => window.scrollTo({ top: Site.scrollMenuOpen, left: 0});
         }
       }
@@ -1023,19 +1025,25 @@ Site = {
       // });
 
       if (!UserAgent.iOS) {
+        Site.body.classList.add('desktop');
+
+        document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mouseMoveHandler, 500), !1);
+        document.onmousemove = Site.mouseMoveHandler;
+
         /** @note -> adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
         Site.mouseOverLinks.forEach((obj) => {
-          document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.mouseOverHandler, 500), !1);
-          document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.mouseOutHandler, 500), !1);
+          obj.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.mouseOverHandler, 500), !1);
+          obj.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.mouseOutHandler, 500), !1);
 
-          document.onmouseover = Site.mouseOverHandler;
-          document.onmouseout = Site.mouseOutHandler;
+          obj.onmouseover = Site.mouseOverHandler;
+          obj.onmouseout = Site.mouseOutHandler;
         });
 
         Site.body.classList.contains('home')
           ? Drag.show()
           : Drag.hide();
       }
+      else Site.body.classList.add('mobile');
 
       Site.animations();
     };
@@ -1048,7 +1056,8 @@ Site = {
 
       // IF STATEMENT CONDITION DOES THE SAME EXPRESSION AS THE ABOVE IF STATEMENT
       UserAgent.iOS && (
-        window.scrollTo(Site.scrollMenuOpen, 0),
+        window.scrollTo(0, 0),
+        // window.scrollTo(Site.scrollMenuOpen, 0),
         Site.main.classList.remove('black')
       );
 
@@ -1384,7 +1393,14 @@ Site = {
         //   onComplete: () => {}
         // });
 
-        TweenMax.to('#main__content', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitOk = !0 });
+        TweenMax.to('#main__content', 1, {
+          opacity: 0,
+          delay: 0.4,
+          ease: Power2.easeInOut,
+          onComplete: () => {
+            Site.exitOk = !0;
+          }
+        });
         Site.hovers = document.querySelectorAll('.main__pagination');
 
         Site.hovers.forEach((obj) => {
@@ -1437,7 +1453,8 @@ Site = {
                   onComplete: () => {
                     // TweenMax.set('#main__content', { clearProps: 'y' });
                     Site.exitOk = !0;
-                    window.scrollTo(Site.scrollMenuOpen, 0);
+                    // window.scrollTo(Site.scrollMenuOpen, 0);
+                    window.scrollTo(0, 0);
                   }
                 });
               }
@@ -1459,7 +1476,9 @@ Site = {
           opacity: 0,
           clearProps: 'backgroundColor',
           ease: Power2.easeInOut,
-          onComplete: () => Site.exitOk = !0
+          onComplete: () => {
+            Site.exitOk = !0;
+          }
         });
       }
       else Site.exitOk = !0;
@@ -1489,29 +1508,27 @@ Site = {
 
     Site.init();
 
-    if (!UserAgent.iOS) {
-      Site.body.classList.add('desktop');
-
-      document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mouseMoveHandler, 500), !1);
-      document.onmousemove = Site.mouseMoveHandler;
-
-      /**
-        * @note -> add mouse events to each element with the class of link_hover and animate the cursor accordingly
-       **/
-      Site.mouseOverLinks.forEach((obj) => {
-        document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.mouseOverHandler, 500), !1);
-        document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.mouseOutHandler, 500), !1);
-
-        document.onmouseout = Site.mouseOverHandler;
-        document.onmouseover = Site.mouseOutHandler;
-      });
-
-      Site.body.classList.contains('home')
-        ? Drag.show()
-        : Drag.hide();
-    }
-
-    Site.body.classList.add('mobile');
+    // if (!UserAgent.iOS) {
+    //   // Site.body.classList.add('desktop');
+    //
+    //   document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mouseMoveHandler, 500), !1);
+    //   document.onmousemove = Site.mouseMoveHandler;
+    //
+    //   /**
+    //     * @note -> add mouse events to each element with the class of link_hover and animate the cursor accordingly
+    //    **/
+    //   Site.mouseOverLinks.forEach((obj) => {
+    //     document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.mouseOverHandler, 500), !1);
+    //     document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.mouseOutHandler, 500), !1);
+    //
+    //     document.onmouseout = Site.mouseOverHandler;
+    //     document.onmouseover = Site.mouseOutHandler;
+    //   });
+    //
+    //   // Site.body.classList.contains('home')
+    //   //   ? Drag.show()
+    //   //   : Drag.hide();
+    // }
 
     Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
     Site.contact.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
@@ -1605,8 +1622,8 @@ Site = {
     document.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
     // document.addEventListener('touchend', Throttle.actThenThrottleEvents(Site.touchEndHandler, 500), !1);
 
-    // document.ontouchstart = Site.touchStartHandler;
-    // document.ontouchmove = Site.touchMoveHandler;
+    document.ontouchstart = Site.touchStartHandler;
+    document.ontouchmove = Site.touchMoveHandler;
     // document.ontouchend = Site.touchEndHandler;
   },
   /*--------------------------------------------------------------------------*/
