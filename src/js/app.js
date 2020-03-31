@@ -898,7 +898,7 @@ Site = {
   displacementFilter2: null,
   displacementFilter3: null,
   // clickEvent: ('ontouchstart' in document ? 'touchend' : 'click'),
-  // clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
+  clickEvent: ('ontouchstart' in window ? 'touchend' : 'click'),
   // touchEvent: ('ontouchstart' in window ? 'touchmove' : 'touchend'),
   // mouseEvent: ('onmousedown' in window ? 'mousemove' : 'mouseup'),
   // mouseOverEvent: ('onmouseover' in window ? 'mousemove' : 'mouseout'),
@@ -1004,13 +1004,13 @@ Site = {
 
       /** @note -> removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
-        obj.removeEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.onClickHandler, !1);
+        obj.removeEventListener(Site.clickEvent, Site.onClickHandler, !1);
         obj.onclick = null;
         obj.ontouchstart = null;
       });
 
       Site.links.forEach((obj) => {
-        obj.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.onClickHandler, !1);
+        obj.addEventListener(Site.clickEvent, Site.onClickHandler, !1);
         obj.onclick = Site.onClickHandler;
         obj.ontouchstart = Site.onClickHandler;
       });
@@ -1615,7 +1615,7 @@ Site = {
     document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     // document.onmousemove = Site.mousePositionHandler;
 
-    document.addEventListener('ontouchstart' in window ? 'touchend' : 'click', Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
+    document.addEventListener(Site.clickEvent, Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
     // document.onmousedown = Site.projectChangedHandler;
 
     document.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
@@ -2680,7 +2680,7 @@ Theme = {
     if (Theme.button) {
       // Theme.button.addEventListener('click', Theme.enableDarkTheme, !1);
       // Theme.button.addEventListener('touchstart', Theme.enableDarkTheme, !1);
-      Theme.button.addEventListener('ontouchstart' in document ? 'touchstart' : 'click', Theme.enableDarkTheme, !1);
+      Theme.button.addEventListener(Site.clickEvent, Theme.enableDarkTheme, !1);
 
       Theme.button.click = Theme.enableDarkTheme;
       Theme.button.touchstart = Theme.enableDarkTheme;
