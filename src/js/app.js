@@ -1548,7 +1548,6 @@ Site = {
     window.addEventListener('onunload', Site.onUnloadHandler);
     // window.addEventListener('onhashchange', Site.onHashChangeHandler);
 
-    /** @note -> State Change Events: Add these events to window element */
     window.onunload = Site.onUnloadHandler;
     window.onpopstate = Site.onPopStateHandler;
     // window.onhashchange = Site.onHashChangeHandler;
@@ -1556,6 +1555,7 @@ Site = {
     window.addEventListener('resize', Throttle.actThenThrottleEvents(Site.onResizeHandler, 500), !1);
     window.addEventListener('keyup', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
     // window.addEventListener('keydown', Throttle.actThenThrottleEvents(Site.onKeydownHandler, 500), !1);
+
     window.resize = Site.onResizeHandler;
     window.keyup = Site.onKeydownHandler;
     // window.keydown = Site.onKeydownHandler;
@@ -1568,10 +1568,10 @@ Site = {
       window.onorientationchange = Site.circleHandler
     );
 
-    // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    // window.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    // window.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
-    // window.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    window.addEventListener('wheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    window.addEventListener('mousewheel', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
+    window.addEventListener('DOMMouseScroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
 
     // window.wheel = Site.scrollEventHandler;
     // window.onscroll = Site.scrollEventHandler;
@@ -1598,21 +1598,16 @@ Site = {
     document.documentElement.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mousePositionHandler, 500), !1);
     // document.documentElement.onmousemove = Site.mousePositionHandler;
 
-    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.projectChangedHandler);
-    window.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.projectChangedHandler);
-    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Site.projectChangedHandler, !1);
-    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500));
-    // document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
+    document.documentElement.addEventListener('ontouchstart' in document ? 'touchend' : 'click', Throttle.actThenThrottleEvents(Site.projectChangedHandler, 500), !1);
     // document.documentElement.onmousedown = Site.projectChangedHandler;
 
-    document.documentElement.addEventListener('ontouchstart' in document ? 'touchstart' : 'touchend', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
-    document.documentElement.addEventListener('ontouchstart' in document ? 'touchmove' : 'touchend', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
+    document.documentElement.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
+    document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
     // document.documentElement.addEventListener('touchend', Throttle.actThenThrottleEvents(Site.touchEndHandler, 500), !1);
-    // document.documentElement.addEventListener('touchstart', Throttle.actThenThrottleEvents(Site.touchStartHandler, 500), !1);
-    // document.documentElement.addEventListener('touchmove', Throttle.actThenThrottleEvents(Site.touchMoveHandler, 500), !1);
 
     // document.documentElement.ontouchstart = Site.touchStartHandler;
     // document.documentElement.ontouchmove = Site.touchMoveHandler;
+    // document.documentElement.ontouchend = Site.touchEndHandler;
   },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
@@ -1726,7 +1721,7 @@ Site = {
     if (event.target.classList.contains('main__pagination')) Site.changePagination(event.target);
     else if (event.target.classList.contains('arrow-transition-in')) {
       Site.scrollBackUp(event.target);
-      Site.showSideNav(); // display about and contact fixed links after clicking scrollBackUp()
+      Site.showSideNav();
     }
     else if (event.target.classList.contains('to_next') && Site.blockedAction === !1) Site.nextSlide();
     else if (event.target.classList.contains('to_prev') && Site.blockedAction === !1) Site.prevSlide();
@@ -1935,18 +1930,16 @@ Site = {
     let xDiff = Site.xDown - xUp;
     let yDiff = Site.yDown - yUp;
 
-    let expression = Site.body.classList.contains('home') && Site.blockedAction === !1;
+    let checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
+    if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) {
+      /* most significant */
+      if (Math.abs(xDiff) > Math.abs(yDiff)) xDiff > 0 ? Site.nextSlide() : Site.prevSlide();
+      else yDiff > 0 ? Site.nextSlide() : Site.prevSlide();
 
-    if (Math.abs(xDiff) > Math.abs(yDiff)) { /* most significant */
-      if (expression) xDiff > 0 ? Site.nextSlide() : Site.prevSlide();
+      /* reset values */
+      Site.xDown = null;
+      Site.yDown = null;
     }
-    else {
-      if (expression) yDiff > 0 ? Site.nextSlide() : Site.prevSlide();
-    }
-
-    /* reset values */
-    Site.xDown = null;
-    Site.yDown = null;
   },
   touchEndHandler: (event) => {
     console.log('touchEndHandler', event);
@@ -2654,10 +2647,11 @@ Theme = {
     SunMoon.init();
 
     if (Theme.button) {
-      Theme.button.addEventListener('click', Theme.enableDarkTheme, !1);
-      Theme.button.addEventListener('touchstart', Theme.enableDarkTheme, !1);
+      // Theme.button.addEventListener('click', Theme.enableDarkTheme, !1);
+      // Theme.button.addEventListener('touchstart', Theme.enableDarkTheme, !1);
+      Theme.button.addEventListener('ontouchstart' in document ? 'touchstart' : 'click', Theme.enableDarkTheme, !1);
 
-      Theme.button.onlick = Theme.enableDarkTheme;
+      Theme.button.click = Theme.enableDarkTheme;
       Theme.button.touchstart = Theme.enableDarkTheme;
     }
 
