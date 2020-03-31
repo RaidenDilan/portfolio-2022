@@ -1004,7 +1004,7 @@ Site = {
 
       /** @note -> removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
-        obj.removeEventListener(Site.clickEvent, Site.onClickHandler, !1);
+        obj.removeEventListener(Site.clickEvent, Site.onClickHandler);
         obj.onclick = null;
         obj.ontouchstart = null;
       });
@@ -1014,15 +1014,6 @@ Site = {
         obj.onclick = Site.onClickHandler;
         obj.ontouchstart = Site.onClickHandler;
       });
-
-      // if (!Menu.button.classList.contains('.point3.black')) Menu.button.style.setProperty('--button-color', 'blue'); // Menu.button.childNodes.forEach((obj) => obj.style.removeProperty('--button-color'));
-      // else Menu.button.style.setProperty('--button-color', 'red'); // Menu.button.childNodes.forEach((obj) => obj.style.setProperty('--button-color'));
-      // Site.preloadImages();
-      // let root = document;
-      // root.addEventListener('mousemove', (e) => {
-      //   root.style.setProperty('--mouse-x', e.clientX + 'px');
-      //   root.style.setProperty('--mouse-y', e.clientY + 'px');
-      // });
 
       if (!UserAgent.iOS) {
         Site.body.classList.add('desktop');
@@ -1508,28 +1499,6 @@ Site = {
 
     Site.init();
 
-    // if (!UserAgent.iOS) {
-    //   // Site.body.classList.add('desktop');
-    //
-    //   document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mouseMoveHandler, 500), !1);
-    //   document.onmousemove = Site.mouseMoveHandler;
-    //
-    //   /**
-    //     * @note -> add mouse events to each element with the class of link_hover and animate the cursor accordingly
-    //    **/
-    //   Site.mouseOverLinks.forEach((obj) => {
-    //     document.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.mouseOverHandler, 500), !1);
-    //     document.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.mouseOutHandler, 500), !1);
-    //
-    //     document.onmouseout = Site.mouseOverHandler;
-    //     document.onmouseover = Site.mouseOutHandler;
-    //   });
-    //
-    //   // Site.body.classList.contains('home')
-    //   //   ? Drag.show()
-    //   //   : Drag.hide();
-    // }
-
     Site.about.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
     Site.contact.style.top = Math.abs(window.innerHeight / 2) - 25 + 'px';
 
@@ -1632,6 +1601,8 @@ Site = {
   onClickHandler: (event) => {
     /** @note - Using Event Capturing **/
     !UserAgent.iOS && (event = event || window.event, event.preventDefault() || false);
+
+    event.type === 'touchstart' ? Site.supportsTouch = !0 : Site.supportsTouch && true;
 
     if (event.target.closest('.external')) {
       window.open(event.target.href, '_blank');
@@ -1865,6 +1836,20 @@ Site = {
       }
     }
   },
+  mouseMoveHandler: (event) => {
+    event = event || window.event;
+    event.preventDefault() || false;
+
+    let pad = 26;
+    let pad2 = 5;
+
+    !Drag.cursorMain.classList.contains('visible')
+      ? Drag.toggleVisible()
+      : Drag.cursorMain.classList.contains('visible') ? (
+        TweenMax.to(Drag.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }), // Drag.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
+        TweenMax.to(Drag.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }) // Drag.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
+      ) : false;
+  },
   mouseOutHandler: (event) => {
     event = event || window.event;
     event.preventDefault() || false;
@@ -1905,20 +1890,6 @@ Site = {
       document = Site.mouseOverHandler;
     });
   },
-  mouseMoveHandler: (event) => {
-    event = event || window.event;
-    event.preventDefault() || false;
-
-    let pad = 26;
-    let pad2 = 5;
-
-    !Drag.cursorMain.classList.contains('visible')
-      ? Drag.toggleVisible()
-      : Drag.cursorMain.classList.contains('visible') ? (
-        TweenMax.to(Drag.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }), // Drag.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
-        TweenMax.to(Drag.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }) // Drag.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
-      ) : false;
-  },
 
   circleHandler: (event) => {
     window.orientation === 0
@@ -1931,10 +1902,7 @@ Site = {
   },
 
   touchStartHandler: (event) => {
-    event.type === 'touchstart'
-      ? Site.supportsTouch = !0
-      : Site.supportsTouch && true;
-
+    event.type === 'touchstart' ? Site.supportsTouch = !0 : Site.supportsTouch && true;
     Site.xDown = event.touches[0].clientX;
     Site.yDown = event.touches[0].clientY;
   },
@@ -1975,6 +1943,7 @@ Site = {
   touchEndHandler: (event) => {
     console.log('touchEndHandler', event);
   },
+
   scrollEventHandler: (event) => {
     event = event || window.event;
     event.type === 'wheel'
