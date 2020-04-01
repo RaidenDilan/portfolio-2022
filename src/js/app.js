@@ -1009,12 +1009,14 @@ Site = {
       this.pixiMenuCover = document.getElementById('pixi_menu');
       this.themeBtn = document.getElementById('change-theme-btn');
       this.toNextProject = document.getElementById('to_next_project');
+      if (this.toNextProject) this.toNextProjectLetter = this.toNextProject.querySelectorAll('span');
 
       this.links = document.querySelectorAll('a');
       this.vsDivs = document.querySelectorAll('.vs-div');
       this.mouseOverLinks = document.querySelectorAll('.link');
       this.pixiMenuLinks = document.querySelectorAll('#nav__menu__links li');
       this.pixiMenuAnchors = document.querySelectorAll('#nav__menu__links li a');
+      this.innerProjectName = document.getElementById('inner_project_name');
 
       UserAgent.init();
 
@@ -1270,7 +1272,7 @@ Site = {
         }
         else {
           Site.toNextProject.innerHTML = Site.toNextProject.getAttribute('data-next');
-          TweenMax.set('#inner_project_name', { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px' });
+          TweenMax.set(Site.innerProjectName, { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px' });
           TweenMax.set('#project_name .stag', { opacity: 1 });
         }
 
@@ -1476,8 +1478,16 @@ Site = {
 
           if (Site.scrolling !== null) {
             diff = Site.main.clientHeight - (Site.scrolling.vars.current + window.innerHeight);
-            TweenMax.to('#main__content', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+            TweenMax.to('#main__content', 1.2, {
+              y: -(diff + window.innerHeight),
+              ease: Power2.easeInOut
+              // onStart: () => {},
+              // onComplete: () => {}
+            });
+
             Menu.hideNavMenu();
+            Site.innerProjectName.classList.add('changing');
+            document.querySelector('.bottom_link').classList.add('changing');
 
             TweenMax.to('#next_proj > div', 1.2, {
               y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
@@ -1486,6 +1496,7 @@ Site = {
                 TweenMax.to('#next_proj > div', 0.4, {
                   opacity: 0,
                   ease: Power2.easeInOut,
+                  // onStart: () => {},
                   onComplete: () => {
                     Menu.showNavMenu();
                     Site.exitOk = !0;
@@ -1496,8 +1507,16 @@ Site = {
           }
           else {
             diff = Site.main.clientHeight - (window.pageYOffset + window.innerHeight);
-            TweenMax.to('#next_proj, .inner_img', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+            TweenMax.to('#next_proj, .inner_img', 1.2, {
+              y: -(diff + window.innerHeight),
+              ease: Power2.easeInOut
+              // onStart: () => {},
+              // onComplete: () => {}
+            });
+
             Menu.hideNavMenu();
+            Site.innerProjectName.classList.add('changing');
+            document.querySelector('.bottom_link').classList.add('changing');
 
             TweenMax.to('#next_proj > div', 1.2, {
               y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
@@ -1506,11 +1525,13 @@ Site = {
                 TweenMax.to('#next_proj > div', 0.4, {
                   opacity: 0,
                   ease: Power2.easeInOut,
+                  // onStart: () => {},
                   onComplete: () => {
-                    Menu.showNavMenu();
                     // TweenMax.set('#main__content', { clearProps: 'y' });
+                    Menu.showNavMenu();
                     Site.exitOk = !0;
-                    // window.scrollTo(Site.scrollMenuOpen, 0);
+
+                    /*** @param - window.scrollTo({Site.scrollMenuOpen}), 0) **/
                     !UserAgent.iOS ? Site.scrolling.scrollTo(0) : window.scrollTo(0, 0); // scroll back to top when reloading page
                   }
                 });
@@ -1700,7 +1721,8 @@ Site = {
         let targetHTML = event.target.innerHTML;
 
         event.target.closest('.bottom_link')
-          ? (Site.bottomLink = !0, event.target.classList.add('changing'))
+          ? Site.bottomLink = !0
+          // ? (Site.bottomLink = !0, event.target.classList.add('changing'))
           : Site.bottomLink = !1;
 
         Site.scrolling !== null && Site.scrolling.scrollTo(0, 0);
@@ -2579,7 +2601,7 @@ Site = {
       Site.playOnce = !0;
       Site.animateRandomElements('#to_next_project span');
       TweenMax.staggerTo(Site.random, 0.4, { opacity: 0, ease: Power2.easeIn }, 0.05, Site.animateNextBtn);
-      TweenMax.to('#inner_project_name', 0.4, { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px', delay: 0.4, ease: Power2.easeOut });
+      TweenMax.to(Site.innerProjectName, 0.4, { x: (document.getElementById('project_name').clientWidth + 10) / 2 + 'px', delay: 0.4, ease: Power2.easeOut });
       TweenMax.staggerTo('.stag', 0.4, { opacity: 1, delay: 0.4, ease: Power2.easeOut }, -0.02);
     }
   },
@@ -2599,18 +2621,22 @@ Site = {
   },
   animateNextInnerBtn: () => {
     Site.toNextProject.innerHTML = '<span>N</span><span>e</span><span>x</span><span>t</span>';
-    TweenMax.set('#to_next_project span', { opacity: 0 });
+    TweenMax.set(Site.toNextProjectLetter, { opacity: 0 });
     Site.animateRandomElements('#to_next_project span');
     TweenMax.staggerTo(Site.random, 0.4, { opacity: 1, ease: Power2.easeOut }, 0.05);
-    TweenMax.to('#inner_project_name', 0.4, { x: '0px', ease: Power2.easeOut });
+    TweenMax.to(Site.innerProjectName, 0.4, { x: '0px', ease: Power2.easeOut });
     TweenMax.staggerTo('.stag', 0.4, { opacity: 0, ease: Power2.easeOut }, 0.02);
   },
   /*--------------------------------------------------------------------------*/
   /*                        HELPER / UTILITY FUNCTIONS                        */
   /*--------------------------------------------------------------------------*/
   animateRandomElements: (element) => {
+    // console.log('[ animateRandomElements ] -+-> element -+->', element);
     Site.random = [];
-    document.querySelectorAll(element).forEach((obj) => Site.random.push(obj));
+    document.querySelectorAll(element).forEach((obj) => {
+      // console.log('[ animateRandomElements ] -+-> obj -+->', obj);
+      Site.random.push(obj);
+    });
     return Site.random.sort(() => 0.5 - Math.random());
   },
   showSideNav: () => {

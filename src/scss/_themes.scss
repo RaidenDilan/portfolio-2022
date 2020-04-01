@@ -3,18 +3,11 @@ $light: #f2f2f7;
 $shadow: #d9d9d9;
 
 :root {
-  // font-size: 25vmin;
-  // font-family: 'Roboto', sans-serif;
   width: 100%;
   height: 100%;
 }
 
 body {
-  // margin: 0;
-  // display: flex;
-  // justify-content: space-around;
-  // align-items: center;
-  // height: 100%;
   background-color: $light;
   color: $dark;
   transition: all 0.15s ease-out;
@@ -175,17 +168,6 @@ body.dark-theme {
     stroke: $light;
   }
 
-  // #main__content #next_proj {
-  //   background: $light;
-  //
-  //   > div a span {
-  //     color: $dark;
-  //   }
-  //   > div div {
-  //     color: $dark;
-  //   }
-  // }
-
   #nav__menu {
     .first_line, .second_line, .third_line {
       background: $light;
@@ -259,21 +241,6 @@ body.dark-theme {
     cursor: pointer;
     opacity: 0;
     z-index: 2;
-
-    // &:checked + span {
-    //   background-color: $dark;
-    // }
-    // &:active + span {
-    //   opacity: 0.5;
-    // }
-    // &:checked + span:before {
-    //   background-color: $dark;
-    //   transform: translate(65px, -10px);
-    // }
-    // &:checked + span:after {
-    //   background-color: $light;
-    //   transform: translate(79px, 0px);
-    // }
   }
 
   &.light {
@@ -301,7 +268,6 @@ body.dark-theme {
       &:before {
         background-color: $light;
         transform: translate(24px, -2px);
-        // transform: translate(22px, -2px);
       }
     }
   }
@@ -336,33 +302,6 @@ body.dark-theme {
   #change-theme-btn {
     left: 100px;
   }
-  // #about, #contact {
-  //   .all_work {
-  //     text {
-  //       font: 400 17px/16px 'MullerLight', Arial, Helvetica, sans-serif;
-  //     }
-  //     .cls-1 {
-  //       stroke: none;
-  //     }
-  //   }
-  //   &.black {
-  //     .all_work {
-  //       .cls-1 {
-  //         stroke: none;
-  //       }
-  //     }
-  //   }
-  // }
-  // #about.black .all_work, #contact.black .all_work {
-  //   text {
-  //     fill: $light;
-  //   }
-  // }
-  // #about.black .all_work, #contact.black .all_work {
-  //   .cls-1 {
-  //     stroke: none;
-  //   }
-  // }
 }
 
 @media (max-width: 414px) {

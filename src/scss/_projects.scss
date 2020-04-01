@@ -1,11 +1,6 @@
 header {
   transition: all 0.3s ease-in;
-  // transition: all 0.3s ease-in, background 0.5s ease-in; // ORIGINAL
   transition-delay: 0.25s;
-
-  .svg-circle {
-    // transform: rotate(94deg);
-  }
 
   .projects {
     pointer-events: bounding-box;
@@ -82,7 +77,7 @@ header {
       }
     }
 
-    // // animating class is currently disabled in app.js
+    // animating class is currently disabled in app.js
     // &.animating {
     //   div {
     //     transition:
@@ -95,7 +90,6 @@ header {
 
     &.closing {
       transition: transform 0.5s ease-in-out 0.125s;
-      // transition: transform 0.5s ease-in-out 0.375s;
 
       div {
         width: 24px;
@@ -106,14 +100,6 @@ header {
           opacity 0.001s linear 0.5s,
           background-color 0.25s linear;
       }
-
-      // &:hover {
-      //   div {
-      //     &:nth-child(3) {
-      //       width: 24px;
-      //     }
-      //   }
-      // }
     }
 
     &.arrow-transition-in {
@@ -219,8 +205,7 @@ header {
       margin: 0 auto;
       width: 62%;
       position: relative;
-      // -webkit-transform-origin: 50% 50%;
-              transform-origin: 50% 50%;
+      transform-origin: 50% 50%;
     }
   }
   #next_proj {
@@ -234,39 +219,42 @@ header {
       display: block;
       width: 80%;
       margin-left: 10%;
-      // margin: 0 auto;
       text-align: center;
       position: relative;
       top: 50%;
-      // -webkit-transform: translateY(-50%);
-              transform: translateY(-50%);
+      transform: translateY(-50%);
 
       div {
         position: absolute;
         color: $white;
         @include stroke(0px, $white);
+        text-shadow: -1px 1px 6px rgba(239, 239, 245, 0.9);
         font: 400 normal 14px/14px $graphik;
-        // font: 400 normal 16px/16px 'Adelon';
-        // font: 400 normal 15px/15px $italiana, serif;
         width: 100%;
         text-align: center;
         padding-top: 2vw;
 
         > span {
-          // font: 400 normal 13px/13px $graphik;
+          text-shadow: -1px 1px 6px rgba(239, 239, 245, 0.9);
           display: inline-block;
           position: absolute;
           white-space: nowrap;
           right: calc(50% + 34px);
         }
+        &.changing {
+          color: $black;
+
+          > span {
+            color: $black;
+          }
+        }
       }
       a {
         display: inline-block;
-        // font: 500 normal 100px/100px $italiana, serif;
-        // letter-spacing: 1px;
         text-transform: uppercase;
         color: $black;
         @include stroke(1px, $white);
+        text-shadow: -1px 1px 6px rgba(239, 239, 245, 0.9);
 
         &.changing {
           span {
@@ -292,16 +280,9 @@ header {
         }
       }
     }
-    // .bottom_link {}
-    // #to_next_project {
-    //   display: inline-block;
-    // }
   }
   .datas {
-    // font: 900 normal 12px/28px $italiana;
     font: 400 normal 13px/28px $graphik;
-    // letter-spacing: 2px;
-    // font: 400 normal 13px/28px $graphik;
     padding: 10vh 0 5vh 65vw;
 
     svg {
@@ -313,8 +294,6 @@ header {
 
       &:last-child {
         margin-top: 8px;
-        // font: 500 normal 13px/28px $graphik;
-        // margin-top: 28px;
       }
     }
     a {
@@ -322,8 +301,6 @@ header {
       display: block;
       color: $black;
       padding: 8px 0 15px 8px;
-      // padding-bottom: 15px;
-      // padding-left: 8px;
       margin-left: -8px;
 
       .svg_menu {
@@ -353,7 +330,6 @@ header {
           }
           &:nth-child(11) {
             margin-bottom: -2px;
-            // margin-bottom: -3px;
           }
         }
       }
@@ -390,12 +366,10 @@ header {
   #main__content {
     #next_proj {
       > div {
-        // margin-left: 5%;
         margin: 0 auto;
         width: 90%;
 
         a {
-          // font: 500 normal 19vw/24vw 'Adelon';
           font: 500 normal 10vw/10vw $italiana;
 
           span {
@@ -404,7 +378,6 @@ header {
         }
         div {
           width: 85%;
-          // padding-top: 7vw;
 
           span {
             position: unset;
@@ -430,10 +403,6 @@ header {
       width: calc(100% - 72px);
     }
   }
-
-  // .datas {
-  //   padding: 11vw 0 15vw 37vw;
-  // }
 }
 
 @media (max-width: 414px) {
@@ -443,8 +412,6 @@ header {
         width: 90%;
 
         a {
-          // font: 500 normal 10vw/10vw $italiana;
-
           span {
             font: 500 normal 12vw/12vw $italiana, serif;
           }
