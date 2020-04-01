@@ -345,6 +345,12 @@ Menu = {
     Menu.logo.classList.remove('light');
     // Site.about.classList.remove('light');
     // Site.contact.classList.remove('light');
+  },
+  hideNavMenu: () => {
+    TweenMax.set('#nav__header', { opacity: 0 });
+  },
+  showNavMenu: () => {
+    TweenMax.set('#nav__header', { opacity: 1 });
   }
 };
 
@@ -510,6 +516,50 @@ SunMoon = {
     // maximumAge: 0 // maximumAge = maximum age for a possible previously-cached position. 0 = must return the current position, not a prior cached position
   },
   init: () => {
+    /**
+      * @param - {name} - {String} - 'geolocation'
+      * @param - {res} - permissionStatus
+     **/
+    // navigator.permissions
+    //   .query({ name: 'geolocation' })
+    //   .then((res) => {
+    //     if (res.state === 'granted') {
+    //       SunMoon.permissionGranted = res.state;
+    //       // console.log('res.state - granted --+->', res.state);
+    //       // SunMoon.geoIsAllowed();
+    //     }
+    //     else if (res.state === 'denied') {
+    //       SunMoon.permissionGranted = res.state;
+    //       // console.log('res.state - denied --+->', res.state);
+    //     }
+    //     else {
+    //       SunMoon.permissionGranted = res.state;
+    //       // console.log('res.state = prompt --+->', res.state);
+    //       // SunMoon.geoIsAllowed();
+    //     }
+    //
+    //     res.onchange = ((event) => {
+    //       if (event.type === 'change') {
+    //         const newState = event.target.state;
+    //         if (newState === 'granted') {
+    //           SunMoon.permissionGranted = newState;
+    //           // console.log('We will be together forever! --+->>', newState);
+    //           // SunMoon.geoIsAllowed();
+    //         }
+    //         else if (newState === 'denied') {
+    //           SunMoon.permissionGranted = newState;
+    //           // console.log('why did you decide to block us? --+->>', newState);
+    //         }
+    //         else {
+    //           SunMoon.permissionGranted = newState;
+    //           // console.log('Thanks for reverting things back to normal --+->>', newState);
+    //           // SunMoon.geoIsAllowed();
+    //         }
+    //       }
+    //     });
+    //   });
+
+    // 'geolocation' in navigator && (SunMoon.permissionGranted === 'prompt' && SunMoon.geoIsAllowed());
     'geolocation' in navigator && (
       SunMoon.requestLocation(),
       SunMoon.sunset = SunMoon.getSunset(SunMoon.lat, SunMoon.lng), /** Sunset tonight at the Triggertrap office for today */
@@ -1427,6 +1477,7 @@ Site = {
           if (Site.scrolling !== null) {
             diff = Site.main.clientHeight - (Site.scrolling.vars.current + window.innerHeight);
             TweenMax.to('#main__content', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+            Menu.hideNavMenu();
 
             TweenMax.to('#next_proj > div', 1.2, {
               y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
@@ -1436,6 +1487,7 @@ Site = {
                   opacity: 0,
                   ease: Power2.easeInOut,
                   onComplete: () => {
+                    Menu.showNavMenu();
                     Site.exitOk = !0;
                   }
                 });
@@ -1445,6 +1497,7 @@ Site = {
           else {
             diff = Site.main.clientHeight - (window.pageYOffset + window.innerHeight);
             TweenMax.to('#next_proj, .inner_img', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+            Menu.hideNavMenu();
 
             TweenMax.to('#next_proj > div', 1.2, {
               y: diff + window.innerHeight - (document.getElementById('top_half').clientHeight / 2),
@@ -1454,6 +1507,7 @@ Site = {
                   opacity: 0,
                   ease: Power2.easeInOut,
                   onComplete: () => {
+                    Menu.showNavMenu();
                     // TweenMax.set('#main__content', { clearProps: 'y' });
                     Site.exitOk = !0;
                     // window.scrollTo(Site.scrollMenuOpen, 0);

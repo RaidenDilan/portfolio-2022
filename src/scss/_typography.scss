@@ -8,10 +8,10 @@
   margin: 0;
   padding: 0;
   border: 0;
-  cursor: none !important;
+  // cursor: none !important;
 
-  // &.404, &.500 {
-  //   cursor: pointer;
+  // &:focus {
+  //   cursor: none !important;
   // }
 }
 
