@@ -30,14 +30,27 @@ body.dark-theme {
     .inner_img {
       background: $dark;
     }
-    #next_proj > div a {
-      color: $light;
-      -webkit-text-stroke: 1px $dark;
-
-      &.changing {
-        span {
+    #next_proj {
+      > div {
+        div {
+          &.changing {
+            color: $light;
+            
+            span {
+              color: $light;
+            }
+          }
+        }
+        a {
           color: $light;
-          @include stroke(1px, $light);
+          -webkit-text-stroke: 1px $dark;
+
+          &.changing {
+            span {
+              color: $light;
+              @include stroke(1px, $light);
+            }
+          }
         }
       }
     }

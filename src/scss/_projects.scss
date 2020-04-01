@@ -249,6 +249,13 @@ header {
           }
         }
       }
+      #inner_project_name {
+        text-shadow: none;
+
+        #project_name {
+          text-shadow: none;
+        }
+      }
       a {
         display: inline-block;
         text-transform: uppercase;
