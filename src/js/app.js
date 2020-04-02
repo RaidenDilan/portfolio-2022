@@ -966,6 +966,13 @@ Site = {
   // mouseOverEvent: ('onmouseover' in window ? 'mousemove' : 'mouseout'),
   // mouseEnterEvent: ('onmouseenter' in window ? 'mousemove' : 'mouseleave'),
   setup: () => {
+    // console.log('platform', platform);
+    // if (platform.isIOS && platform.screen.mainScreen.heightPixels === 2436 && platform.screen.mainScreen.widthPixels === 1125) {
+    //   console.log('platform', platform);
+    //   this.page.className = 'iphonex';
+    //   // applicationSettings.setBoolean('iPhoneX', true);
+    // }
+    // // else applicationSettings.setBoolean('iPhoneX', false);
     /*------------------------------------------------------------------------*/
     /*                             PRELOAD ASSETS                             */
     /*------------------------------------------------------------------------*/
@@ -1770,7 +1777,7 @@ Site = {
     /**
       * @NOTE - Scroll back to top when reloading page
      **/
-    (!UserAgent.iOS && Site.scrolling) && (Site.scrolling.scrollTo(0), console.log('HHHHHHHHHHHHHH'));
+    (!UserAgent.iOS && Site.scrolling) && (Site.scrolling.scrollTo(0));
     window.scrollTo(0, 0);
 
     // !UserAgent.iOS ? Site.scrolling.scrollTo(0) : window.scrollTo(0, 0); // scroll back to top when reloading page

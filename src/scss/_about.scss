@@ -391,6 +391,10 @@ footer {
 .intro2 {
   position: relative;
 
+  .background_intro {
+    border-bottom-right-radius: 50px;
+  }
+
   h1 {
     font: 500 normal 300px/300px 'Adelon';
     text-transform: uppercase;

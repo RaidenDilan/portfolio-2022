@@ -1,5 +1,7 @@
-$dark: #1d1d1f;
-$light: #f2f2f7;
+// $dark: #1d1d1f;
+// $light: #f2f2f7;
+$dark: rgb(55, 55, 55); // #383838
+$light: rgb(251, 251, 251);
 $shadow: #d9d9d9;
 
 :root {
@@ -35,7 +37,7 @@ body.dark-theme {
         div {
           &.changing {
             color: $light;
-            
+
             span {
               color: $light;
             }
@@ -53,6 +55,9 @@ body.dark-theme {
           }
         }
       }
+    }
+    .datas {
+      background: #222222;
     }
   }
 
@@ -202,7 +207,8 @@ body.dark-theme {
   margin: 0 auto;
   position: absolute;
   top: 39px;
-  left: 125px;
+  // left: 125px;
+  right: 10vw;
   cursor: pointer;
   overflow: hidden;
   transition: all 0.15s ease-out;

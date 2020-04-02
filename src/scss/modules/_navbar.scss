@@ -202,10 +202,20 @@ header {
       left: calc(51vw - 27px);
     }
     .projects {
+      top: -3px !important;
       right: 0;
     }
     #social {
-      left: 0;
+      top: 1px;
+      // left: 0;
+    }
+    #change-theme-btn {
+      top: 23px;
+      right: 100px;
+      left: auto;
+    }
+    .logo {
+      top: 17px;
     }
   }
   #nav__menu {
@@ -246,6 +256,25 @@ header {
     }
   }
 }
+
+// @media (max-width: 414px) {
+//   header {
+//     .projects {
+//       top: -3px !important;
+//     }
+//     #social {
+//       top: 1px;
+//     }
+//     #change-theme-btn {
+//       top: 23px;
+//       right: 100px;
+//       left: auto;
+//     }
+//     .logo {
+//       top: 17px;
+//     }
+//   }
+// }
 
 @media (max-width: 320px) {
   header {
