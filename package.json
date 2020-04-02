@@ -1,7 +1,7 @@
 {
   "name": "raiden-dilan",
   "version": "1.0.0",
-  "description": "A example stack with gulp and angular",
+  "description": "Raiden Dilan Prortfolio",
   "main": "index.js",
   "engines": {
     "node": "8.11.0",
