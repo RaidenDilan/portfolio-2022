@@ -939,15 +939,9 @@ Site = {
   // mouseOverEvent: ('onmouseover' in window ? 'mousemove' : 'mouseout'),
   // mouseEnterEvent: ('onmouseenter' in window ? 'mousemove' : 'mouseleave'),
   setup: () => {
-    /*------------------------------------------------------------------------*/
-    /*                             PRELOAD ASSETS                             */
-    /*------------------------------------------------------------------------*/
     /** @NOTE -> DISABLED AS IT'S NOT NECESSARY TO USE IN THIS APP */
     // Preload.init();
 
-    /*------------------------------------------------------------------------*/
-    /*                            CORE APP ANIMATION                          */
-    /*------------------------------------------------------------------------*/
     Site.onRafLoading = function onRafLoading() {
       Site.rafLoading = requestAnimationFrame(Site.onRafLoading);
       // TEST CODE BELLOW
@@ -2578,8 +2572,12 @@ Theme = {
           cancelAnimationFrame(Theme.rafAutoChange);
         }
       }
-      if (Site.historyState.isTouched === !0) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
-      if (Site.historyState.stateChanged === !0) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      if (Site.historyState.isTouched === !0) {
+        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      }
+      if (Site.historyState.stateChanged === !0) {
+        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      }
     }
   },
   updateDarkMode: () => {
@@ -2594,18 +2592,20 @@ Theme = {
     }, 500);
   },
   darkTheme: () => {
+    // let darkThemeEnabled = Site.body.classList.contains('dark-theme');
+    // if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+    window.localStorage.setItem('dark-theme-enabled', true);
     Site.body.classList.add('dark-theme');
-    let darkThemeEnabled = Site.body.classList.contains('dark-theme');
-    darkThemeEnabled && window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
     Theme.toggleStatus = 'night';
     Theme.button.setAttribute('data-theme', 'night');
     Theme.button.classList.add('dark-mode');
     Theme.dataTheme = Theme.button.getAttribute('data-theme');
   },
   lightTheme: () => {
+    // let darkThemeEnabled = Site.body.classList.contains('dark-theme');
+    // if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
+    window.localStorage.setItem('dark-theme-enabled', false);
     Site.body.classList.remove('dark-theme');
-    let darkThemeEnabled = Site.body.classList.contains('dark-theme');
-    darkThemeEnabled && window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
     Theme.toggleStatus = 'day';
     Theme.button.setAttribute('data-theme', 'day');
     Theme.button.classList.remove('dark-mode');
