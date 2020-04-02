@@ -2557,7 +2557,6 @@ Theme = {
   rafAutoChange: null,
   init: () => {
     Theme.button = document.getElementById('change-theme-btn');
-    SunMoon.init();
 
     if (Theme.button) {
       Theme.button.addEventListener(Site.clickEvent, Theme.enableDarkTheme, !1);
@@ -2565,20 +2564,19 @@ Theme = {
       Theme.button.touchstart = Theme.enableDarkTheme;
     }
 
-    if (JSON.parse(window.localStorage.getItem('dark-theme-enabled'))) {
-      if (Theme.isTouched === !1) {
-        if (Theme.stateChanged === !1) {
-          Theme.updateDarkMode();
-          cancelAnimationFrame(Theme.rafAutoChange);
-        }
-      }
-      if (Site.historyState.isTouched === !0) {
-        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
-      }
-      if (Site.historyState.stateChanged === !0) {
-        Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+    SunMoon.init();
+
+    if (typeof (String) !== 'undefined') {
+      let darkThemeEnabled = Site.body.classList.contains('dark-theme');
+      window.localStorage.setItem('dark-theme-enabled', JSON.stringify(darkThemeEnabled));
+
+      if (window.localStorage.getItem('dark-theme-enabled')) {
+        Theme.isTouched === !1 && Theme.stateChanged === !1 && Theme.updateDarkMode();
+        Site.historyState.isTouched === !0 && (Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme());
+        Site.historyState.stateChanged === !0 && (Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme());
       }
     }
+
   },
   updateDarkMode: () => {
     Theme.stateChanged = !0;
@@ -2590,11 +2588,10 @@ Theme = {
       Theme.calculateDaylight();
       clearTimeout(timeout);
     }, 500);
+
   },
   darkTheme: () => {
-    // let darkThemeEnabled = Site.body.classList.contains('dark-theme');
-    // if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-    window.localStorage.setItem('dark-theme-enabled', true);
+    window.localStorage.setItem('dark-theme-enabled', JSON.stringify(!0));
     Site.body.classList.add('dark-theme');
     Theme.toggleStatus = 'night';
     Theme.button.setAttribute('data-theme', 'night');
@@ -2602,9 +2599,7 @@ Theme = {
     Theme.dataTheme = Theme.button.getAttribute('data-theme');
   },
   lightTheme: () => {
-    // let darkThemeEnabled = Site.body.classList.contains('dark-theme');
-    // if (darkThemeEnabled) window.localStorage.setItem('dark-theme-enabled', darkThemeEnabled);
-    window.localStorage.setItem('dark-theme-enabled', false);
+    window.localStorage.setItem('dark-theme-enabled', JSON.stringify(!1));
     Site.body.classList.remove('dark-theme');
     Theme.toggleStatus = 'day';
     Theme.button.setAttribute('data-theme', 'day');
@@ -2632,8 +2627,9 @@ Theme = {
     endDate.setSeconds(endTime.split(':')[2]);
 
     let isDaylight = startDate < currentDate && endDate > currentDate; // let isNight = endDate > currentDate && startDate > currentDate;
-
     isDaylight ? Theme.lightTheme() : Theme.darkTheme(); // isNight ? Theme.darkTheme() : Theme.lightTheme();
+
+    if (Theme.rafAutoChange !== null) cancelAnimationFrame(Theme.rafAutoChange);
   },
   enableDarkTheme: () => {
     Theme.isTouched = !0;
