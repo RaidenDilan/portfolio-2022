@@ -1371,8 +1371,8 @@ Site = {
         else TweenMax.to('#main__content', 0.4, { opacity: 0, ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
       }
       else if (Site.body.classList.contains('about')) TweenMax.to('#main__content', 0.4, { opacity: 0, clearProps: 'backgroundColor', ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
-
-      Site.exitComplete();
+      /*** @NOTE - Most significant: Site.exitOk must return true **/
+      else Site.exitComplete();
     };
     Site.onUpdatePage = function onUpdatePage(html) {
       const parser = new DOMParser();

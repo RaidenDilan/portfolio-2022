@@ -59,6 +59,9 @@ body.dark-theme {
     .datas {
       background: #222222;
     }
+    h1.random {
+      text-shadow: -2px 2px 3px rgba(255, 255, 255, 0.5);
+    }
   }
 
   #social {
@@ -71,13 +74,10 @@ body.dark-theme {
     text {
       fill: $light;
     }
-  }
-  #about.black .all_work, #contact.black .all_work {
     .cls-1 {
       stroke: $light;
     }
   }
-
   header .projects.black .feature1,
 
   .black {
@@ -370,6 +370,7 @@ body.dark-theme {
     left: 100px;
   }
 }
+
 @media (max-width: 320px) {
   body.dark-theme {
     #about.black .all_work, #contact.black .all_work {
