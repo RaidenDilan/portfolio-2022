@@ -16,15 +16,24 @@ UserAgent = {
   string: '',
   init: () => {
     UserAgent.string = window.navigator.userAgent;
-    var a = UserAgent.string;
+    let a = UserAgent.string;
 
     UserAgent.iOS = a.match(/iPhone|iPad|iPod/i);
+
     UserAgent.iOS || (
       UserAgent.android = a.match(/Android/i),
       UserAgent.android || (
         UserAgent.edge = a.indexOf('Edge/') > 0,
         UserAgent.edge || (
-          UserAgent.internetExplorer = a.indexOf('Trident/') > 0 || a.indexOf('MSIE ') > 0
+          UserAgent.internetExplorer = (
+            a.indexOf('Trident/') > 0
+            || a.indexOf('MSIE ') > 0
+            || a.indexOf('Chrome') > 0
+            || a.indexOf('Safari') > 0
+            || a.indexOf('Firefox') > 0
+            || a.indexOf('Opera') > 0
+            || a.indexOf('OPR') > 0
+          )
         )
       )
     );
@@ -64,13 +73,7 @@ AboutRAFs = {
   },
   updateScaleX: () => {
     // TEST CODE BELLOW
-    !UserAgent.iOS
-      && TweenMax.to('.scaleA', 1.4, {
-        scaleX: Site.intensity,
-        ease: Power2.easeOut,
-        onUpdate: () => {},
-        onComplete: () => {}
-      });
+    !UserAgent.iOS && TweenMax.to('.scaleA', 1.4, { scaleX: Site.intensity, ease: Power2.easeOut });
   }
 };
 
@@ -123,9 +126,7 @@ MenuPixi = {
     Site.deltaMenu = Site.theDeltaMenu;
   },
   calculateMousePosition: () => {
-    Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8
-      ? Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1)
-      : Site.intensity = 1.8;
+    Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8 ? Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) : Site.intensity = 1.8;
   },
   updateNavLinksPos: () => {
     // TEST CODE BELLOW
@@ -147,10 +148,10 @@ MenuPixi = {
     Site.displace.intensity = Site.displacementFilter3.scale.x;
     TweenMax.to(Site.displace, 0.3, {
       intensity: 4 * (Site.theDeltaMenu - Site.deltaMenu),
+      ease: Linear.easeNone,
       onUpdate: () => {
         Site.displacementFilter3.scale.x = Site.displace.intensity;
-      },
-      ease: Linear.easeNone
+      }
     });
   }
 };
@@ -163,10 +164,11 @@ Menu = {
   arrowHidingTimeout: null,
   menuClosingTimeout: null,
   init: () => {
-    Menu.button = document.querySelector('.projects');
     Menu.logo = document.querySelector('.logo');
-    Menu.navMenu = document.getElementById('nav__menu');
+    Menu.button = document.querySelector('.projects');
     Menu.social = document.getElementById('social');
+    Menu.navMenu = document.getElementById('nav__menu');
+    Menu.navHeader = document.getElementById('nav__header');
 
     Menu.button.isArrow = !1;
     Menu.button.isOpen = !1;
@@ -180,12 +182,10 @@ Menu = {
     Drag.cursorMain.classList.remove('vertical_scroll');
     Drag.cursorJunior.classList.remove('vertical_scroll');
 
-    Site.scrolling !== null
-      ? Site.scrolling.off()
-      : Site.scrollMenuOpen = window.pageYOffset;
+    Site.scrolling !== null ? Site.scrolling.off() : Site.scrollMenuOpen = window.pageYOffset;
 
     document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.add('black'));
-    document.getElementById('nav__menu').style.display = 'block';
+    Menu.navMenu.style.display = 'block';
 
     // TweenMax.to('.feature1', 0.2, { scaleY: 0, delay: 0.2, ease: Power2.easeIn });
 
@@ -247,16 +247,8 @@ Menu = {
       opacity: 0,
       ease: Power2.easeIn,
       onComplete: () => {
-        document.getElementById('nav__menu').style.display = 'none';
-
-        // TEST CODE BELLOW
-        if (UserAgent.iOS) {
-          Site.main.classList.remove('black');
-          Site.body.classList.remove('temp');
-          window.scrollTo(0, 0); // --- OR --- equivalent of => window.scrollTo({ left: 0, top: Site.scrollMenuOpen });
-          // window.scrollTo(0, Site.scrollMenuOpen); // --- OR --- equivalent of => window.scrollTo({ left: 0, top: Site.scrollMenuOpen });
-          // window.scrollTo(Site.scrollMenuOpen, 0); // --- OR --- equivalent of => window.scrollTo({ top: Site.scrollMenuOpen, left: 0});
-        }
+        Menu.navMenu.style.display = 'none';
+        UserAgent.iOS && (window.scrollTo(0, 0), Site.main.classList.remove('black'), Site.body.classList.remove('temp'));
       }
     });
 
@@ -324,9 +316,7 @@ Menu = {
               ? Menu.hideArrow()
               : console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement // : null;
 
-          window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34)
-            ? Theme.lightStyle()
-            : Theme.darkStyle();
+          window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34) ? Theme.lightStyle() : Theme.darkStyle();
         }
         else if (Site.body.classList.contains('about')) window.pageYOffset >= 10 ? Menu.showArrow() : Menu.hideArrow();
       }
@@ -347,10 +337,10 @@ Menu = {
     // Site.contact.classList.remove('light');
   },
   hideNavMenu: () => {
-    TweenMax.set('#nav__header', { opacity: 0 });
+    TweenMax.set('#nav__header', { opacity: 0 }); // Menu.navHeader.style.display = 'none';
   },
   showNavMenu: () => {
-    TweenMax.set('#nav__header', { opacity: 1 });
+    TweenMax.set('#nav__header', { opacity: 1 }); // Menu.navHeader.style.display = 'block';
   }
 };
 
@@ -364,12 +354,14 @@ Drag = {
   init: () => {
     Drag.cursorMain = document.getElementsByClassName('cursor_main')[0];
     Drag.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
+
     Drag.isDrag = !1;
     Drag.isScroll = !1;
+
     Site.body.classList.contains('home') && (
-      document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500), !1), // touchStart
-      document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500), !1), // touchMove
-      document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500), !1), // touchEnd
+      document.addEventListener('mousedown', Throttle.actThenThrottleEvents(Drag.start, 500), !1),
+      document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Drag.move, 500), !1),
+      document.addEventListener('mouseup', Throttle.actThenThrottleEvents(Drag.end, 500), !1),
 
       document.onmousedown = Drag.start,
       document.onmousemove = Drag.move,
@@ -413,7 +405,7 @@ Drag = {
 
     Drag.isDown = !1;
     Site.finishPosition = event.pageX;
-    Site.body.classList.remove('dragging'); // Used when in developement
+    Site.body.classList.remove('dragging'); // Used during DEVELOPMENT
 
     (Site.finishPosition - Site.startPosition < -Drag.threshold) && Site.blockedAction === !1
       ? Site.nextSlide()
@@ -435,6 +427,7 @@ Drag = {
   show: () => {
     Drag.isDrag = !0;
     Drag.isScroll = !1;
+
     Drag.cursorMain.classList.remove('vertical_scroll');
     Drag.cursorJunior.classList.remove('vertical_scroll');
     Drag.cursorMain.classList.add('mainDrag');
@@ -443,6 +436,7 @@ Drag = {
   hide: () => {
     Drag.isScroll = !0;
     Drag.isDrag = !1;
+
     Drag.cursorMain.classList.remove('mainDrag');
     Drag.cursorJunior.classList.remove('j_Drag');
     Drag.cursorMain.classList.add('vertical_scroll');
@@ -455,10 +449,7 @@ var LazyLoad = LazyLoad || {};
 LazyLoad = {
   init: () => {
     LazyLoad.images = [].concat(LazyLoad.toConsumableArray(document.querySelectorAll('.lazy-image')));
-    LazyLoad.interactSettings = {
-      root: document.querySelector('.inner_img'),
-      rootMargin: '0px 0px 200px 0px'
-    };
+    LazyLoad.interactSettings = { root: document.querySelector('.inner_img'), rootMargin: '0px 0px 200px 0px' };
     LazyLoad.observer = new IntersectionObserver(LazyLoad.onIntersection, LazyLoad.interactSettings);
     LazyLoad.images.forEach((image) => LazyLoad.observer.observe(image));
   },
@@ -483,25 +474,6 @@ LazyLoad = {
   }
 };
 
-/**
- * Sunrise/sunset script. By Matt Kane. Adopted for NPM use by Alexey Udivankin.
- *
- * Based loosely and indirectly on Kevin Boone's SunTimes Java implementation
- * of the US Naval Observatory's algorithm.
- *
- * Copyright © 2012 Triggertrap Ltd. All rights reserved.
- *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option)
- * any later version.
- *
- * This library is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY; without even the implied
- * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more
- * details.
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to
- * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA,
- * or connect to: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
- */
 var SunMoon = SunMoon || {};
 
 SunMoon = {
@@ -561,13 +533,14 @@ SunMoon = {
 
     // 'geolocation' in navigator && (SunMoon.permissionGranted === 'prompt' && SunMoon.geoIsAllowed());
     'geolocation' in navigator && (
-      SunMoon.requestLocation(),
+      // SunMoon.requestLocation(),
       SunMoon.sunset = SunMoon.getSunset(SunMoon.lat, SunMoon.lng), /** Sunset tonight at the Triggertrap office for today */
       SunMoon.sunrise = SunMoon.getSunrise(SunMoon.lat, SunMoon.lng) /** Sunrise at London on Spring day 2020 */
     );
   },
   requestLocation: () => {
     navigator.geolocation.getCurrentPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options); // call getCurrentPosition()
+    // navigator.geolocation.watchPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options); // call getCurrentPosition()
   },
   onSuccess: (position) => {
     /** Combined with geolocation. Sunset tonight at your location. */
@@ -700,7 +673,7 @@ SunMoon = {
 var Preload = Preload || {};
 
 Preload = {
-  /** @note - USAGE
+  /** @NOTE - USAGE
     * <p class="preload-counter"></p>
     *
     * <div id="state"></div>
@@ -966,18 +939,12 @@ Site = {
   // mouseOverEvent: ('onmouseover' in window ? 'mousemove' : 'mouseout'),
   // mouseEnterEvent: ('onmouseenter' in window ? 'mousemove' : 'mouseleave'),
   setup: () => {
-    // console.log('platform', platform);
-    // if (platform.isIOS && platform.screen.mainScreen.heightPixels === 2436 && platform.screen.mainScreen.widthPixels === 1125) {
-    //   console.log('platform', platform);
-    //   this.page.className = 'iphonex';
-    //   // applicationSettings.setBoolean('iPhoneX', true);
-    // }
-    // // else applicationSettings.setBoolean('iPhoneX', false);
     /*------------------------------------------------------------------------*/
     /*                             PRELOAD ASSETS                             */
     /*------------------------------------------------------------------------*/
-    /** @note -> DISABLED AS IT'S NOT NECESSARY TO USE IN THIS APP */
+    /** @NOTE -> DISABLED AS IT'S NOT NECESSARY TO USE IN THIS APP */
     // Preload.init();
+
     /*------------------------------------------------------------------------*/
     /*                            CORE APP ANIMATION                          */
     /*------------------------------------------------------------------------*/
@@ -988,10 +955,7 @@ Site = {
         Site.rafPixiHome && cancelAnimationFrame(Site.rafPixiHome);
         Site.rafPixiSingle && cancelAnimationFrame(Site.rafPixiSingle);
         Site.rafScaleAbout && cancelAnimationFrame(AboutRAFs.rafScaleAbout);
-        Site.body.classList.contains('single') || Site.body.classList.contains('home') && (
-          Site.stage.destroy(),
-          Site.renderer.destroy()
-        );
+        Site.body.classList.contains('single') || Site.body.classList.contains('home') && (Site.stage.destroy(), Site.renderer.destroy());
         Site.onUpdatePage(Site.newPageContent);
         Site.rafLoading && cancelAnimationFrame(Site.rafLoading);
       }
@@ -1016,7 +980,7 @@ Site = {
       this.pixiMenuCover = document.getElementById('pixi_menu');
       this.themeBtn = document.getElementById('change-theme-btn');
       this.toNextProject = document.getElementById('to_next_project');
-      if (this.toNextProject) this.toNextProjectLetter = this.toNextProject.querySelectorAll('span');
+      this.toNextProject && (this.toNextProjectLetter = this.toNextProject.querySelectorAll('span'));
 
       this.links = document.querySelectorAll('a');
       this.vsDivs = document.querySelectorAll('.vs-div');
@@ -1028,15 +992,8 @@ Site = {
       UserAgent.init();
 
       // TEST CODE BELLOW
-      Site.themeBtn
-        && (!Site.body.classList.contains('home'))
-        && (Theme.init(), Theme.button.classList.remove('light'));
-
-      if (Site.themeBtn) {
-        Site.body.classList.contains('home')
-          ? Site.themeBtn.style.display = 'none'
-          : Site.themeBtn.style.display = 'block';
-      }
+      Site.themeBtn && (!Site.body.classList.contains('home')) && (Theme.init(), Theme.button.classList.remove('light'));
+      if (Site.themeBtn) Site.body.classList.contains('home') ? Site.themeBtn.style.display = 'none' : Site.themeBtn.style.display = 'block';
 
       Drag.init();
       Menu.init();
@@ -1046,16 +1003,13 @@ Site = {
       TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
       // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
 
-      /** @note -> Resets header menu elements back to their defaults states/classes. */
+      /** @NOTE -> Resets header menu elements back to their defaults states/classes. */
       Menu.navMenu.style.display = 'none';
-
-      /** @note -> Update and Animate projMenu from arrow/Close(X) */
+      /** @NOTE -> Update and Animate projMenu from arrow/Close(X) */
       Menu.button.classList.contains('arrow-transition-in') && Menu.hideArrow();
-
-      /** @note -> close Nav Menu when anchor click events */
+      /** @NOTE -> close Nav Menu when anchor click events */
       Menu.button.classList.remove('opened');
-
-      /** @note -> Reset lightButtonStyles */
+      /** @NOTE -> Reset lightButtonStyles */
       Menu.darkFooter();
 
       // if (Site.themeBtn) Theme.button.classList.remove('light');
@@ -1063,7 +1017,7 @@ Site = {
       Site.about.style.display = 'block';
       Site.contact.style.display = 'block';
 
-      /** @note -> classList of undefined when going from state to another => BUG!!! */
+      /** @NOTE -> classList of undefined when going from state to another => BUG!!! */
       Site.body.classList.contains('is-loading') && (
         // TEST CODE BELLOW
         Site.loadingTimeout = setTimeout(() => {
@@ -1073,7 +1027,7 @@ Site = {
         }, 1000, !1)
       );
 
-      /** @note -> removes event listeners from elements with 'link' class before adding click events to each element */
+      /** @NOTE -> removes event listeners from elements with 'link' class before adding click events to each element */
       Site.links.forEach((obj) => {
         obj.removeEventListener(Site.clickEvent, Site.onClickHandler);
         obj.onclick = null;
@@ -1092,7 +1046,7 @@ Site = {
         document.addEventListener('mousemove', Throttle.actThenThrottleEvents(Site.mouseMoveHandler, 500), !1);
         document.onmousemove = Site.mouseMoveHandler;
 
-        /** @note -> adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
+        /** @NOTE -> adds  mouse events to each element with the class of link_hover and animate the cursor accordingly */
         Site.mouseOverLinks.forEach((obj) => {
           obj.addEventListener('mouseover', Throttle.actThenThrottleEvents(Site.mouseOverHandler, 500), !1);
           obj.addEventListener('mouseout', Throttle.actThenThrottleEvents(Site.mouseOutHandler, 500), !1);
@@ -1101,9 +1055,7 @@ Site = {
           obj.onmouseout = Site.mouseOutHandler;
         });
 
-        Site.body.classList.contains('home')
-          ? Drag.show()
-          : Drag.hide();
+        Site.body.classList.contains('home') ? Drag.show() : Drag.hide();
       }
       else Site.body.classList.add('mobile');
 
@@ -1117,11 +1069,7 @@ Site = {
       window.innerWidth < 768 && Site.pixiMenuLinks.forEach((obj) => obj.classList.remove('active'));
 
       // IF STATEMENT CONDITION DOES THE SAME EXPRESSION AS THE ABOVE IF STATEMENT
-      UserAgent.iOS && (
-        window.scrollTo(0, 0),
-        // window.scrollTo(Site.scrollMenuOpen, 0),
-        Site.main.classList.remove('black')
-      );
+      UserAgent.iOS && (window.scrollTo(0, 0), Site.main.classList.remove('black'));
 
       /* Page transitions/animations when navigating between states */
       if (Site.body.classList.contains('home')) {
@@ -1147,32 +1095,32 @@ Site = {
 
         document.querySelectorAll('#images div').forEach(Site.setDimensions);
 
-        /* displacement 1 */
+        /** @NOTE -> displacement 1 */
         Site.displacementSprite = PIXI.Sprite.from(Site.directoryUri + 'images/gradient4.png');
         Site.displacementSprite.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.CLAMP; // options: REPEAT, MIRRORED_REPEAT, CLAMP
         Site.displacementFilter = new PIXI.filters.DisplacementFilter(Site.displacementSprite);
 
-        /* displacement 2 */
+        /** @NOTE -> displacement 2 */
         Site.displacementSprite2 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
         Site.displacementSprite2.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
         Site.displacementFilter2 = new PIXI.filters.DisplacementFilter(Site.displacementSprite2);
 
-        /* settings displacement1 - intensity */
+        /** @NOTE -> settings displacement1 - intensity */
         Site.displacementFilter.scale.x = 50;
         Site.displacementFilter.scale.y = 0;
 
-        /* center for slider */
+        /** @NOTE -> center for slider */
         Site.displacementSprite.pivot.x = 256;
         Site.displacementSprite.pivot.y = 256;
 
-        /* ladder x/y */
+        /** @NOTE -> ladder x/y */
         Site.displacementSprite.scale.x = 0.2;
 
-        /* settings displacement2 - intensity */
+        /** @NOTE -> settings displacement2 - intensity */
         Site.displacementFilter2.scale.x = 0;
         Site.displacementFilter2.scale.y = 0;
 
-        /* ladder x/y */
+        /** @NOTE -> ladder x/y */
         Site.displacementSprite2.scale.x = 0.8;
         // displacementSprite2.anchor.x = 1;
 
@@ -1182,23 +1130,8 @@ Site = {
 
         Site.loader.load((loader, resources) => {
           Site.blockedAction = !1;
-          if (!Menu.button.isOpen) Site.homePixi();
+          !Menu.button.isOpen && Site.homePixi();
           Site.nextSlide();
-
-          /**
-            * @note
-            *
-            * DISABLE elements with class of update_link (<a>) in home pixi slider
-            *
-            * if (Site.currentSlide === 0) {
-            *   document.querySelectorAll('.update_link').forEach((obj) => {
-            *     obj
-            *       .setAttribute('href', document.querySelectorAll('#images div')[Site.currentSlide]
-            *       .getAttribute('data-params'));
-            *   });
-            * }
-          **/
-
           document.getElementById('progress').style.display = 'none';
         });
       }
@@ -1206,45 +1139,15 @@ Site = {
         document.getElementById('progress').style.display = 'none';
         document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
 
-        // document.getElementById('shutter1').classList.add('open');
-        // document.querySelector('.intro').classList.add('open');
-
         TweenMax.to('.background_intro', 1.4, { scale: 1, ease: Power4.easeOut });
         Site.animateRandomElements('.random');
         TweenMax.staggerFromTo(Site.random, 1, { x: '-24px' }, { x: '0px', opacity: 1, delay: 0.6, ease: Power2.easeOut }, 0.1);
 
-        if (!UserAgent.iOS) {
-          if (Site.scrolling !== null) Site.scrolling.destroy();
+        !UserAgent.iOS && Site.createVirtualScroll();
 
-          Site.scrolling = null;
-
-          Site.scrolling = new Smooth({
-            preload: !0,
-            native: !1,
-            section: Site.vsSection,
-            divs: Site.vsDivs,
-            vs: { mouseMultiplier: 0.4 }
-          });
-
-          Site.scrolling.init();
-        }
-
-        // TweenMax.to('#main__content', 0.4, { backgroundColor: '#EFEFEF', ease: Power2.easeInOut });
         TweenMax.to('#inner_svg', 1, { opacity: 1, ease: Power2.easeIn });
         TweenMax.fromTo('#inner_svg', 2, { rotation: 140 }, { rotation: 0, ease: Power2.easeOut });
-        TweenMax.fromTo('#inner_svg img', 2, { rotation: -140 }, {
-          rotation: 0,
-          ease: Power2.easeOut,
-          onComplete: () => {
-            // Site.aboutRafs();
-            AboutRAFs.init();
-            // AboutRAFs.rafScaleAbout = requestAnimationFrame(Site.aboutRafs);
-            // window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.aboutRafs()), 1000);
-            // if (AboutRAFs.rafScaleAbout !== null) Site.aboutRafs();
-            // else {}
-          }
-        });
-        // Site.aboutSkills();
+        TweenMax.fromTo('#inner_svg img', 2, { rotation: -140 }, { rotation: 0, ease: Power2.easeOut, onComplete: () => AboutRAFs.init() });
       }
       else if (Site.body.classList.contains('single')) {
         if (window.innerWidth < 768) {
@@ -1265,17 +1168,7 @@ Site = {
           Site.toNextProject.onmouseover = Site.onHoverNext;
           Site.toNextProject.onmouseout = Site.offHoverNext;
 
-          if (Site.scrolling !== null) Site.scrolling.destroy();
-
-          Site.scrolling = null;
-          Site.scrolling = new Smooth({
-            preload: !0,
-            native: !1,
-            section: Site.vsSection,
-            divs: Site.vsDivs,
-            vs: { mouseMultiplier: 0.4 }
-          });
-          Site.scrolling.init();
+          Site.createVirtualScroll();
         }
         else {
           Site.toNextProject.innerHTML = Site.toNextProject.getAttribute('data-next');
@@ -1287,13 +1180,11 @@ Site = {
           let height = 0.57 * window.innerWidth + 20;
           Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, (0.57 * window.innerWidth + 20), { transparent: !0 });
           Site.renderer.view.width = window.innerWidth;
-          // Site.renderer.view.height = window.innerHeight;
         }
         else {
           let height = window.innerWidth + 20;
           Site.renderer = PIXI.autoDetectRenderer(window.innerWidth, (window.innerWidth + 20), { transparent: !0 });
           Site.renderer.view.width = window.innerWidth;
-          // Site.renderer.view.height = window.innerHeight;
         }
 
         document.getElementById('cover').appendChild(Site.renderer.view);
@@ -1308,7 +1199,7 @@ Site = {
         // DISABLED - Because PixiJS doesn't like duplicate resources saved into TextureCache. Therefore, we access our assets with Site.loader.resources
         // Site.loader.add('image', document.getElementById('cover').getAttribute('data-img'));
 
-        let img = new Image();
+        const img = new Image();
 
         img.src = document.getElementById('cover').getAttribute('data-img');
         img.onload = function() {
@@ -1327,16 +1218,9 @@ Site = {
           else {
             image.height = height;
             image.width = (width * window.innerHeight / height) + 10;
-            // image.x      = (window.innerWidth / 2 - image.width / 2) - 5;
             image.y = height / 6 - image.height / 2; // ADDED BY ME
           }
         };
-
-        // /* center the sprite's anchor point */
-        // image.anchor = 0.5;
-        // /* move the sprite to the center of the screen */
-        // image.x = Site.renderer.width / 2;
-        // image.y = Site.renderer.height / 2;
 
         /* displacement 2 */
         Site.displacementSprite2 = PIXI.Sprite.from(`${Site.directoryUri}images/gradient_large.png`);
@@ -1352,25 +1236,6 @@ Site = {
 
         Site.stage.addChild(Site.displacementSprite2);
         Site.stage.addChild(image);
-
-        // Site.stage.hitArea = Site.renderer.screen;
-        // Site.stage.interactive = true;
-
-        // Site.stage.on('mousemove', function(event) {
-        //   const x = event.data.global.x;
-        //   const y = event.data.global.y;
-        //   image.rotation = Math.atan2(y - image.y, x - image.x);
-        // });
-
-        // // Listen for animate update
-        // Site.ticker.add(function(delta) {
-        //   // just for fun, let's rotate mr rabbit a little
-        //   // delta is 1 if running at 100% performance
-        //   // creates frame-independent tranformation
-        //   image.x += Math.cos(image.rotation) * delta;
-        //   image.y += Math.sin(image.rotation) * delta;
-
-        // });
 
         Site.stage.filters = [Site.displacementFilter2];
 
@@ -1394,13 +1259,6 @@ Site = {
       }
       else if (Site.body.classList.contains('notFound')) document.getElementById('progress').style.display = 'none';
       else if (Site.body.classList.contains('internalServerError')) document.getElementById('progress').style.display = 'none';
-
-      // TweenMax.to('body', 1, { opacity: 1, onComplete: () => {
-      //   scroll.init();
-      //   scroll.Site.onResizeHandler();
-      // }});
-      //
-      // if ($('event')[0]) {}
     };
     Site.onLoadPage = function onLoadPage(href) {
       document.getElementById('progress').style.display = 'block';
@@ -1413,7 +1271,7 @@ Site = {
         Site.rafPixiMenu && cancelAnimationFrame(Site.rafPixiMenu);
         Site.rafPixiMenu && cancelAnimationFrame(AboutRAFs.rafScaleAbout);
 
-        /** @note -> reset projMenu when changing states/clicking on anchor elements */
+        /** @NOTE -> reset projMenu when changing states/clicking on anchor elements */
         Menu.button.classList.add('closing');
         Menu.arrowHidingTimeout !== null && clearTimeout(Menu.arrowHidingTimeout);
 
@@ -1428,41 +1286,19 @@ Site = {
           ease: Power2.easeInOut,
           onComplete: () => {
             Site.stageMenu.removeChildren();
-            Site.exitOk = !0;
+            Site.exitComplete();
             TweenMax.set('#main__content', { clearProps: 'backgroundColor' });
           }
         });
       }
       else if (Site.body.classList.contains('home')) {
-        // Site.speed = 4;
         Site.listenCursor = !1;
         Site.blockedAction = !0;
-
-        // Site.stage.removeChild(displacementSprite);
-        // Site.stage.addChild(Site.displacementSprite2);
 
         Site.animateRandomElements('.random');
         TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1);
 
-        // TweenMax.to(attributes2, 0.9, {
-        //   intensity: 150,
-        //   x: 10,
-        //   ease: Power2.easeIn,
-        //   onUpdate: () => {
-        //     Site.displacementFilter2.scale.x = attributes2.intensity;
-        //     speed = attributes2.x;
-        //   },
-        //   onComplete: () => {}
-        // });
-
-        TweenMax.to('#main__content', 1, {
-          opacity: 0,
-          delay: 0.4,
-          ease: Power2.easeInOut,
-          onComplete: () => {
-            Site.exitOk = !0;
-          }
-        });
+        TweenMax.to('#main__content', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
         Site.hovers = document.querySelectorAll('.main__pagination');
 
         Site.hovers.forEach((obj) => {
@@ -1485,13 +1321,7 @@ Site = {
 
           if (Site.scrolling !== null) {
             diff = Site.main.clientHeight - (Site.scrolling.vars.current + window.innerHeight);
-            TweenMax.to('#main__content', 1.2, {
-              y: -(diff + window.innerHeight),
-              ease: Power2.easeInOut
-              // onStart: () => {},
-              // onComplete: () => {}
-            });
-
+            TweenMax.to('#main__content', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
             Menu.hideNavMenu();
             Site.innerProjectName.classList.add('changing');
             document.querySelector('.bottom_link').classList.add('changing');
@@ -1503,10 +1333,9 @@ Site = {
                 TweenMax.to('#next_proj > div', 0.4, {
                   opacity: 0,
                   ease: Power2.easeInOut,
-                  // onStart: () => {},
                   onComplete: () => {
                     Menu.showNavMenu();
-                    Site.exitOk = !0;
+                    Site.exitComplete();
                   }
                 });
               }
@@ -1514,12 +1343,7 @@ Site = {
           }
           else {
             diff = Site.main.clientHeight - (window.pageYOffset + window.innerHeight);
-            TweenMax.to('#next_proj, .inner_img', 1.2, {
-              y: -(diff + window.innerHeight),
-              ease: Power2.easeInOut
-              // onStart: () => {},
-              // onComplete: () => {}
-            });
+            TweenMax.to('#next_proj, .inner_img', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
 
             Menu.hideNavMenu();
             Site.innerProjectName.classList.add('changing');
@@ -1532,12 +1356,10 @@ Site = {
                 TweenMax.to('#next_proj > div', 0.4, {
                   opacity: 0,
                   ease: Power2.easeInOut,
-                  // onStart: () => {},
                   onComplete: () => {
                     // TweenMax.set('#main__content', { clearProps: 'y' });
                     Menu.showNavMenu();
-                    Site.exitOk = !0;
-
+                    Site.exitComplete();
                     /*** @param - window.scrollTo({Site.scrollMenuOpen}), 0) **/
                     !UserAgent.iOS ? Site.scrolling.scrollTo(0) : window.scrollTo(0, 0); // scroll back to top when reloading page
                   }
@@ -1546,46 +1368,21 @@ Site = {
             });
           }
         }
-        else {
-          TweenMax.to('#main__content', 0.4, {
-            opacity: 0,
-            ease: Power2.easeInOut,
-            onComplete: () => {
-              Site.exitOk = !0;
-            }
-          });
-        }
+        else TweenMax.to('#main__content', 0.4, { opacity: 0, ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
       }
-      else if (Site.body.classList.contains('about')) {
-        TweenMax.to('#main__content', 0.4, {
-          opacity: 0,
-          clearProps: 'backgroundColor',
-          ease: Power2.easeInOut,
-          onComplete: () => {
-            Site.exitOk = !0;
-          }
-        });
-      }
-      else Site.exitOk = !0;
+      else if (Site.body.classList.contains('about')) TweenMax.to('#main__content', 0.4, { opacity: 0, clearProps: 'backgroundColor', ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
+
+      Site.exitComplete();
     };
     Site.onUpdatePage = function onUpdatePage(html) {
       const parser = new DOMParser();
-
       let doc = parser.parseFromString(html, 'text/html');
       let classList = doc.querySelectorAll('body')[0].getAttribute('class');
-
       document.title = doc.querySelector('title').innerHTML;
-
       let res = classList.replace('is-loading', '');
-
       Site.body.setAttribute('class', res);
-
-      !UserAgent.iOS
-        ? Site.body.classList.add('desktop')
-        : Site.body.classList.add('mobile');
-
+      !UserAgent.iOS ? Site.body.classList.add('desktop') : Site.body.classList.add('mobile');
       Site.main.innerHTML = doc.getElementById('main__content').innerHTML;
-
       Site.init();
     };
 
@@ -1598,30 +1395,30 @@ Site = {
 
     Drag.toggleHidden();
 
-    /** @note -> pixi menu statement */
+    /** @NOTE -> pixi menu statement */
     Site.rendererMenu = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight, { transparent: !0 });
     // Site.rendererMenu = PIXI.autoDetectRenderer(0.24 * window.innerWidth, window.innerHeight - 0.074 * window.innerWidth, { transparent: !0 });
 
     Site.pixiMenuCover && Site.pixiMenuCover.appendChild(Site.rendererMenu.view);
 
-    /** @note -> RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
+    /** @NOTE -> RENDER STATE TO FULL SCREEN WIDTH + HEIGHT */
     Site.rendererMenu.view.width = window.innerWidth;
     Site.rendererMenu.view.height = window.innerHeight;
     Site.stageMenu = new PIXI.Container();
     Site.pixiMenuAnchors.forEach(Site.setMenuDimensions);
 
-    /** @note -> displacement 2 */
+    /** @NOTE -> displacement 2 */
     Site.displacementSprite3 = PIXI.Sprite.from(Site.directoryUri + 'images/gradient_large.png');
     Site.displacementSprite3.texture.baseTexture.wrapMode = PIXI.WRAP_MODES.REPEAT;
     Site.displacementFilter3 = new PIXI.filters.DisplacementFilter(Site.displacementSprite3);
 
     Site.stageMenu.filters = [Site.displacementFilter3];
 
-    /** @note -> settings displacement2 - intensity */
+    /** @NOTE -> settings displacement2 - intensity */
     Site.displacementFilter3.scale.x = 0;
     Site.displacementFilter3.scale.y = 0;
 
-    /** @note -> ladder x/y */
+    /** @NOTE -> ladder x/y */
     Site.displacementSprite3.scale.x = 0.4;
 
     window.addEventListener('onpopstate', Site.onPopStateHandler);
@@ -1661,7 +1458,7 @@ Site = {
     /**
       * Show Hide Menu Arrow events
       *
-      * @note -> COULD ADD -+-> if (Site.body.classList.contains('single')) {}
+      * @NOTE -> COULD ADD -+-> if (Site.body.classList.contains('single')) {}
     **/
     window.addEventListener('scroll', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
     window.addEventListener('wheel', Throttle.actThenThrottleEvents(Menu.showHideArrow, 500), !1);
@@ -1689,11 +1486,26 @@ Site = {
     document.ontouchmove = Site.touchMoveHandler;
     // document.ontouchend = Site.touchEndHandler;
   },
+  createVirtualScroll: () => {
+    if (Site.scrolling !== null) Site.scrolling.destroy();
+
+    Site.scrolling = null;
+
+    Site.scrolling = new Smooth({
+      preload: !0,
+      native: !1,
+      section: Site.vsSection,
+      divs: Site.vsDivs,
+      vs: { mouseMultiplier: 0.4 }
+    });
+
+    Site.scrolling.init();
+  },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
   onClickHandler: (event) => {
-    /** @note - Using Event Capturing **/
+    /** @NOTE - Using Event Capturing **/
     !UserAgent.iOS && (event = event || window.event, event.preventDefault() || false);
 
     event.type === 'touchstart' ? Site.supportsTouch = !0 : Site.supportsTouch && true;
@@ -1717,7 +1529,7 @@ Site = {
     /* If the clicked element doesn't have the .external class, bail */
     if (!event.target.closest('.external')) {
       /**
-        * @note - This stops any click or touch events when user clicks on Projects that are 'Comming Soon'.
+        * @NOTE - This stops any click or touch events when user clicks on Projects that are 'Comming Soon'.
        **/
       if (event.target.getAttribute('href') === '' || event.target.getAttribute('href').length === 0) return !1;
 
@@ -1833,7 +1645,7 @@ Site = {
     window['image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-url')));
     window['image' + index].alpha = 0;
 
-    let img = new Image(); // equivalent to document.createElement('img')
+    const img = new Image(); // equivalent to document.createElement('img')
 
     img.src = item.getAttribute('data-url');
     img.onload = function() {
@@ -1862,7 +1674,7 @@ Site = {
 
     let frameWidth = 0.24 * window.innerWidth;
     let frameHeight = window.innerHeight - 0.074 * window.innerWidth;
-    let img = new Image(); // equivalent to document.createElement('img')
+    const img = new Image(); // equivalent to document.createElement('img')
 
     img.src = item.getAttribute('data-img');
     img.onload = function() {
@@ -2239,15 +2051,15 @@ Site = {
 
       TweenMax.to(Site.displace2, 0.2, {
         alpha: 1,
+        ease: Linear.easeNone,
         onUpdate: () => {
           window['menu_image' + index].alpha = Site.displace2.alpha;
-        },
-        onComplete: () => {
-          // to do : management suppression former child
-          // Site.stageMenu.removeChildren(2);
-          // addedLast = index;
-        },
-        ease: Linear.easeNone
+        }
+        // onComplete: () => {
+        //   // to do : management suppression former child
+        //   // Site.stageMenu.removeChildren(2);
+        //   // addedLast = index;
+        // }
       });
     }
   },
@@ -2255,6 +2067,7 @@ Site = {
   /*                           Pixi Configurations                            */
   /*--------------------------------------------------------------------------*/
   homePixi: () => {
+    // Site.rafPixiHome && cancelAnimationFrame(Site.homePixi);
     Site.rafPixiHome = requestAnimationFrame(Site.homePixi);
     Site.renderer.render(Site.stage);
 
@@ -2324,6 +2137,7 @@ Site = {
     // Site.ladderScale = (document.getElementById('the_imgs').clientHeight + (0.56 * window.innerHeight)) / document.getElementById('the_imgs').clientHeight;
     // Site.ladderScale = parseFloat(Math.round(Site.ladderScale * 100) / 100).toFixed(2);
 
+    // Site.rafPixiSingle && cancelAnimationFrame(Site.singlePixi);
     Site.rafPixiSingle = requestAnimationFrame(Site.singlePixi);
     Site.renderer.render(Site.stage);
     Site.displacementSprite2.x += Site.speed;
@@ -2433,7 +2247,7 @@ Site = {
 
   scrollablePagination: () => {
     document.querySelectorAll('.random.first').forEach((obj) => obj.classList.remove('first'));
-    /** @note -> Added to prevent classList of null. */
+    /** @NOTE -> Added to prevent classList of null. */
     if (document.querySelector('#num_letter .current')) document.querySelector('#num_letter .current').classList.add('after');
 
     if (Site.multiplier === 1) {
@@ -2465,7 +2279,7 @@ Site = {
             clearProps: 'x',
             ease: Power4.easeInOut,
             onComplete: () => {
-              if (document.querySelectorAll('.main__pagination')[Site.totalSlides - 1].classList.contains('first')) document.querySelectorAll('.main__pagination')[Site.totalSlides - 1].classList.remove('first');
+              document.querySelectorAll('.main__pagination')[Site.totalSlides - 1].classList.contains('first') && document.querySelectorAll('.main__pagination')[Site.totalSlides - 1].classList.remove('first');
               document.querySelector('#num_letter .current').classList.remove('current', 'after');
               first.classList.add('current');
               first.classList.remove('before');
@@ -2637,6 +2451,9 @@ Site = {
   /*--------------------------------------------------------------------------*/
   /*                        HELPER / UTILITY FUNCTIONS                        */
   /*--------------------------------------------------------------------------*/
+  exitComplete: () => {
+    Site.exitOk = !0;
+  },
   animateRandomElements: (element) => {
     // console.log('[ animateRandomElements ] -+-> element -+->', element);
     Site.random = [];
@@ -2749,10 +2566,7 @@ Theme = {
     SunMoon.init();
 
     if (Theme.button) {
-      // Theme.button.addEventListener('click', Theme.enableDarkTheme, !1);
-      // Theme.button.addEventListener('touchstart', Theme.enableDarkTheme, !1);
       Theme.button.addEventListener(Site.clickEvent, Theme.enableDarkTheme, !1);
-
       Theme.button.click = Theme.enableDarkTheme;
       Theme.button.touchstart = Theme.enableDarkTheme;
     }
@@ -2764,22 +2578,16 @@ Theme = {
           cancelAnimationFrame(Theme.rafAutoChange);
         }
       }
-      if (Site.historyState.isTouched === !0) {
-        Site.historyState.dataTheme === 'day'
-          ? Theme.lightTheme()
-          : Theme.darkTheme();
-      }
-      if (Site.historyState.stateChanged === !0) {
-        Site.historyState.dataTheme === 'day'
-          ? Theme.lightTheme()
-          : Theme.darkTheme();
-      }
+      if (Site.historyState.isTouched === !0) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
+      if (Site.historyState.stateChanged === !0) Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme();
     }
   },
   updateDarkMode: () => {
     Theme.stateChanged = !0;
+
     Theme.rafAutoChange && cancelAnimationFrame(Theme.rafAutoChange);
     Theme.rafAutoChange = requestAnimationFrame(Theme.updateDarkMode);
+
     const timeout = setTimeout(() => {
       Theme.calculateDaylight();
       clearTimeout(timeout);
