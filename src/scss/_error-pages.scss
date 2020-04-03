@@ -11,6 +11,11 @@
         font: 100 normal 15vw/15vw 'Avenir Next', sans-serif;
         letter-spacing: 10px;
         color: $white;
+        opacity: 0.25;
+        animation-name: lightbulb;
+        animation-duration: 2.5s;
+        animation-fill-mode: forwards;
+        animation-delay: 1.3s;
       }
       p {
         font: 600 normal 2vw/2vw $italiana;
@@ -44,6 +49,11 @@
         font: 100 normal 15vw/15vw 'Avenir Next', sans-serif;
         letter-spacing: 10px;
         color: $white;
+        opacity: 0.25;
+        animation-name: lightbulb;
+        animation-duration: 2.5s;
+        animation-fill-mode: forwards;
+        animation-delay: 1.3s;
       }
       p {
         letter-spacing: 1px;
@@ -71,7 +81,7 @@
 }
 
 @media (max-width: 767px) {
-  .notFound, .internalServerError {
+  .notFound {
     #main__content {
       div {
         h1 {
@@ -86,10 +96,32 @@
       }
     }
   }
+  .internalServerError {
+    #main__content {
+      div {
+        h1 {
+          font: 100 normal 35vw/35vw 'Avenir Next', sans-serif;
+        }
+        p {
+          // font: 600 normal 4.5vw/10vw $italiana;
+
+          &:first-of-type {
+            font: 600 normal 4.5vw/10vw $italiana;
+          }
+          &:last-of-type {
+            font: 600 normal 3vw/6vw $italiana;
+          }
+        }
+        a {
+          font: 600 normal 5vw/10vw $italiana;
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 414px) {
-  .notFound, .internalServerError {
+  .notFound {
     #main__content {
       div {
         h1 {
@@ -97,6 +129,28 @@
         }
         p {
           font: 600 normal 4.5vw/10vw $italiana;
+        }
+        a {
+          font: 600 normal 5vw/10vw $italiana;
+        }
+      }
+    }
+  }
+  .internalServerError {
+    #main__content {
+      div {
+        h1 {
+          font: 100 normal 35vw/35vw 'Avenir Next', sans-serif;
+        }
+        p {
+          // font: 600 normal 4.5vw/10vw $italiana;
+
+          &:first-of-type {
+            font: 600 normal 4.5vw/10vw $italiana;
+          }
+          &:last-of-type {
+            font: 600 normal 3vw/3vw6$italiana;
+          }
         }
         a {
           font: 600 normal 5vw/10vw $italiana;

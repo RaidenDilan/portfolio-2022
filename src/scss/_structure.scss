@@ -211,6 +211,31 @@ svg.svg_underline {
   }
 }
 
+@keyframes lightbulb {
+  0%, 8%, 14% {
+    opacity: 0.1;
+  }
+  0%, 10%, 25% {
+    opacity: 0.25;
+  }
+  5%, 30%, 50%, 70% {
+    opacity: 0.5;
+  }
+  16%, 60%, 80% {
+    opacity: 0.75;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  94% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
 @media (max-width: 1024px) {
   .single-works {
     h1 {

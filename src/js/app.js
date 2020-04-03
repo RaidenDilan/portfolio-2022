@@ -1144,11 +1144,7 @@ Site = {
         TweenMax.fromTo('#inner_svg img', 2, { rotation: -140 }, { rotation: 0, ease: Power2.easeOut, onComplete: () => AboutRAFs.init() });
       }
       else if (Site.body.classList.contains('single')) {
-        if (window.innerWidth < 768) {
-          Site.pixiMenuLinks.forEach((obj) => {
-            if (Site.body.classList.contains(obj.getAttribute('data-id'))) obj.classList.add('active');
-          });
-        }
+        if (window.innerWidth < 768) Site.pixiMenuLinks.forEach((obj) => Site.body.classList.contains(obj.getAttribute('data-id')) && obj.classList.add('active'));
 
         document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
 
@@ -1194,8 +1190,8 @@ Site = {
         // Site.loader.add('image', document.getElementById('cover').getAttribute('data-img'));
 
         const img = new Image();
-
         img.src = document.getElementById('cover').getAttribute('data-img');
+
         img.onload = function() {
           let width = this.width;
           let height = this.height;
@@ -1204,15 +1200,16 @@ Site = {
 
           // +10 and -5 values to avoid white edges
           if (windowRatio >= imageRatio) {
-            image.width = window.innerWidth + 10;
-            image.height = height * (window.innerWidth + 10) / width;
+            image.width = window.innerWidth;
+            image.height = Math.round((height * window.innerWidth) / width);
             image.x = -5;
-            image.y = window.innerHeight / 2 - image.height / 2;
+            image.y = Math.round((window.innerHeight / 2) - (image.height - (image.height / 3)));
           }
           else {
-            image.height = height;
-            image.width = (width * window.innerHeight / height) + 10;
-            image.y = height / 6 - image.height / 2; // ADDED BY ME
+            image.width = width;
+            image.height = Math.round((width * window.innerHeight) / width);
+            image.x = Math.round((window.innerWidth / 15) - (image.width - (image.width / 3)));
+            image.y = Math.round((window.innerHeight / 10) - (image.height / 2));
           }
         };
 
@@ -1640,7 +1637,6 @@ Site = {
     window['image' + index].alpha = 0;
 
     const img = new Image(); // equivalent to document.createElement('img')
-
     img.src = item.getAttribute('data-url');
     img.onload = function() {
       let width = this.width;
@@ -1651,14 +1647,14 @@ Site = {
       // +10 and -5 values to avoid white edges
       if (window.innerWidth / window.innerHeight >= imageRatio) {
         window['image' + index].width = window.innerWidth + 10;
-        window['image' + index].height = height * (window.innerWidth + 10) / width;
+        window['image' + index].height = Math.round((height * window.innerWidth) / width);
         window['image' + index].x = -5;
-        window['image' + index].y = window.innerHeight / 2 - window['image' + index].height / 2;
+        window['image' + index].y = Math.round(window.innerHeight / 2 - window['image' + index].height / 2);
       }
       else {
         window['image' + index].height = window.innerHeight;
-        window['image' + index].width = (width * window.innerHeight / height) + 10;
-        window['image' + index].x = (window.innerWidth / 2 - window['image' + index].width / 2) - 5;
+        window['image' + index].width = Math.round((width * window.innerHeight / height) + 10);
+        window['image' + index].x = Math.round((window.innerWidth / 2 - window['image' + index].width / 2) - 5);
       }
     };
   },
@@ -1668,8 +1664,8 @@ Site = {
 
     let frameWidth = 0.24 * window.innerWidth;
     let frameHeight = window.innerHeight - 0.074 * window.innerWidth;
-    const img = new Image(); // equivalent to document.createElement('img')
 
+    const img = new Image(); // equivalent to document.createElement('img')
     img.src = item.getAttribute('data-img');
     img.onload = function() {
       let width = this.width;
@@ -1680,14 +1676,14 @@ Site = {
       // +10 and -5 values to avoid white edges
       if (windowRatio >= imageRatio) {
         window['menu_image' + index].width = window.innerWidth + 10;
-        window['menu_image' + index].height = height * (window.innerWidth + 10) / width;
+        window['menu_image' + index].height = Math.round((height * window.innerWidth) / width);
         window['menu_image' + index].x = -5;
-        window['menu_image' + index].y = window.innerHeight / 2 - window['menu_image' + index].height / 2;
+        window['menu_image' + index].y = Math.round(window.innerHeight / 2 - window['menu_image' + index].height / 2);
       }
       else {
-        window['menu_image' + index].width = (width * window.innerHeight / height) + 10;
-        window['menu_image' + index].height = height * (window.innerWidth + 10) / width;
-        window['menu_image' + index].x = (frameWidth / 2 - window['menu_image' + index].width / 2) - 25;
+        window['menu_image' + index].width = Math.round((width * window.innerHeight / height) + 10);
+        window['menu_image' + index].height = Math.round((height * window.innerWidth + 10) / width);
+        window['menu_image' + index].x = Math.round((frameWidth / 2 - window['menu_image' + index].width / 2) - 25);
       }
     };
   },

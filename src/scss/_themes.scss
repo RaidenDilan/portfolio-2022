@@ -57,8 +57,8 @@ body.dark-theme {
       }
     }
     .datas {
-      background: #222222;
-      transition: background 0s;
+      // background: #222222;
+      // transition: background 0s;
     }
     h1.random {
       text-shadow: -2px 2px 3px rgba(255, 255, 255, 0.5);
@@ -158,6 +158,12 @@ body.dark-theme {
       svg g {
         fill: $light;
       }
+    }
+  }
+  .reach {
+    h3 {
+      // color: $light;
+      color: #AEAEAE;
     }
   }
   .deets-dash {
