@@ -4,10 +4,10 @@ $dark: rgb(55, 55, 55); // #383838
 $light: rgb(251, 251, 251);
 $shadow: #d9d9d9;
 
-:root {
-  width: 100%;
-  height: 100%;
-}
+// :root {
+//   width: 100%;
+//   height: 100%;
+// }
 
 body {
   background-color: $light;
@@ -19,58 +19,44 @@ body.dark-theme {
   background-color: $dark;
   color: $light;
 
+  .cursor_main {
+    border: 2px solid $light;
+
+    &.vertical_scroll {
+      border: 2px solid $light;
+
+      &::after {
+        color: $light;
+      }
+    }
+  }
+  .cursor_junior {
+    background-color: $light;
+
+    &.vertical_scroll {
+      background-color: $light;
+        &::after {
+        background-color: $light;
+      }
+    }
+  }
+
   header .logo {
     color: $light;
   }
-  #main__content {
-    span.random {
-      color: $light;
-    }
-    a {
-      color: $light;
-    }
-    .inner_img {
-      background: $dark;
-    }
-    #next_proj {
-      > div {
-        div {
-          &.changing {
-            color: $light;
-
-            span {
-              color: $light;
-            }
-          }
-        }
-        a {
-          color: $light;
-          -webkit-text-stroke: 1px $dark;
-
-          &.changing {
-            span {
-              color: $light;
-              @include stroke(1px, $light);
-            }
-          }
-        }
-      }
-    }
-    .datas {
-      // background: #222222;
-      // transition: background 0s;
-    }
-    h1.random {
-      text-shadow: -2px 2px 3px rgba(255, 255, 255, 0.5);
+  header .projects.black .feature1,
+  .black {
+    .feature1,
+    .feature2,
+    .feature3 {
+      background: $light;
     }
   }
-
   #social {
     a {
       color: $light;
     }
   }
-
   #about.black .all_work, #contact.black .all_work {
     text {
       fill: $light;
@@ -79,18 +65,20 @@ body.dark-theme {
       stroke: $light;
     }
   }
-  header .projects.black .feature1,
 
-  .black {
-    .feature1,
-    .feature2,
-    .feature3 {
-      background: $light;
-    }
+  svg.svg_menu path {
+    stroke: $light;
+  }
+  .point3.black .svg_menu .svg_line {
+    stroke: $light;
+  }
+  .point3.black .svg_underline .svg_line {
+    stroke: $light;
   }
 
   #nav__menu {
     background: $dark;
+
     a {
       color: $light;
     }
@@ -110,90 +98,9 @@ body.dark-theme {
       }
       &.active a {
         -webkit-text-stroke: 1px $light;
-        color: $light;
+        color: $dark;
       }
     }
-  }
-
-  .cursor_main {
-    border: 2px solid $light;
-
-    &.vertical_scroll {
-      border: 2px solid $light;
-
-      &::after {
-        color: $light;
-      }
-    }
-  }
-  .cursor_junior {
-    &.vertical_scroll {
-      background-color: $light;
-        &::after {
-        background-color: $light;
-      }
-    }
-  }
-
-  .background_intro {
-    background: #222222
-  }
-  .madein div {
-    color: $light;
-  }
-  .city {
-    fill: $light;
-
-    div:first-child {
-      background: -webkit-gradient(left top, left bottom, color-stop(0%, $light), color-stop(58%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 1)));
-      background: -webkit-linear-gradient(top, $light 0%, rgba(255, 255, 255, 1) 58%, rgba(255, 255, 255, 1) 100%);
-
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    #inner_svg {
-      fill: $light;
-
-      svg g {
-        fill: $light;
-      }
-    }
-  }
-  .reach {
-    h3 {
-      // color: $light;
-      color: #AEAEAE;
-    }
-  }
-  .deets-dash {
-    background: $light;
-  }
-  .intro2 {
-    h1 {
-      color: $light;
-    }
-    h2 {
-      span {
-        color: $light;
-      }
-    }
-  }
-  footer h3 {
-    color: $light;
-  }
-
-  svg.svg_menu path {
-    stroke: $light;
-  }
-  .point3.black .svg_menu .svg_line {
-    stroke: $light;
-  }
-  .point3.black .svg_underline .svg_line {
-    stroke: $light;
-  }
-
-  #nav__menu {
     .first_line, .second_line, .third_line {
       background: $light;
     }
@@ -203,23 +110,128 @@ body.dark-theme {
       }
     }
   }
+
+  &.single-works {
+    #main__content {
+      span.random {
+        color: $light;
+      }
+      a {
+        color: $light;
+      }
+      .inner_img {
+        background: $dark;
+      }
+      #next_proj {
+        > div {
+          div {
+            &.changing {
+              color: $light;
+
+              span {
+                color: $light;
+              }
+            }
+          }
+          a {
+            color: $light;
+            -webkit-text-stroke: 1px $dark;
+
+            &.changing {
+              span {
+                color: $light;
+                @include stroke(1px, $light);
+              }
+            }
+          }
+        }
+      }
+      // .datas {
+      //   background: #222222;
+      //   transition: background 0s;
+      // }
+      h1.random {
+        text-shadow: -2px 2px 3px rgba(255, 255, 255, 0.5);
+      }
+    }
+  }
+  &.about {
+    #main__content {
+      .background_intro {
+        background: #222222
+      }
+      .madein div {
+        color: $light;
+      }
+      .city {
+        fill: $light;
+
+        div:first-child {
+          background: -webkit-gradient(left top, left bottom, color-stop(0%, $light), color-stop(58%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 1)));
+          background: -webkit-linear-gradient(top, $light 0%, rgba(255, 255, 255, 1) 58%, rgba(255, 255, 255, 1) 100%);
+
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+        }
+
+        #inner_svg {
+          fill: $light;
+
+          svg g {
+            fill: $light;
+          }
+        }
+      }
+      .reach {
+        h3 {
+          color: #AEAEAE;
+        }
+        a {
+          color: $light;
+        }
+      }
+      .deets-dash {
+        background: $light;
+      }
+      .intro2 {
+        h1 {
+          color: $light;
+        }
+        h2 {
+          span {
+            color: $light;
+          }
+        }
+      }
+      footer {
+        h3, a {
+          color: $light;
+        }
+      }
+    }
+  }
 }
 
 #change-theme-btn {
+  pointer-events: bounding-box;
   font: inherit;
   outline: 0;
   border-radius: 40px;
   width: 46px;
   height: 21px;
-  margin: 0 auto;
+  // margin: 0 auto;
   position: absolute;
   top: 39px;
   // left: 125px;
   right: 10vw;
-  cursor: pointer;
+  // cursor: pointer;
   overflow: hidden;
   transition: all 0.15s ease-out;
   z-index: 2;
+
+  * {
+    pointer-events: none;
+  }
 
   span {
     position: absolute;
@@ -255,18 +267,6 @@ body.dark-theme {
       width: 13px;
       height: 13px;
     }
-  }
-  input[type="checkbox"] {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    cursor: pointer;
-    opacity: 0;
-    z-index: 2;
   }
 
   &.light {

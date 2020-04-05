@@ -240,8 +240,8 @@ Menu = {
       Menu.menuClosingTimeout = null;
     }, 1250); // delay is unusally long
 
-    if (Site.scrolling !== null) Site.scrolling.on();
-    else if (Site.body.classList.contains('home')) document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black'));
+    Site.scrolling !== null && (Site.scrolling.on());
+    Site.body.classList.contains('home') && (document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black')));
 
     TweenMax.to('#nav__menu', 0.2, {
       opacity: 0,
@@ -299,7 +299,6 @@ Menu = {
         : false;
   },
   showHideArrow: () => {
-    // TEST CODE BELLOW
     if (!Menu.button.isOpen) {
       if (!UserAgent.iOS) {
         Site.body.classList.contains('single')
@@ -310,15 +309,21 @@ Menu = {
       }
       else {
         if (Site.body.classList.contains('single')) {
-          window.pageYOffset >= 10
+          (window.pageYOffset >= 10)
             ? Menu.showArrow()
-            : window.pageYOffset <= 10
+            : (window.pageYOffset <= 10)
               ? Menu.hideArrow()
               : console.log('showHideArrow => default action required'); // --- OR --- return Menu.hideArrow() as final block statement // : null;
 
-          window.innerHeight + Math.round(window.pageYOffset) >= (document.body.offsetHeight - 34) ? Theme.lightStyle() : Theme.darkStyle();
+          (window.innerHeight + Math.round(window.pageYOffset)) >= (document.body.offsetHeight - 34)
+            ? Theme.lightStyle()
+            : Theme.darkStyle();
         }
-        else if (Site.body.classList.contains('about')) window.pageYOffset >= 10 ? Menu.showArrow() : Menu.hideArrow();
+        else if (Site.body.classList.contains('about')) {
+          (window.pageYOffset >= 10)
+            ? Menu.showArrow()
+            : Menu.hideArrow();
+        }
       }
     }
   },
@@ -352,6 +357,7 @@ Drag = {
   isDrag: !0,
   isScroll: !0,
   init: () => {
+    Drag.cursorCont = document.getElementById('cursor_rd');
     Drag.cursorMain = document.getElementsByClassName('cursor_main')[0];
     Drag.cursorJunior = document.getElementsByClassName('cursor_junior')[0];
 
@@ -376,7 +382,7 @@ Drag = {
     Site.startPosition = event.pageX;
     Site.body.classList.add('dragging'); // IS THIS NECESSARY?
 
-    event.type === 'ontouchstart'
+    (event.type === 'ontouchstart')
       ? Site.posX1 = event.touches[0].clientX
       : (
         Site.posX1 = event.clientX,
@@ -390,7 +396,7 @@ Drag = {
 
     if (!Drag.isDown) return;
 
-    event.type === 'ontouchmove'
+    (event.type === 'ontouchmove')
       ? (
         Site.posX2 = Site.posX1 - event.touches[0].clientX,
         Site.posX1 = event.touches[0].clientX
@@ -488,66 +494,48 @@ SunMoon = {
     // maximumAge: 0 // maximumAge = maximum age for a possible previously-cached position. 0 = must return the current position, not a prior cached position
   },
   init: () => {
+    SunMoon.sunset = SunMoon.getSunset(SunMoon.lat, SunMoon.lng);
+    SunMoon.sunrise = SunMoon.getSunrise(SunMoon.lat, SunMoon.lng);
+    // SunMoon.checkGeolocation();
+  },
+  checkGeolocation: () => {
     /**
       * @param - {name} - {String} - 'geolocation'
       * @param - {res} - permissionStatus
      **/
+
     // navigator.permissions
     //   .query({ name: 'geolocation' })
     //   .then((res) => {
-    //     if (res.state === 'granted') {
-    //       SunMoon.permissionGranted = res.state;
-    //       // console.log('res.state - granted --+->', res.state);
-    //       // SunMoon.geoIsAllowed();
-    //     }
-    //     else if (res.state === 'denied') {
-    //       SunMoon.permissionGranted = res.state;
-    //       // console.log('res.state - denied --+->', res.state);
-    //     }
-    //     else {
-    //       SunMoon.permissionGranted = res.state;
-    //       // console.log('res.state = prompt --+->', res.state);
-    //       // SunMoon.geoIsAllowed();
-    //     }
-    //
+    //     if (res.state === 'granted') console.log('res.state - granted --+->', res.state);
+    //     else if (res.state === 'denied') console.log('res.state - denied --+->', res.state);
+    //     else console.log('res.state = prompt --+->', res.state);
     //     res.onchange = ((event) => {
     //       if (event.type === 'change') {
     //         const newState = event.target.state;
-    //         if (newState === 'granted') {
-    //           SunMoon.permissionGranted = newState;
-    //           // console.log('We will be together forever! --+->>', newState);
-    //           // SunMoon.geoIsAllowed();
-    //         }
-    //         else if (newState === 'denied') {
-    //           SunMoon.permissionGranted = newState;
-    //           // console.log('why did you decide to block us? --+->>', newState);
-    //         }
-    //         else {
-    //           SunMoon.permissionGranted = newState;
-    //           // console.log('Thanks for reverting things back to normal --+->>', newState);
-    //           // SunMoon.geoIsAllowed();
-    //         }
+    //         if (newState === 'granted') console.log('We will be together forever! --+->>', newState);
+    //         else if (newState === 'denied') console.log('why did you decide to block us? --+->>', newState);
+    //         else console.log('Thanks for reverting things back to normal --+->>', newState);
     //       }
     //     });
     //   });
 
     // 'geolocation' in navigator && (SunMoon.permissionGranted === 'prompt' && SunMoon.geoIsAllowed());
-    'geolocation' in navigator && (
-      // SunMoon.requestLocation(),
-      SunMoon.sunset = SunMoon.getSunset(SunMoon.lat, SunMoon.lng), /** Sunset tonight at the Triggertrap office for today */
-      SunMoon.sunrise = SunMoon.getSunrise(SunMoon.lat, SunMoon.lng) /** Sunrise at London on Spring day 2020 */
-    );
+    // 'geolocation' in navigator && (
+    //   SunMoon.requestLocation(),
+    //   SunMoon.sunset = SunMoon.getSunset(SunMoon.lat, SunMoon.lng), /** Sunset tonight at the Triggertrap office for today */
+    //   SunMoon.sunrise = SunMoon.getSunrise(SunMoon.lat, SunMoon.lng) /** Sunrise at London on Spring day 2020 */
+    // );
   },
   requestLocation: () => {
-    navigator.geolocation.getCurrentPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options); // call getCurrentPosition()
-    // navigator.geolocation.watchPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options); // call getCurrentPosition()
+    navigator.geolocation.getCurrentPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options);
+    // navigator.geolocation.watchPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options);
   },
   onSuccess: (position) => {
-    /** Combined with geolocation. Sunset tonight at your location. */
     SunMoon.lat = position.coords.latitude;
     SunMoon.lng = position.coords.longitude;
   },
-  onError: (position) => {
+  onError: (error) => {
     console.log('Geolocation error', error);
   },
   getDayOfYear: (date) => {
@@ -556,46 +544,52 @@ SunMoon = {
     * @param {Date} date
     * @returns {Number}
     */
+
     return Math.ceil((date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) / 8.64e7);
   },
   sinDeg: (deg) => {
     /**
-    * Get sin of value in deg
+    * Get sine of value in deg
     * @param {Number} deg
     * @returns {Number}
     */
+
     return Math.sin(deg * 2.0 * Math.PI / 360.0);
   },
   acosDeg: (x) => {
     /**
-    * Get acos of value in deg
+    * Get arccosine of value in deg
     * @param {Number} x
     * @returns {Number}
     */
+
     return Math.acos(x) * 360.0 / (2 * Math.PI);
   },
   asinDeg: (x) => {
     /**
-    * Get asin of value in deg
+    * Get arcsine of value in deg
     * @param {Number} x
     * @returns {Number}
     */
+
     return Math.asin(x) * 360.0 / (2 * Math.PI);
   },
   tanDeg: (deg) => {
     /**
-    * Get tan of value in deg
+    * Get tangent of value in deg
     * @param {Number} deg
     * @returns {Number}
     */
+
     return Math.tan(deg * 2.0 * Math.PI / 360.0);
   },
   cosDeg: (deg) => {
     /**
-    * Get cos of value in deg
+    * Get cosine of value in deg
     * @param {Number} deg
     * @returns {Number}
     */
+
     return Math.cos(deg * 2.0 * Math.PI / 360.0);
   },
   mod: (a, b) => {
@@ -605,6 +599,7 @@ SunMoon = {
     * @param {Number} b
     * @returns {Number}
     */
+
     const result = a % b;
     return result < 0 ? result + b : result;
   },
@@ -645,6 +640,8 @@ SunMoon = {
     const time = SunMoon.mod(localMeanTime - (longitude / SunMoon.DEGREES_PER_HOUR), 24);
     const utcMidnight = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
 
+    // console.log(dayOfYear, '<-+->', hoursFromMeridian, '<-+->', approxTimeOfEventInDays, '<-+->', sunMeanAnomaly, '<-+->', sunTrueLongitude, '<-+->', ascension, '<-+->', lQuadrant, '<-+->', raQuadrant, '<-+->', sinDec, '<-+->', cosDec, '<-+->', cosLocalHourAngle, '<-+->', localHourAngle, '<-+->', localHour, '<-+->', localMeanTime, '<-+->', time, '<-+->', utcMidnight);
+
     // Created date will be set to local (system) time zone.
     return new Date(utcMidnight + (time * SunMoon.MSEC_IN_HOUR));
   },
@@ -656,6 +653,7 @@ SunMoon = {
     * @param {Date} [date]
     * @returns {Date}
     */
+
     return SunMoon.calculate(latitude, longitude, true, SunMoon.DEFAULT_ZENITH, date);
   },
   getSunset: (latitude, longitude, date = new Date()) => {
@@ -666,190 +664,8 @@ SunMoon = {
     * @param {Date} [date]
     * @returns {Date}
     */
+
     return SunMoon.calculate(latitude, longitude, false, SunMoon.DEFAULT_ZENITH, date);
-  }
-};
-
-var Preload = Preload || {};
-
-Preload = {
-  /** @NOTE - USAGE
-    * <p class="preload-counter"></p>
-    *
-    * <div id="state"></div>
-    * <div id="progressId">...</div>
-    * <div id="progressbar">
-    *   <div class="bar"></div>
-    * </div>
-   **/
-  init: () => {
-    // Preload.$state = document.querySelector('#state');
-    // Preload.$progress = document.querySelector('#progressId');
-    // Preload.$progressbar = document.querySelector('#progressbar .bar');
-    // Preload.allImages = document.querySelectorAll("[data-img^='../images']");
-
-    // console.log('Preload.allImages', Preload.allImages);
-
-    /*------------------------------------------------------------------------*/
-    /*                             PRELOAD ASSETS                             */
-    /*------------------------------------------------------------------------*/
-    // Site.preload.on('fileload', Site.handlePreloadFileLoad);
-    // Site.preload.on('progress', Site.handlePreloadProgress);
-    // Site.preload.on('fileprogress', Site.handlePreloadProgress);
-    // Site.preload.on('complete', Site.handleFileProgress);
-    // Site.preload.on('error', Site.handleFileError);
-
-    // Site.preload.on('complete', Preload.onComplete);
-    // Site.preload.on('error', Preload.onError);
-    // Site.preload.on('fileload', Preload.onFileLoad);
-    // Site.preload.on('fileprogress', Preload.onFileProgress);
-    // Site.preload.on('progress', Preload.onProgress);
-    // Site.preload.setMaxConnections(5);
-
-    // Push each item into our manifest
-    // Preload.manifest = [
-    //   'image0.jpg',
-    //   'image1.jpg',
-    //   'image2.jpg',
-    //   'image3.jpg',
-    //   'Autumn.png',
-    //   'BlueBird.png',
-    //   'Nepal.jpg',
-    //   'Texas.jpg'
-    // ];
-
-    // Site.preload.loadFile();
-
-    // Site.preload.loadManifest(Preload.allImages);
-    // Site.preload.loadManifest([{
-    //   id: '1',
-    //   src: 'http://upload.wikimedia.org/wikipedia/commons/a/a2/Polycyclic_Aromatic_Hydrocarbons_In_Space.jpg'
-    // }, {
-    //   id: '2',
-    //   src: 'http://upload.wikimedia.org/wikipedia/commons/c/cb/WA_-_Dry_Falls_-_Huge_Channel_v1.png'
-    // }]);
-
-    // If there is an open preload queue, close it.
-    // Site.preload != null && Site.preload.close();
-
-    // console.log('Site.preload', Site.preload);
-  },
-  stop: () => {
-    Site.preload != null && Site.preload.close();
-  },
-  loadAll: () => {
-    while (Preload.manifest.length > 0) loadAnother();
-  },
-  loadAnother: () => {
-    // Get the next Preload.manifest item, and load it
-    let item = Preload.manifest.shift();
-    Site.preload.loadFile(item);
-
-    // If we have no more items, disable the UI.
-    if (Preload.manifest.length === 0) {
-      $('#loadAnotherBtn').attr('disabled', 'disabled');
-      $('#loadAllBtn').attr('disabled', 'disabled');
-      $('#reloadBtn').css('display', 'inline');
-    }
-
-    // Create a new loader display item
-    let div = $('#template').clone();
-    div.attr('id', ''); // Wipe out the ID
-    div.addClass('box');
-    $('#container').append(div);
-    map[item] = div; // Store a reference to each item by its src
-  },
-  loadItem: (url) => {
-    // Add the event listener and handler
-    Site.preload.on('fileload', (event) => {
-      let type = event.item.type;
-
-      if (type === createjs.LoadQueue.IMAGE) {
-        // make a CreateJS Bitmap object from the result
-        let imgItem = event.result;
-        image = new createjs.Bitmap(imgItem.src);
-        stage.addChild(image);
-        stage.update();
-      }
-    }, null, true, options);
-
-    let item = new createjs.LoadItem().set({ src: url, crossOrigin: 'Anonymous' }); // create a LoadItem and set the crossOrigin property
-    Site.preload.loadFile(item); // load it
-  },
-  onComplete: (event) => {
-    console.log('Complete', event);
-    Preload.$state.innerHTML = Preload.$state.innerHTML + '[All loaded]';
-    Preload.$progressbar.classList.add('complete');
-  },
-  onError: (event) => {
-    console.log('Error', event);
-    Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item + ' errored] ';
-    // Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item.id + ' errored] ';
-  },
-  onFileLoad: (event) => {
-    console.log('File loaded', event);
-    Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item + ' loaded] ';
-    // Preload.$state.innerHTML = Preload.$state.innerHTML + '[' + event.item.id + ' loaded] ';
-  },
-  onFileProgress: (event) => {
-    console.log('File progress', event);
-  },
-  onProgress: (event) => {
-    let progress = Math.round(event.loaded * 100);
-    console.log('General progress', Math.round(event.loaded) * 100, event);
-    Preload.$progress.innerHTML = progress + '%';
-    Preload.$progressbar.style.widht = progress + '%';
-  },
-  /*--------------------------------------------------------------------------*/
-  /*                               PRELOAD JS                                 */
-  /*--------------------------------------------------------------------------*/
-  // File complete handler
-  handlePreloadFileLoad: (event) => {
-    console.log('[ handlePreloadFileLoad ] -+-> event -+->', event);
-
-    let div = map[event.item.id];
-    div.classList.add('complete');
-
-    // Get a reference to the loaded image (<img/>)
-    let img = event.result;
-
-    // Resize it to fit inside the item
-    let r = img.width / img.height;
-    let ir = w / h;
-
-    if (r > ir) {
-      img.width = w;
-      img.height = w / r;
-    }
-    else {
-      img.height = h;
-      img.width = h;
-    }
-    div.append(img); // Add it to the DOM
-  },
-  // File progress handler
-  handleFileProgress: (event) => {
-    let div = map[event.item.id]; // Lookup the related item
-    div.children('DIV').width(event.progress * div.width()); // Set the width the progress.
-  },
-  // Overall progress handler
-  handleOverallProgress: (event) => {
-    $('#mainProgress > .progress').width(preload.progress * $('#mainProgress').width());
-  },
-  // An error happened on a file
-  handleFileError: (event) => {
-    let div = map[event.item.id];
-    div.classList.add('error');
-  },
-  // File progress handler
-  handlePreloadProgress: (event) => {
-    let propgress = Site.preload.progress * 100;
-    document.querySelector('.preload-counter').textContent = ' ' + Math.round(propgress) + '%';
-    // return console.log('[ handlePreloadProgress ]', 1 - event.progress);
-  },
-  // File complete handler
-  handlePreloadComplete: (event) => {
-    // return console.log('[ handlePreloadComplete ]', event.complete);
   }
 };
 
@@ -1021,7 +837,7 @@ Site = {
         }, 1000, !1)
       );
 
-      /** @NOTE -> removes event listeners from elements with 'link' class before adding click events to each element */
+      /** @NOTE -> removes event listeners from elements with 'link' class before adding click events to each element again */
       Site.links.forEach((obj) => {
         obj.removeEventListener(Site.clickEvent, Site.onClickHandler);
         obj.onclick = null;
@@ -1137,7 +953,14 @@ Site = {
         Site.animateRandomElements('.random');
         TweenMax.staggerFromTo(Site.random, 1, { x: '-24px' }, { x: '0px', opacity: 1, delay: 0.6, ease: Power2.easeOut }, 0.1);
 
-        !UserAgent.iOS && Site.createVirtualScroll();
+        // !UserAgent.iOS && Site.createVirtualScroll();
+
+        Drag.cursorMain.classList.add('vertical_scroll');
+        Drag.cursorJunior.classList.add('vertical_scroll');
+
+        if (!UserAgent.iOS) {
+          Site.createVirtualScroll();
+        }
 
         TweenMax.to('#inner_svg', 1, { opacity: 1, ease: Power2.easeIn });
         TweenMax.fromTo('#inner_svg', 2, { rotation: 140 }, { rotation: 0, ease: Power2.easeOut });
@@ -1429,11 +1252,11 @@ Site = {
     // window.keydown = Site.onKeydownHandler;
 
     window.DeviceOrientationEvent && (
-      window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1),
-      window.addEventListener('onorientationchange', Throttle.actThenThrottleEvents(Site.circleHandler, 500), !1),
+      window.addEventListener('ondeviceorientation', Throttle.actThenThrottleEvents(Site.circleOrientationHandler, 500), !1),
+      window.addEventListener('onorientationchange', Throttle.actThenThrottleEvents(Site.circleOrientationHandler, 500), !1),
 
-      window.ondeviceorientation = Site.circleHandler,
-      window.onorientationchange = Site.circleHandler
+      window.ondeviceorientation = Site.circleOrientationHandler,
+      window.onorientationchange = Site.circleOrientationHandler
     );
 
     window.addEventListener('scroll', Throttle.actThenThrottleEvents(Site.scrollEventHandler, 500), !1);
@@ -1485,6 +1308,7 @@ Site = {
     Site.scrolling = new Smooth({
       preload: !0,
       native: !1,
+      direction: 'vertical',
       section: Site.vsSection,
       divs: Site.vsDivs,
       vs: { mouseMultiplier: 0.4 }
@@ -1607,27 +1431,17 @@ Site = {
   projectChangedHandler: (event) => {
     !UserAgent.iOS && (event = event || window.event, event.preventDefault() || false);
 
-    if (event.target.classList.contains('main__pagination')) Site.changePagination(event.target);
-    else if (event.target.classList.contains('arrow-transition-in')) {
-      Site.scrollBackUp(event.target);
-      Site.showSideNav();
-    }
-    else if (event.target.classList.contains('to_next') && Site.blockedAction === !1) Site.nextSlide();
-    else if (event.target.classList.contains('to_prev') && Site.blockedAction === !1) Site.prevSlide();
-    else if (event.target.classList.contains('projects')) {
-      // TEST CODE BELLOW
-
-      // event = event || window.event;
-      // event.preventDefault() || false;
-
-      if (Menu.button.isArrow) {
-        Site.scrolling !== null
-          ? Site.scrolling.scrollTo(0) // Site.scrolling.scrollTo(0, !0);
-          : Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad'); // Site.scrollToTop(Math.abs(Site.vsSection), 1000, 'easeOutQuad');
-      }
-      document.querySelectorAll('.projects').forEach((obj) => obj.classList.toggle('opened'));
-      !Menu.button.isOpen ? Menu.open() : Menu.close();
-    }
+    (event.target.classList.contains('main__pagination'))
+      ? Site.paginationClickHandler(event.target)
+      : (event.target.classList.contains('arrow-transition-in'))
+        ? Site.scrollBackUp(event.target)
+        : (event.target.classList.contains('to_next') && Site.blockedAction === !1)
+          ? Site.nextSlide()
+          : (event.target.classList.contains('to_prev') && Site.blockedAction === !1)
+            ? Site.prevSlide()
+            : (event.target.classList.contains('projects'))
+              ? Site.menuClickedHandler(event)
+              : false;
   },
 
   setDimensions: (item, index) => {
@@ -1636,12 +1450,15 @@ Site = {
     window['image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-url')));
     window['image' + index].alpha = 0;
 
+    let imageRatio;
+
     const img = new Image(); // equivalent to document.createElement('img')
+
     img.src = item.getAttribute('data-url');
     img.onload = function() {
       let width = this.width;
       let height = this.height;
-      let imageRatio = width / height;
+      imageRatio = width / height;
       // let windowRatio = window.innerWidth / window.innerHeight;
 
       // +10 and -5 values to avoid white edges
@@ -1657,6 +1474,26 @@ Site = {
         window['image' + index].x = Math.round((window.innerWidth / 2 - window['image' + index].width / 2) - 5);
       }
     };
+    // img.onresize = function() {
+    //   let w;
+    //   let h;
+    //
+    //   // console.log('Site.renderer', Site.renderer);
+    //   // Site.renderer.resize(window.innerWidth, window.innerHeight);
+    //
+    //   if (window.innerWidth / window.innerHeight >= imageRatio) {
+    //     w = window.innerHeight * imageRatio;
+    //     h = window.innerHeight;
+    //   }
+    //   else {
+    //     w = window.innerWidth;
+    //     h = window.innerWidth / imageRatio;
+    //   }
+    //
+    //   Site.renderer.view.style.width = w + 'px';
+    //   Site.renderer.view.style.height = h + 'px';
+    // };
+    // console.log('img', img.onresize);
   },
   setMenuDimensions: (item, index) => {
     window['menu_image' + index] = new PIXI.Sprite(PIXI.Texture.from(item.getAttribute('data-img')));
@@ -1688,6 +1525,23 @@ Site = {
     };
   },
 
+  menuClickedHandler: (event) => {
+    event = event || window.event;
+    event.preventDefault() || false;
+
+    if (Menu.button.isArrow) {
+      Site.scrolling !== null
+        ? Site.scrolling.scrollTo(0)
+        : Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad');
+    }
+
+    Menu.button.classList.toggle('opened');
+
+    !Menu.button.isOpen
+      ? Menu.open()
+      : Menu.close();
+
+  },
   scrollBackUp: (event) => {
     if (!UserAgent.iOS) {
       if (Math.round(Site.scrolling.vars.bounding / 7)) {
@@ -1715,6 +1569,8 @@ Site = {
       document.querySelectorAll('.light').forEach((obj) => obj.classList.remove('light'));
       document.querySelectorAll('.point3').forEach((obj) => obj.classList.add('black'));
     }
+
+    Site.showSideNav();
   },
   /*--------------------------------------------------------------------------*/
   /*                          Anchor Mouse Events                             */
@@ -1739,16 +1595,12 @@ Site = {
   mouseMoveHandler: (event) => {
     event = event || window.event;
     event.preventDefault() || false;
-
-    let pad = 26;
-    let pad2 = 5;
-
+    const padding = 26;
     !Drag.cursorMain.classList.contains('visible')
       ? Drag.toggleVisible()
-      : Drag.cursorMain.classList.contains('visible') ? (
-        TweenMax.to(Drag.cursorMain, 0.1, { transform: 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )', ease: 'none' }), // Drag.cursorMain.style.transform = 'translate( ' + (event.clientX - pad) + 'px , ' + (event.clientY - pad) + 'px )';
-        TweenMax.to(Drag.cursorJunior, 0.1, { transform: 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )', ease: 'none' }) // Drag.cursorJunior.style.transform = 'translate( ' + (event.clientX - pad2) + 'px , ' + (event.clientY - pad2) + 'px )';
-      ) : false;
+      : Drag.cursorMain.classList.contains('visible')
+        ? TweenMax.to(Drag.cursorCont, 0.1, { x: event.clientX - padding, y: event.clientY - padding, ease: 'none' })
+        : false;
   },
   mouseOutHandler: (event) => {
     event = event || window.event;
@@ -1789,16 +1641,6 @@ Site = {
       document.removeEventListener('onmousemove', Site.mouseOverHandler, !1);
       document = Site.mouseOverHandler;
     });
-  },
-
-  circleHandler: (event) => {
-    window.orientation === 0
-      ? Site.gamma = event.gamma
-      : window.orientation === 180
-        ? Site.gamma = -event.gamma
-        : window.orientation === -90
-          ? Site.gamma = -event.beta
-          : window.orientation === 90 && (Site.gamma = event.beta); // this is the last conditional block OR 'else' statement
   },
 
   touchStartHandler: (event) => {
@@ -1875,6 +1717,12 @@ Site = {
         Site.about.style.top = (window.innerHeight / 2) - 50 + 'px',
         Site.contact.style.top = (window.innerHeight / 2) - 50 + 'px'
       );
+
+    // RESIZE PixiJS
+    Site.renderer && (
+      Site.renderer.view.style.width = window.innerWidth + 'px',
+      Site.renderer.view.style.height = window.innerHeight + 'px'
+    );
   },
 
   onHover: (event) => {
@@ -1890,13 +1738,14 @@ Site = {
     Site.speed = 4;
     // if (Site.body.classList.contains('home')) Site.commonTransition();
     Site.commonTransition();
-    Site.updatePagination('next');
+    Site.updateCircleHandler('next');
+
     window['image' + Site.currentSlide].alpha = 0;
     Site.stage.addChild(window['image' + Site.currentSlide]);
     // image1.alpha = 1;
-    const timeline = new TimelineMax();
+    const tl = new TimelineMax();
 
-    timeline.to(Site.attributes2, 0.9, {
+    tl.to(Site.attributes2, 0.9, {
       intensity: 150,
       x: 20,
       ease: Power2.easeIn,
@@ -1906,18 +1755,8 @@ Site = {
         // Site.displacementSprite2.scale.x = Site.attributes2.width;
       },
       onComplete: () => {
-        timeline.reverse();
-        Site.nextSlideTimeout && clearTimeout(Site.nextSlideTimeout);
-        Site.nextSlideTimeout = setTimeout(() => {
-          !UserAgent.iOS && (Site.stage.removeChild(Site.displacementSprite2), Site.stage.addChild(Site.displacementSprite));
-          Site.listenCursor = !0;
-          Site.currentSlide === 0 ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
-          Site.currentSlide < (Site.totalSlides - 1) ? Site.currentSlide++ : Site.currentSlide = 0;
-          Site.displacementSprite.x = Site.currentMousePos.x;
-          Site.blockedAction = !1;
-          clearTimeout(Site.nextSlideTimeout);
-          Site.nextSlideTimeout = null;
-        }, 800);
+        tl.reverse();
+        Site.nextSlideRafs();
       }
     });
 
@@ -1933,23 +1772,19 @@ Site = {
   prevSlide: () => {
     Site.speed = -4;
     Site.commonTransition();
-    Site.updatePagination('prev');
+    Site.updateCircleHandler('prev');
 
-    Site.currentSlide === 0 ? (
-      window['image' + (Site.totalSlides - 2)].alpha = 0,
-      Site.stage.addChild(window['image' + (Site.totalSlides - 2)])
-    ) : Site.currentSlide === 1 ? (
-      window['image' + (Site.totalSlides - 1)].alpha = 0,
-      Site.stage.addChild(window['image' + (Site.totalSlides - 1)])
-    ) : (
-      window['image' + (Site.currentSlide - 2)].alpha = 0,
-      Site.stage.addChild(window['image' + (Site.currentSlide - 2)])
-    );
+    Site.currentSlide === 0
+      ? (window['image' + (Site.totalSlides - 2)].alpha = 0, Site.stage.addChild(window['image' + (Site.totalSlides - 2)]))
+      : Site.currentSlide === 1
+        ? (window['image' + (Site.totalSlides - 1)].alpha = 0, Site.stage.addChild(window['image' + (Site.totalSlides - 1)]))
+        : (window['image' + (Site.currentSlide - 2)].alpha = 0, Site.stage.addChild(window['image' + (Site.currentSlide - 2)]));
+
     // image1.alpha = 1;
-    const timeline = new TimelineMax();
+    const tl = new TimelineMax();
     // Site.attributes2.anchor = 0;
 
-    timeline.to(Site.attributes2, 0.9, {
+    tl.to(Site.attributes2, 0.9, {
       intensity: 150,
       x: -20,
       // width: 0.8,
@@ -1962,18 +1797,8 @@ Site = {
         // Site.displacementSprite2.anchor.x = Site.attributes2.anchor;
       },
       onComplete: () => {
-        timeline.reverse();
-        Site.prevSlideTimeout && clearTimeout(Site.prevSlideTimeout);
-        Site.prevSlideTimeout = setTimeout(() => {
-          !UserAgent.iOS && (Site.stage.removeChild(Site.displacementSprite2), Site.stage.addChild(Site.displacementSprite));
-          Site.listenCursor = !0;
-          Site.currentSlide === 0 ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)]) : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
-          Site.currentSlide > 0 ? Site.currentSlide-- : Site.currentSlide = Site.totalSlides - 1;
-          Site.displacementSprite.x = Site.currentMousePos.x;
-          Site.blockedAction = !1;
-          clearTimeout(Site.prevSlideTimeout);
-          Site.prevSlideTimeout = null;
-        }, 800);
+        tl.reverse();
+        Site.prevSlideRafs();
       }
     });
 
@@ -1989,6 +1814,44 @@ Site = {
             : window['image' + (Site.currentSlide - 2)].alpha = Site.attributes3.opacity;
       }
     });
+  },
+
+  /** @NOTE Refactor (prevSlideRafs + nextSlideRafs) methods bellow into one method as they do exactly the same thing. **/
+  prevSlideRafs: () => {
+    Site.prevSlideTimeout && clearTimeout(Site.prevSlideTimeout);
+
+    Site.prevSlideTimeout = setTimeout(() => {
+      !UserAgent.iOS && (Site.stage.removeChild(Site.displacementSprite2), Site.stage.addChild(Site.displacementSprite));
+      Site.listenCursor = !0;
+      Site.currentSlide === 0
+        ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)])
+        : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
+      Site.currentSlide > 0
+        ? Site.currentSlide--
+        : Site.currentSlide = Site.totalSlides - 1;
+      Site.displacementSprite.x = Site.currentMousePos.x;
+      Site.blockedAction = !1;
+      clearTimeout(Site.prevSlideTimeout);
+      Site.prevSlideTimeout = null;
+    }, 800);
+  },
+  nextSlideRafs: () => {
+    Site.nextSlideTimeout && clearTimeout(Site.nextSlideTimeout);
+
+    Site.nextSlideTimeout = setTimeout(() => {
+      !UserAgent.iOS && (Site.stage.removeChild(Site.displacementSprite2), Site.stage.addChild(Site.displacementSprite));
+      Site.listenCursor = !0;
+      Site.currentSlide === 0
+        ? Site.stage.removeChild(window['image' + (Site.totalSlides - 1)])
+        : Site.stage.removeChild(window['image' + (Site.currentSlide - 1)]);
+      Site.currentSlide < (Site.totalSlides - 1)
+        ? Site.currentSlide++
+        : Site.currentSlide = 0;
+      Site.displacementSprite.x = Site.currentMousePos.x;
+      Site.blockedAction = !1;
+      clearTimeout(Site.nextSlideTimeout);
+      Site.nextSlideTimeout = null;
+    }, 800);
   },
 
   commonTransition: () => {
@@ -2012,15 +1875,18 @@ Site = {
   },
 
   footerInView: () => {
-    Site.scrolling.vars.target >= Math.round(Site.scrolling.vars.bounding - 34)
+    // console.log('footerInView');
+    (Site.scrolling.vars.target >= Math.round(Site.scrolling.vars.bounding - 34))
       ? (
         Drag.cursorMain.classList.remove('vertical_scroll', 'black'),
         Drag.cursorJunior.classList.remove('vertical_scroll', 'black'),
         Theme.lightStyle()
+        // console.log('[lightStyle]')
       ) : (
         Drag.cursorMain.classList.add('vertical_scroll', 'black'),
         Drag.cursorJunior.classList.add('vertical_scroll', 'black'),
         Theme.darkStyle()
+        // console.log('[darkStyle]')
       );
   },
 
@@ -2160,7 +2026,7 @@ Site = {
   /*--------------------------------------------------------------------------*/
   /*                            Home Pagination                               */
   /*--------------------------------------------------------------------------*/
-  changePagination: (element) => {
+  paginationClickHandler: (element) => {
     !!element.classList.contains('current'); // return if element contains the 'current' class
 
     Site.lindex = Array.from(document.getElementById('num_letter').children).indexOf(element);
@@ -2174,9 +2040,9 @@ Site = {
 
     Site.stage.addChild(window['image' + Site.lindex]);
 
-    const timeline = new TimelineMax();
+    const tl = new TimelineMax();
 
-    timeline.to(Site.attributes2, 0.9, {
+    tl.to(Site.attributes2, 0.9, {
       intensity: 150,
       x: 20,
       ease: Power2.easeIn,
@@ -2185,22 +2051,8 @@ Site = {
         Site.speed = Site.attributes2.x;
       },
       onComplete: () => {
-        timeline.reverse();
-
-        if (Site.changePaginationTimeout !== null) clearTimeout(Site.changePaginationTimeout);
-
-        Site.changePaginationTimeout = setTimeout(() => {
-          Site.stage.removeChild(Site.displacementSprite2);
-          Site.stage.addChild(Site.displacementSprite);
-          Site.listenCursor = !0;
-          Site.stage.removeChild(window['image' + (currentIndex)]);
-          Site.lindex >= Site.totalSlides - 1 ? Site.currentSlide = 0 : Site.currentSlide = Site.lindex + 1;
-          Site.displacementSprite.x = Site.currentMousePos.x;
-          Site.blockedAction = !1;
-
-          clearTimeout(Site.changePaginationTimeout);
-          Site.changePaginationTimeout = null;
-        }, 800);
+        tl.reverse();
+        Site.updatePagination(currentIndex);
       }
     });
 
@@ -2217,7 +2069,24 @@ Site = {
     Site.animateRandomElements('.random');
     TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.clickablePagination);
   },
-  updatePagination: (direction) => {
+  updatePagination: (index) => {
+    if (Site.changePaginationTimeout !== null) clearTimeout(Site.changePaginationTimeout);
+
+    Site.changePaginationTimeout = setTimeout(() => {
+      Site.stage.removeChild(Site.displacementSprite2);
+      Site.stage.addChild(Site.displacementSprite);
+      Site.listenCursor = !0;
+      Site.stage.removeChild(window['image' + (index)]);
+      Site.lindex >= Site.totalSlides - 1 ? Site.currentSlide = 0 : Site.currentSlide = Site.lindex + 1;
+      Site.displacementSprite.x = Site.currentMousePos.x;
+      Site.blockedAction = !1;
+
+      clearTimeout(Site.changePaginationTimeout);
+      Site.changePaginationTimeout = null;
+    }, 800);
+  },
+
+  updateCircleHandler: (direction) => {
     if (direction === 'next') {
       Site.multiplier = 1;
       TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.currentSlide) / Site.totalSlides)), ease: Power4.easeInOut });
@@ -2233,6 +2102,15 @@ Site = {
 
     Site.animateRandomElements('.random');
     TweenMax.staggerTo(Site.random, 0.4, { x: Site.multiplier * 24 + 'px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.scrollablePagination);
+  },
+  circleOrientationHandler: (event) => {
+    window.orientation === 0
+      ? Site.gamma = event.gamma
+      : window.orientation === 180
+        ? Site.gamma = -event.gamma
+        : window.orientation === -90
+          ? Site.gamma = -event.beta
+          : window.orientation === 90 && (Site.gamma = event.beta); // this is the last conditional block OR 'else' statement
   },
 
   scrollablePagination: () => {
@@ -2572,7 +2450,6 @@ Theme = {
         Site.historyState.stateChanged === !0 && (Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme());
       }
     }
-
   },
   updateDarkMode: () => {
     Theme.stateChanged = !0;
@@ -2584,7 +2461,6 @@ Theme = {
       Theme.calculateDaylight();
       clearTimeout(timeout);
     }, 500);
-
   },
   darkTheme: () => {
     window.localStorage.setItem('dark-theme-enabled', JSON.stringify(!0));
@@ -2603,26 +2479,26 @@ Theme = {
     Theme.dataTheme = Theme.button.getAttribute('data-theme');
   },
   calculateDaylight: () => {
-    let startTime = SunMoon.sunrise.toLocaleTimeString('en-GB');
-    let endTime = SunMoon.sunset.toLocaleTimeString('en-GB');
+    const startTime = SunMoon.sunrise.toLocaleTimeString('en-GB');
+    const endTime = SunMoon.sunset.toLocaleTimeString('en-GB');
 
     startTime.replace('AM', '').replace('PM', '');
     endTime.replace('AM', '').replace('PM', '');
 
-    let currentDate = new Date();
+    const currentDate = new Date();
 
     startDate = new Date(currentDate.getTime());
     startDate.setHours(startTime.split(':')[0]);
     startDate.setMinutes(startTime.split(':')[1]);
     startDate.setSeconds(startTime.split(':')[2]);
 
-    let endDate = new Date(currentDate.getTime());
+    const endDate = new Date(currentDate.getTime());
 
     endDate.setHours(endTime.split(':')[0]);
     endDate.setMinutes(endTime.split(':')[1]);
     endDate.setSeconds(endTime.split(':')[2]);
 
-    let isDaylight = startDate < currentDate && endDate > currentDate; // let isNight = endDate > currentDate && startDate > currentDate;
+    const isDaylight = startDate < currentDate && endDate > currentDate; // let isNight = endDate > currentDate && startDate > currentDate;
     isDaylight ? Theme.lightTheme() : Theme.darkTheme(); // isNight ? Theme.darkTheme() : Theme.lightTheme();
 
     if (Theme.rafAutoChange !== null) cancelAnimationFrame(Theme.rafAutoChange);
