@@ -122,14 +122,15 @@ MenuPixi = {
     Site.displacementSprite3.x += 2;
     MenuPixi.calculateMousePosition();
     MenuPixi.updateNavLinksPos();
-    window.innerWidth > 767 && MenuPixi.updatePixiDisplacement();
+    window.innerWidth > 767 && (MenuPixi.updatePixiDisplacement());
     Site.deltaMenu = Site.theDeltaMenu;
   },
   calculateMousePosition: () => {
-    Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8 ? Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) : Site.intensity = 1.8;
+    Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1) < 1.8
+      ? Site.intensity = Math.abs((Site.theDeltaMenu - Site.deltaMenu) / 200 + 1)
+      : Site.intensity = 1.8;
   },
   updateNavLinksPos: () => {
-    // TEST CODE BELLOW
     if (!UserAgent.iOS) {
       Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100) / 100;
       Site.theDeltaMenu = Site.currentMousePos.y;
@@ -143,8 +144,7 @@ MenuPixi = {
     }
   },
   updatePixiDisplacement: () => {
-    // TEST CODE BELLOW
-    Site.cursorPercentage > Site.heightMargin && Site.cursorPercentage < (100 - Site.heightMargin) && Site.pixiMenuLinks.forEach(Site.checkMenu);
+    Site.cursorPercentage > Site.heightMargin && (Site.cursorPercentage < (100 - Site.heightMargin) && Site.pixiMenuLinks.forEach(Site.checkMenu));
     Site.displace.intensity = Site.displacementFilter3.scale.x;
     TweenMax.to(Site.displace, 0.3, {
       intensity: 4 * (Site.theDeltaMenu - Site.deltaMenu),
@@ -342,10 +342,12 @@ Menu = {
     // Site.contact.classList.remove('light');
   },
   hideNavMenu: () => {
-    TweenMax.set('#nav__header', { opacity: 0 }); // Menu.navHeader.style.display = 'none';
+    TweenMax.to('#nav__header', { opacity: 0 });
+    // Menu.navHeader.style.display = 'none';
   },
   showNavMenu: () => {
-    TweenMax.set('#nav__header', { opacity: 1 }); // Menu.navHeader.style.display = 'block';
+    TweenMax.to('#nav__header', { opacity: 1 });
+    // Menu.navHeader.style.display = 'block';
   }
 };
 
@@ -488,11 +490,6 @@ SunMoon = {
   MSEC_IN_HOUR: 60 * 60 * 1000, /** Msec in hour */
   lat: null,
   lng: null,
-  options: {
-    enableHighAccuracy: false // enableHighAccuracy = should the device take extra time or power to return a really accurate result, or should it give you the quick (but less accurate) answer?
-    // timeout: 0, // timeout = how long does the device have, in milliseconds to return a result?
-    // maximumAge: 0 // maximumAge = maximum age for a possible previously-cached position. 0 = must return the current position, not a prior cached position
-  },
   init: () => {
     SunMoon.sunset = SunMoon.getSunset(SunMoon.lat, SunMoon.lng);
     SunMoon.sunrise = SunMoon.getSunrise(SunMoon.lat, SunMoon.lng);
@@ -528,7 +525,12 @@ SunMoon = {
     // );
   },
   requestLocation: () => {
-    navigator.geolocation.getCurrentPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options);
+    const options = {
+      enableHighAccuracy: false // enableHighAccuracy = should the device take extra time or power to return a really accurate result, or should it give you the quick (but less accurate) answer?
+      // timeout: 0, // timeout = how long does the device have, in milliseconds to return a result?
+      // maximumAge: 0 // maximumAge = maximum age for a possible previously-cached position. 0 = must return the current position, not a prior cached position
+    };
+    navigator.geolocation.getCurrentPosition(SunMoon.onSuccess, SunMoon.onError, options);
     // navigator.geolocation.watchPosition(SunMoon.onSuccess, SunMoon.onError, SunMoon.options);
   },
   onSuccess: (position) => {
@@ -666,6 +668,111 @@ SunMoon = {
     */
 
     return SunMoon.calculate(latitude, longitude, false, SunMoon.DEFAULT_ZENITH, date);
+  }
+};
+
+var Theme = Theme || {};
+
+Theme = {
+  button: null,
+  dataTheme: null,
+  isTouched: !1,
+  stateChanged: !1,
+  toggleStatus: null,
+  rafAutoChange: null,
+  init: () => {
+    Theme.button = document.getElementById('change-theme-btn');
+
+    if (Theme.button) {
+      Theme.button.addEventListener(Site.clickEvent, Theme.enableDarkTheme, !1);
+      Theme.button.click = Theme.enableDarkTheme;
+      Theme.button.touchstart = Theme.enableDarkTheme;
+    }
+
+    SunMoon.init();
+
+    if (typeof (String) !== 'undefined') {
+      let darkThemeEnabled = Site.body.classList.contains('dark-theme');
+      window.localStorage.setItem('dark-theme-enabled', JSON.stringify(darkThemeEnabled));
+
+      if (window.localStorage.getItem('dark-theme-enabled')) {
+        Theme.isTouched === !1 && Theme.stateChanged === !1 && Theme.updateDarkMode();
+        Site.historyState.isTouched === !0 && (Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme());
+        Site.historyState.stateChanged === !0 && (Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme());
+      }
+    }
+  },
+  updateDarkMode: () => {
+    Theme.stateChanged = !0;
+
+    Theme.rafAutoChange && cancelAnimationFrame(Theme.rafAutoChange);
+    Theme.rafAutoChange = requestAnimationFrame(Theme.updateDarkMode);
+
+    const timeout = setTimeout(() => {
+      Theme.calculateDaylight();
+      clearTimeout(timeout);
+    }, 500);
+  },
+  darkTheme: () => {
+    window.localStorage.setItem('dark-theme-enabled', JSON.stringify(!0));
+    Site.body.classList.add('dark-theme');
+    Theme.toggleStatus = 'night';
+    Theme.button.setAttribute('data-theme', 'night');
+    Theme.button.classList.add('dark-mode');
+    Theme.dataTheme = Theme.button.getAttribute('data-theme');
+  },
+  lightTheme: () => {
+    window.localStorage.setItem('dark-theme-enabled', JSON.stringify(!1));
+    Site.body.classList.remove('dark-theme');
+    Theme.toggleStatus = 'day';
+    Theme.button.setAttribute('data-theme', 'day');
+    Theme.button.classList.remove('dark-mode');
+    Theme.dataTheme = Theme.button.getAttribute('data-theme');
+  },
+  calculateDaylight: () => {
+    const startTime = SunMoon.sunrise.toLocaleTimeString('en-GB');
+    const endTime = SunMoon.sunset.toLocaleTimeString('en-GB');
+
+    startTime.replace('AM', '').replace('PM', '');
+    endTime.replace('AM', '').replace('PM', '');
+
+    const currentDate = new Date();
+
+    startDate = new Date(currentDate.getTime());
+    startDate.setHours(startTime.split(':')[0]);
+    startDate.setMinutes(startTime.split(':')[1]);
+    startDate.setSeconds(startTime.split(':')[2]);
+
+    const endDate = new Date(currentDate.getTime());
+
+    endDate.setHours(endTime.split(':')[0]);
+    endDate.setMinutes(endTime.split(':')[1]);
+    endDate.setSeconds(endTime.split(':')[2]);
+
+    const isDaylight = startDate < currentDate && endDate > currentDate; // let isNight = endDate > currentDate && startDate > currentDate;
+    isDaylight ? Theme.lightTheme() : Theme.darkTheme(); // isNight ? Theme.darkTheme() : Theme.lightTheme();
+
+    if (Theme.rafAutoChange !== null) cancelAnimationFrame(Theme.rafAutoChange);
+  },
+  enableDarkTheme: () => {
+    Theme.isTouched = !0;
+    Theme.dataTheme === 'day' ? Theme.darkTheme() : Theme.lightTheme();
+    Site.historyState = {
+      stateChanged: Theme.stateChanged,
+      dataTheme: Theme.dataTheme,
+      isTouched: Theme.isTouched,
+      toggleStatus: Theme.toggleStatus
+    };
+  },
+  lightStyle: () => {
+    Theme.button && Theme.button.classList.add('light');
+    Menu.lightFooter();
+    Site.hideSideNav();
+  },
+  darkStyle: () => {
+    Theme.button && Theme.button.classList.remove('light');
+    Menu.darkFooter();
+    Site.showSideNav();
   }
 };
 
@@ -952,8 +1059,6 @@ Site = {
         TweenMax.to('.background_intro', 1.4, { scale: 1, ease: Power4.easeOut });
         Site.animateRandomElements('.random');
         TweenMax.staggerFromTo(Site.random, 1, { x: '-24px' }, { x: '0px', opacity: 1, delay: 0.6, ease: Power2.easeOut }, 0.1);
-
-        // !UserAgent.iOS && Site.createVirtualScroll();
 
         Drag.cursorMain.classList.add('vertical_scroll');
         Drag.cursorJunior.classList.add('vertical_scroll');
@@ -1300,22 +1405,6 @@ Site = {
     document.ontouchmove = Site.touchMoveHandler;
     // document.ontouchend = Site.touchEndHandler;
   },
-  createVirtualScroll: () => {
-    if (Site.scrolling !== null) Site.scrolling.destroy();
-
-    Site.scrolling = null;
-
-    Site.scrolling = new Smooth({
-      preload: !0,
-      native: !1,
-      direction: 'vertical',
-      section: Site.vsSection,
-      divs: Site.vsDivs,
-      vs: { mouseMultiplier: 0.4 }
-    });
-
-    Site.scrolling.init();
-  },
   /*--------------------------------------------------------------------------*/
   /*                              Click Handler                               */
   /*--------------------------------------------------------------------------*/
@@ -1542,6 +1631,7 @@ Site = {
       : Menu.close();
 
   },
+
   scrollBackUp: (event) => {
     if (!UserAgent.iOS) {
       if (Math.round(Site.scrolling.vars.bounding / 7)) {
@@ -1571,6 +1661,23 @@ Site = {
     }
 
     Site.showSideNav();
+  },
+
+  createVirtualScroll: () => {
+    if (Site.scrolling !== null) Site.scrolling.destroy();
+
+    Site.scrolling = null;
+
+    Site.scrolling = new Smooth({
+      preload: !0,
+      native: !1,
+      direction: 'vertical',
+      section: Site.vsSection,
+      divs: Site.vsDivs,
+      vs: { mouseMultiplier: 0.4 }
+    });
+
+    Site.scrolling.init();
   },
   /*--------------------------------------------------------------------------*/
   /*                          Anchor Mouse Events                             */
@@ -1612,35 +1719,44 @@ Site = {
         Drag.cursorJunior.classList.add('j_Drag');
         Drag.cursorMain.classList.remove('cursor_main-small');
         Drag.cursorMain.classList.remove('menu_opened');
-
-        if (Menu.button.isOpen) {
-          Drag.cursorMain.classList.remove('mainDrag');
-          Drag.cursorJunior.classList.remove('j_Drag');
-          Drag.cursorMain.classList.add('menu_opened');
-        }
+        Site.dragCursorStyle();
       }
-      else {
-        if (Site.scrolling !== null) {
-          if (Site.scrolling.vars.target <= Math.round(Site.scrolling.vars.bounding - 500)) {
-            Drag.cursorMain.classList.add('vertical_scroll');
-            Drag.cursorJunior.classList.add('vertical_scroll');
-            Drag.cursorMain.classList.remove('cursor_main-small');
-            Drag.cursorMain.classList.remove('menu_opened');
-          }
+      else if (Site.body.classList.contains('single')) {
+        if (Site.scrolling.vars.target <= Math.round(Site.scrolling.vars.bounding - 500)) {
+          Drag.cursorMain.classList.add('vertical_scroll');
+          Drag.cursorJunior.classList.add('vertical_scroll');
+          Drag.cursorMain.classList.remove('cursor_main-small');
+          Drag.cursorMain.classList.remove('menu_opened');
         }
-        if (Menu.button.isOpen) {
-          Drag.cursorMain.classList.remove('vertical_scroll');
-          Drag.cursorJunior.classList.remove('vertical_scroll');
-          Drag.cursorMain.classList.add('menu_opened');
-        }
-
-        Drag.cursorMain.classList.remove('cursor_main-small');
+        Site.scrollCursorStyle();
+      }
+      else if (Site.body.classList.contains('about')) {
+        Drag.cursorMain.classList.add('vertical_scroll');
+        Drag.cursorJunior.classList.add('vertical_scroll');
+        Site.scrollCursorStyle();
       }
     }
     else Site.mouseOverLinks.forEach((obj) => {
       document.removeEventListener('onmousemove', Site.mouseOverHandler, !1);
       document = Site.mouseOverHandler;
     });
+  },
+
+  dragCursorStyle: () => {
+    if (Menu.button.isOpen) {
+      Drag.cursorMain.classList.remove('mainDrag');
+      Drag.cursorJunior.classList.remove('j_Drag');
+      Drag.cursorMain.classList.add('menu_opened');
+    }
+  },
+  scrollCursorStyle: () => {
+    if (Menu.button.isOpen) {
+      Drag.cursorMain.classList.remove('vertical_scroll');
+      Drag.cursorJunior.classList.remove('vertical_scroll');
+      Drag.cursorMain.classList.add('menu_opened');
+    }
+
+    Drag.cursorMain.classList.remove('cursor_main-small');
   },
 
   touchStartHandler: (event) => {
@@ -1694,6 +1810,7 @@ Site = {
 
     let delta = (event.deltaY || -event.wheelDelta || event.detail) || 1;
     let checkLethargy = Site.lethargy.check(event) !== false && Site.blockedAction === !1;
+
     if (checkLethargy && Site.body.classList.contains('home') && !Menu.button.isOpen) {
       delta > 0
         ? Site.nextSlide()
@@ -1718,11 +1835,11 @@ Site = {
         Site.contact.style.top = (window.innerHeight / 2) - 50 + 'px'
       );
 
-    // RESIZE PixiJS
-    Site.renderer && (
-      Site.renderer.view.style.width = window.innerWidth + 'px',
-      Site.renderer.view.style.height = window.innerHeight + 'px'
-    );
+    // // RESIZE PixiJS
+    // Site.renderer && (
+    //   Site.renderer.view.style.width = window.innerWidth + 'px',
+    //   Site.renderer.view.style.height = window.innerHeight + 'px'
+    // );
   },
 
   onHover: (event) => {
@@ -1875,18 +1992,15 @@ Site = {
   },
 
   footerInView: () => {
-    // console.log('footerInView');
     (Site.scrolling.vars.target >= Math.round(Site.scrolling.vars.bounding - 34))
       ? (
         Drag.cursorMain.classList.remove('vertical_scroll', 'black'),
         Drag.cursorJunior.classList.remove('vertical_scroll', 'black'),
         Theme.lightStyle()
-        // console.log('[lightStyle]')
       ) : (
         Drag.cursorMain.classList.add('vertical_scroll', 'black'),
         Drag.cursorJunior.classList.add('vertical_scroll', 'black'),
         Theme.darkStyle()
-        // console.log('[darkStyle]')
       );
   },
 
@@ -2417,111 +2531,6 @@ Site = {
     }
 
     scroll();
-  }
-};
-
-var Theme = Theme || {};
-
-Theme = {
-  button: null,
-  dataTheme: null,
-  isTouched: !1,
-  stateChanged: !1,
-  toggleStatus: null,
-  rafAutoChange: null,
-  init: () => {
-    Theme.button = document.getElementById('change-theme-btn');
-
-    if (Theme.button) {
-      Theme.button.addEventListener(Site.clickEvent, Theme.enableDarkTheme, !1);
-      Theme.button.click = Theme.enableDarkTheme;
-      Theme.button.touchstart = Theme.enableDarkTheme;
-    }
-
-    SunMoon.init();
-
-    if (typeof (String) !== 'undefined') {
-      let darkThemeEnabled = Site.body.classList.contains('dark-theme');
-      window.localStorage.setItem('dark-theme-enabled', JSON.stringify(darkThemeEnabled));
-
-      if (window.localStorage.getItem('dark-theme-enabled')) {
-        Theme.isTouched === !1 && Theme.stateChanged === !1 && Theme.updateDarkMode();
-        Site.historyState.isTouched === !0 && (Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme());
-        Site.historyState.stateChanged === !0 && (Site.historyState.dataTheme === 'day' ? Theme.lightTheme() : Theme.darkTheme());
-      }
-    }
-  },
-  updateDarkMode: () => {
-    Theme.stateChanged = !0;
-
-    Theme.rafAutoChange && cancelAnimationFrame(Theme.rafAutoChange);
-    Theme.rafAutoChange = requestAnimationFrame(Theme.updateDarkMode);
-
-    const timeout = setTimeout(() => {
-      Theme.calculateDaylight();
-      clearTimeout(timeout);
-    }, 500);
-  },
-  darkTheme: () => {
-    window.localStorage.setItem('dark-theme-enabled', JSON.stringify(!0));
-    Site.body.classList.add('dark-theme');
-    Theme.toggleStatus = 'night';
-    Theme.button.setAttribute('data-theme', 'night');
-    Theme.button.classList.add('dark-mode');
-    Theme.dataTheme = Theme.button.getAttribute('data-theme');
-  },
-  lightTheme: () => {
-    window.localStorage.setItem('dark-theme-enabled', JSON.stringify(!1));
-    Site.body.classList.remove('dark-theme');
-    Theme.toggleStatus = 'day';
-    Theme.button.setAttribute('data-theme', 'day');
-    Theme.button.classList.remove('dark-mode');
-    Theme.dataTheme = Theme.button.getAttribute('data-theme');
-  },
-  calculateDaylight: () => {
-    const startTime = SunMoon.sunrise.toLocaleTimeString('en-GB');
-    const endTime = SunMoon.sunset.toLocaleTimeString('en-GB');
-
-    startTime.replace('AM', '').replace('PM', '');
-    endTime.replace('AM', '').replace('PM', '');
-
-    const currentDate = new Date();
-
-    startDate = new Date(currentDate.getTime());
-    startDate.setHours(startTime.split(':')[0]);
-    startDate.setMinutes(startTime.split(':')[1]);
-    startDate.setSeconds(startTime.split(':')[2]);
-
-    const endDate = new Date(currentDate.getTime());
-
-    endDate.setHours(endTime.split(':')[0]);
-    endDate.setMinutes(endTime.split(':')[1]);
-    endDate.setSeconds(endTime.split(':')[2]);
-
-    const isDaylight = startDate < currentDate && endDate > currentDate; // let isNight = endDate > currentDate && startDate > currentDate;
-    isDaylight ? Theme.lightTheme() : Theme.darkTheme(); // isNight ? Theme.darkTheme() : Theme.lightTheme();
-
-    if (Theme.rafAutoChange !== null) cancelAnimationFrame(Theme.rafAutoChange);
-  },
-  enableDarkTheme: () => {
-    Theme.isTouched = !0;
-    Theme.dataTheme === 'day' ? Theme.darkTheme() : Theme.lightTheme();
-    Site.historyState = {
-      stateChanged: Theme.stateChanged,
-      dataTheme: Theme.dataTheme,
-      isTouched: Theme.isTouched,
-      toggleStatus: Theme.toggleStatus
-    };
-  },
-  lightStyle: () => {
-    Theme.button && Theme.button.classList.add('light');
-    Menu.lightFooter();
-    Site.hideSideNav();
-  },
-  darkStyle: () => {
-    Theme.button && Theme.button.classList.remove('light');
-    Menu.darkFooter();
-    Site.showSideNav();
   }
 };
 
