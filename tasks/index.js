@@ -18,7 +18,6 @@ const buildIndex = () => {
   const css = require('./css')();
 
   return validateIndex()
-    // write first to get relative path for inject
     .pipe(gulp.dest(config.destDir))
     .pipe(inject(js, { relative: true, addRootSlash: true }))
     .pipe(inject(css, { relative: true, addRootSlash: true }))

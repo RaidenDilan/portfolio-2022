@@ -20,18 +20,14 @@ const cleanFonts = () => {
 };
 
 const copyFonts = () => {
-  return eventStream.merge(
-    localFonts(),
-    vendorFonts()
-  )
+  return eventStream
+    .merge(localFonts(), vendorFonts())
     .pipe(gulp.dest(config.dest.fonts));
 };
 
 const buildFonts = () => {
-  return eventStream.merge(
-    cleanFonts(),
-    copyFonts()
-  )
+  return eventStream
+    .merge(cleanFonts(), copyFonts())
     .pipe(browserSync.stream());
 };
 

@@ -24,10 +24,8 @@ const copyImages = () => {
 };
 
 const buildImages = () => {
-  return eventStream.merge(
-    cleanImages(),
-    copyImages()
-  )
+  return eventStream
+    .merge(cleanImages(), copyImages())
     .pipe(browserSync.stream());
 };
 

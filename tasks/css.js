@@ -16,7 +16,7 @@ const config = require('../package').gulp;
 const fetchVendorCss = () => {
   return gulp
     .src(bowerFiles(config.selectors.css))
-    .pipe(stripCssComments()) // Removing the sourcemaps
+    .pipe(stripCssComments())
     .pipe(concat(config.vendor.css));
 };
 
@@ -24,13 +24,7 @@ const fetchLocalCss = () => {
   return gulp
     .src(`${config.src.scss}${config.main.scss}`)
     .pipe(sass({ style: 'expanded' }))
-    // .pipe(autoprefixer('last 2 version', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'))
-    .pipe(autoprefixer({
-      browsers: config.browserslist,
-      // browsers: ['last 2 version', 'safari >= 10', 'ie 8', 'ie 9', 'opera 12.1', 'ios 10', 'android 4'],
-      cascade: true, /* should Autoprefixer use Visual Cascade, if CSS is uncompressed. Default: true */
-      flexbox: true /* should Autoprefixer add prefixes for flexbox properties Default: true */
-    }))
+    .pipe(autoprefixer({ browsers: config.browserslist }))
     .pipe(concat(config.output.css));
 };
 

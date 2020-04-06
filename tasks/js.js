@@ -8,7 +8,6 @@ const order = require('gulp-order');
 const babel = require('gulp-babel');
 const eventStream = require('event-stream');
 const sourcemaps = require('gulp-sourcemaps');
-// const uglify = require('gulp-uglify');
 const uglify = require('gulp-uglify-es').default;
 const rename = require('gulp-rename');
 const browserSync = require('browser-sync');
@@ -22,20 +21,10 @@ const fetchVendorJs = () => {
 };
 
 const validateLocalJs = () => {
-  // return gulp.src([`${config.src.js}${config.selectors.js}`, '!**/*/pixi.js'])
   return gulp
     .src(`${config.src.js}${config.selectors.js}`)
     .pipe(eslint())
     .pipe(eslint.format());
-  // .pipe(eslint.result((result) => console.log(`ESLint result: ${result.filePath}`)))
-  // .pipe(eslint.results((results) => {
-  //   console.log(`Total Results: ${results.length}`);
-  //   console.log(`Total Warnings: ${results.warningCount}`);
-  //   console.log(`Total Errors: ${results.errorCount}`);
-  // }));
-  // .pipe(eslint.failAfterError());
-  // .pipe(jshint())
-  // .pipe(jshint.reporter('jshint-stylish', { beep: true }));
 };
 
 const fetchLocalJs = () => {

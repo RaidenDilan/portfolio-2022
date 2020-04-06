@@ -19,8 +19,8 @@ const serve = () => {
     ignore: [config.destDir, config.srcDir],
     env: { NODE_ENV: 'development' }
   })
-    .on('start', () => (!started ? browserSync.reload() : started = false))
-    .on('restart', () => console.log('Nodemon Restarted!'));
+    .on('start', () => (!started ? browserSync.reload() : started = false));
+  // .on('restart', () => console.log('Nodemon Restarted!'));
 };
 
 gulp.task('serve', serve);
