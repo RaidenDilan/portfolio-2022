@@ -137,12 +137,12 @@ MenuPixi = {
       Site.cursorPercentage = Math.round(Site.currentMousePos.y * 100 / window.innerHeight * 100) / 100;
       Site.theDeltaMenu = Site.currentMousePos.y;
       let expression = -1 * (Site.menuHeight - window.innerHeight) / window.innerHeight * Site.currentMousePos.y;
-      TweenMax.to('#nav__menu__links', 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
+      TweenMax.to(Menu.navMenuLinks, 1.4, { y: expression + 'px', scaleY: Site.intensity, ease: Power2.easeOut });
     }
     else {
       Site.cursorPercentage = window.pageYOffset * 100 / (Site.menuHeight - window.innerHeight);
       Site.theDeltaMenu = window.pageYOffset;
-      TweenMax.to('#nav__menu__links', 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
+      TweenMax.to(Menu.navMenuLinks, 1.4, { scaleY: Site.intensity, ease: Power2.easeOut });
     }
   },
   updatePixiDisplacement: () => {
@@ -171,6 +171,7 @@ Menu = {
     Menu.social = document.getElementById('social');
     Menu.navMenu = document.getElementById('nav__menu');
     Menu.navHeader = document.getElementById('nav__header');
+    Menu.navMenuLinks = document.getElementById('nav__menu__links');
 
     Menu.button.isArrow = !1;
     Menu.button.isOpen = !1;
@@ -191,7 +192,7 @@ Menu = {
 
     // TweenMax.to('.feature1', 0.2, { scaleY: 0, delay: 0.2, ease: Power2.easeIn });
 
-    TweenMax.to('#main__content', 0.2, {
+    TweenMax.to(Site.main, 0.2, {
       opacity: 0,
       display: 'none',
       ease: Power2.easeIn,
@@ -205,7 +206,7 @@ Menu = {
       }
     });
 
-    TweenMax.to('#nav__menu', 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
+    TweenMax.to(Menu.navMenu, 0.2, { opacity: 1, delay: 0.2, ease: Power2.easeOut });
 
     Site.menuHeight = document.getElementById('nav__menu__links').clientHeight;
     Site.margins = window.innerHeight / 2 - 70;
@@ -245,7 +246,7 @@ Menu = {
     Site.scrolling !== null && (Site.scrolling.on());
     Site.body.classList.contains('home') && (document.querySelectorAll('.front.point3, .front .point3').forEach((obj) => obj.classList.remove('black')));
 
-    TweenMax.to('#nav__menu', 0.2, {
+    TweenMax.to(Menu.navMenu, 0.2, {
       opacity: 0,
       ease: Power2.easeIn,
       onComplete: () => {
@@ -254,7 +255,7 @@ Menu = {
       }
     });
 
-    TweenMax.to('#main__content', 0.2, { opacity: 1, display: 'block', delay: 0.2, ease: Power2.easeOut });
+    TweenMax.to(Site.main, 0.2, { opacity: 1, display: 'block', delay: 0.2, ease: Power2.easeOut });
     // TweenMax.to('.feature1', 0.2, { scaleY: 1, delay: 0.2, ease: Power2.easeIn });
 
     Site.stageMenu.removeChildren();
@@ -344,12 +345,10 @@ Menu = {
     // Site.contact.classList.remove('light');
   },
   hideNavMenu: () => {
-    TweenMax.to('#nav__header', { opacity: 0 });
-    // Menu.navHeader.style.display = 'none';
+    TweenMax.set(Menu.navHeader, { opacity: 0 });
   },
   showNavMenu: () => {
-    TweenMax.to('#nav__header', { opacity: 1 });
-    // Menu.navHeader.style.display = 'block';
+    TweenMax.set(Menu.navHeader, { opacity: 1 });
   }
 };
 
@@ -897,6 +896,7 @@ Site = {
       this.main = document.getElementById('main__content');
       this.pixiMenuCover = document.getElementById('pixi_menu');
       this.themeBtn = document.getElementById('change-theme-btn');
+      this.whiteCircle = document.getElementById('white_circle');
       this.toNextProject = document.getElementById('to_next_project');
       this.toNextProject && (this.toNextProjectLetter = this.toNextProject.querySelectorAll('span'));
 
@@ -917,8 +917,8 @@ Site = {
       Menu.init();
       LazyLoad.init();
 
-      TweenMax.set('#main__content, #nav__menu__links, #pixi_menu', { opacity: 1 });
-      TweenMax.set('#main__content', { display: 'block', clearProps: 'y' });
+      TweenMax.set([Site.main, Menu.navMenuLinks, Site.pixiMenuCover], { opacity: 1 });
+      TweenMax.set(Site.main, { display: 'block', clearProps: 'y' });
       // TweenMax.to('.feature1', 0.2, { scaleY: 1, ease: Power2.easeIn });
 
       /** @NOTE -> Resets header menu elements back to their defaults states/classes. */
@@ -1206,7 +1206,7 @@ Site = {
           onComplete: () => {
             Site.stageMenu.removeChildren();
             Site.exitComplete();
-            TweenMax.set('#main__content', { clearProps: 'backgroundColor' });
+            TweenMax.set(Site.main, { clearProps: 'backgroundColor' });
           }
         });
       }
@@ -1217,7 +1217,7 @@ Site = {
         Site.animateRandomElements('.random');
         TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1);
 
-        TweenMax.to('#main__content', 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
+        TweenMax.to(Site.main, 1, { opacity: 0, delay: 0.4, ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
         Site.hovers = document.querySelectorAll('.main__pagination');
 
         Site.hovers.forEach((obj) => {
@@ -1240,8 +1240,10 @@ Site = {
 
           if (Site.scrolling !== null) {
             diff = Site.main.clientHeight - (Site.scrolling.vars.current + window.innerHeight);
-            TweenMax.to('#main__content', 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+            TweenMax.to(Site.main, 1.2, { y: -(diff + window.innerHeight), ease: Power2.easeInOut });
+
             Menu.hideNavMenu();
+
             Site.innerProjectName.classList.add('changing');
             document.querySelector('.bottom_link').classList.add('changing');
 
@@ -1276,7 +1278,7 @@ Site = {
                   opacity: 0,
                   ease: Power2.easeInOut,
                   onComplete: () => {
-                    // TweenMax.set('#main__content', { clearProps: 'y' });
+                    // TweenMax.set(Site.main, { clearProps: 'y' });
                     Menu.showNavMenu();
                     Site.exitComplete();
                     /*** @param - window.scrollTo({Site.scrollMenuOpen}), 0) **/
@@ -1287,9 +1289,9 @@ Site = {
             });
           }
         }
-        else TweenMax.to('#main__content', 0.4, { opacity: 0, ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
+        else TweenMax.to(Site.main, 0.4, { opacity: 0, ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
       }
-      else if (Site.body.classList.contains('about')) TweenMax.to('#main__content', 0.4, { opacity: 0, clearProps: 'backgroundColor', ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
+      else if (Site.body.classList.contains('about')) TweenMax.to(Site.main, 0.4, { opacity: 0, clearProps: 'backgroundColor', ease: Power2.easeInOut, onComplete: () => Site.exitComplete() });
       else Site.exitComplete(); /*** @NOTE - Most significant: Site.exitOk must return true **/
     };
     Site.onUpdatePage = function onUpdatePage(html) {
@@ -1482,7 +1484,7 @@ Site = {
     // history changed because of a page load
   },
   onHashChangeHandler: (event) => {
-    document.getElementById('main__content').innerHTML = window.location.href + ' (' + window.location.pathname + ')';
+    Site.main.innerHTML = window.location.href + ' (' + window.location.pathname + ')';
   },
   onUnloadHandler: (event) => {
     event = event || window.event;
@@ -1509,8 +1511,8 @@ Site = {
     switch(true) {
       case expr.contains('main__pagination') : return Site.paginationClickHandler(event.target);
       case expr.contains('arrow-transition-in') : return Site.scrollBackUp(event.target);
-      case expr.contains('to_next') : return Site.nextSlide();
-      case expr.contains('to_prev') : return Site.prevSlide();
+      case expr.contains('to_next') && Site.blockedAction === !1 : return Site.nextSlide();
+      case expr.contains('to_prev') && Site.blockedAction === !1 : return Site.prevSlide();
       case expr.contains('projects') : return Site.menuClickedHandler(event);
       default: return false;
     }
@@ -1612,19 +1614,9 @@ Site = {
   menuClickedHandler: (event) => {
     event = event || window.event;
     event.preventDefault() || false;
-
-    if (Menu.button.isArrow) {
-      Site.scrolling !== null
-        ? Site.scrolling.scrollTo(0)
-        : Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad');
-    }
-
+    if (Menu.button.isArrow) Site.scrolling !== null ? Site.scrolling.scrollTo(0) : Site.scrollToTop(Site.vsSection, 1000, 'easeOutQuad');
     Menu.button.classList.toggle('opened');
-
-    !Menu.button.isOpen
-      ? Menu.open()
-      : Menu.close();
-
+    !Menu.button.isOpen ? Menu.open() : Menu.close();
   },
 
   scrollBackUp: (event) => {
@@ -2196,7 +2188,7 @@ Site = {
       }
     });
 
-    TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.lindex) / Site.totalSlides)), ease: Power4.easeInOut });
+    TweenMax.to(Site.whiteCircle, 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.lindex) / Site.totalSlides)), ease: Power4.easeInOut });
     Site.animateRandomElements('.random');
     TweenMax.staggerTo(Site.random, 0.4, { x: '24px', opacity: 0, ease: Power2.easeIn }, 0.1, Site.clickablePagination);
   },
@@ -2220,15 +2212,15 @@ Site = {
   updateCircleHandler: (direction) => {
     if (direction === 'next') {
       Site.multiplier = 1;
-      TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.currentSlide) / Site.totalSlides)), ease: Power4.easeInOut });
+      TweenMax.to(Site.whiteCircle, 0.9, { strokeDashoffset: 1900 * (1 - 1 / Site.totalSlides - (Number(Site.currentSlide) / Site.totalSlides)), ease: Power4.easeInOut });
     }
     else {
       Site.multiplier = -1;
       Site.currentSlide === 1
-        ? TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 0, ease: Power4.easeInOut })
+        ? TweenMax.to(Site.whiteCircle, 0.9, { strokeDashoffset: 0, ease: Power4.easeInOut })
         : Site.currentSlide === 0
-          ? TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 / Site.totalSlides, ease: Power4.easeInOut })
-          : TweenMax.to('#white_circle', 0.9, { strokeDashoffset: 1900 - (Site.currentSlide - 1) * 1900 / Site.totalSlides, ease: Power4.easeInOut });
+          ? TweenMax.to(Site.whiteCircle, 0.9, { strokeDashoffset: 1900 / Site.totalSlides, ease: Power4.easeInOut })
+          : TweenMax.to(Site.whiteCircle, 0.9, { strokeDashoffset: 1900 - (Site.currentSlide - 1) * 1900 / Site.totalSlides, ease: Power4.easeInOut });
     }
 
     Site.animateRandomElements('.random');
