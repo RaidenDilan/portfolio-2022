@@ -4,9 +4,9 @@
   "description": "Raiden Dilan Portfolio",
   "main": "index.js",
   "engines": {
-    "node": "8.11.0",
-    "npm": "5.6.0",
-    "yarn": ">= 1.0.0"
+    "node": "8.11.x",
+    "npm": "5.6.x",
+    "yarn": "1.22.x"
   },
   "scripts": {
     "postinstall": "bower install && gulp deploy",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/raidendilan/angular-gulp-setup.git"
+    "url": "git://github.com/raidendilan/portfolio.git"
   },
   "homepage": "",
   "gulp": {
