@@ -1,6 +1,6 @@
 {
   "name": "raiden-dilan",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Raiden Dilan Portfolio",
   "main": "index.js",
   "engines": {
