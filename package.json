@@ -10,6 +10,11 @@
   "scripts": {
     "postinstall": "bower install && gulp deploy",
     "start": "node index.js",
+    "dev": "gulp",
+    "deploy-dev": "NODE_ENV=development gulp deploy",
+    "deploy-prod": "NODE_ENV=production gulp deploy",
+    "gulp-dev": "NODE_ENV=development gulp",
+    "gulp-prod": "NODE_ENV=production gulp",
     "audit": "better-npm-audit audit"
   },
   "author": "Raiden Dilan <raiden18@me.com> (https://github.com/raidendilan)",
@@ -105,6 +110,7 @@
     "gulp-inject": "^5.0.5",
     "gulp-jshint": "^2.1.0",
     "gulp-minify-css": "^1.2.4",
+    "gulp-mode": "^1.1.0",
     "gulp-nodemon": "^2.5.0",
     "gulp-notify": "4.0.0",
     "gulp-order": "^1.2.0",
