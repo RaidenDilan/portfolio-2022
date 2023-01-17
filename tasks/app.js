@@ -1,16 +1,22 @@
 const gulp = require('gulp');
 const eventStream = require('event-stream');
+const clean = require('./clean');
 const buildIndex = require('./index');
-const buildImages = require('./images');
 const buildFonts = require('./fonts');
+const buildImages = require('./images');
+const buildPartials = require('./partials');
+const { isDevEnv } = require('../config/environment');
 
-const buildApp = function() {
-  return eventStream.merge(
+const buildApp = (done) => {
+  global.production = !isDevEnv();
+  eventStream.merge(
     buildIndex(),
+    buildPartials(),
     buildImages(),
     buildFonts()
   );
+  done();
 };
 
-gulp.task('build-app', ['clean'], buildApp);
+gulp.task('build-app', gulp.series(clean, buildApp));
 module.exports = buildApp;

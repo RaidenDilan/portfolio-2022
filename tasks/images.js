@@ -8,17 +8,17 @@ const config = require('../package').gulp;
 
 const cleanImages = () => {
   return gulp
-    .src(config.dest.images, { read: false })
+    .src(config.dest.images, { read: false, allowEmpty: true })
     .pipe(clean());
 };
 
 const copyImages = () => {
   return gulp
     .src(`${config.src.images}${config.selectors.images}`)
-    .pipe(gulpIf(global.production, imagemin({
-      interlaced: true,
+    .pipe(gulpIf(global.prodocution, imagemin({
+      optimizationLevel: 3,
       progressive: true,
-      optimizationLevel: 5
+      interlaced: true
     })))
     .pipe(gulp.dest(config.dest.images));
 };

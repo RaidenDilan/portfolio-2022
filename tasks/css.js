@@ -1,8 +1,8 @@
 const gulp = require('gulp');
-const sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('sass'));
 const autoprefixer = require('gulp-autoprefixer');
 const stripCssComments = require('gulp-strip-css-comments');
-const minifycss = require('gulp-clean-css');
+const cleanCSS = require('gulp-clean-css');
 const bowerFiles = require('main-bower-files');
 const concat = require('gulp-concat');
 const eventStream = require('event-stream');
@@ -15,7 +15,7 @@ const config = require('../package').gulp;
 
 const fetchVendorCss = () => {
   return gulp
-    .src(bowerFiles(config.selectors.css))
+    .src(bowerFiles())
     .pipe(stripCssComments())
     .pipe(concat(config.vendor.css));
 };
@@ -23,21 +23,23 @@ const fetchVendorCss = () => {
 const fetchLocalCss = () => {
   return gulp
     .src(`${config.src.scss}${config.main.scss}`)
-    .pipe(sass({ style: 'expanded' }))
+    .pipe(sass({ outputStyle: 'expanded' }))
     .pipe(autoprefixer({ browsers: config.browserslist }))
+    .pipe(stripCssComments())
     .pipe(concat(config.output.css));
 };
 
 const buildCss = () => {
-  const vendorCss = fetchVendorCss();
-  const localCss = fetchLocalCss();
+  // const vendorCss = fetchVendorCss();
+  // const localCss = fetchLocalCss();
+  // return eventStream
+  //   .merge(vendorCss, localCss)...
 
-  return eventStream
-    .merge(vendorCss, localCss)
+  return fetchLocalCss()
     .pipe(order([config.vendor.css, config.output.css]))
-    .pipe(concat(config.output.css))
+    .pipe(gulpIf(global.production, concat(config.output.css)))
     .pipe(sourcemaps.init())
-    .pipe(gulpIf(global.production, minifycss()))
+    .pipe(gulpIf(global.production, cleanCSS()))
     .pipe(gulpIf(global.production, rename({ suffix: '.min' })))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(config.dest.css))

@@ -3,18 +3,9 @@
   "version": "1.0.0",
   "description": "Raiden Dilan Portfolio",
   "main": "index.js",
-  "authors": [
-    "Raiden Dilan <raiden18@me.com>"
-  ],
+  "authors": ["Raiden Dilan <raiden18@me.com>"],
   "license": "ISC",
-  "homepage": "",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "ignore": ["**/.*", "node_modules", "bower_components", "test", "tests"],
   "dependencies": {
     "gsap": "^2.1.3",
     "PreloadJS": "1.0.1",
@@ -23,24 +14,16 @@
   },
   "overrides": {
     "gsap": {
-      "main": [
-        "src/uncompressed/TweenMax.js"
-      ]
+      "main": ["src/uncompressed/TweenMax.js"]
     },
     "smooth-scrolling": {
-      "main": [
-        "smooth-scrolling.js"
-      ]
+      "main": ["smooth-scrolling.js"]
     },
     "PreloadJS": {
-      "main": [
-        "lib/preloadjs.js"
-      ]
+      "main": ["lib/preloadjs.js"]
     },
     "lethargy": {
-      "main": [
-        "lethargy.js"
-      ]
+      "main": ["lethargy.js"]
     }
   }
 }

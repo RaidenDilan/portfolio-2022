@@ -1,12 +1,12 @@
 const gulp = require('gulp');
-const clean = require('gulp-clean');
+const clear = require('gulp-clean');
 const config = require('../package').gulp;
 
-const cleanDest = () => {
+const clean = () => {
   return gulp
-    .src(config.destDir, { read: false }) // .src(config.destDir, { 'read': false })
-    .pipe(clean());
+    .src(config.destDir, { read: false, allowEmpty: true })
+    .pipe(clear());
 };
 
-gulp.task('clean', cleanDest);
-module.exports = cleanDest;
+gulp.task('clean', clean);
+module.exports = clean;
