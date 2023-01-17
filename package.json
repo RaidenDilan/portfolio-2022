@@ -4,8 +4,8 @@
   "description": "Raiden Dilan Portfolio",
   "main": "index.js",
   "engines": {
-    "node": "8.11.x",
-    "npm": "5.6.x"
+    "node": "16",
+    "npm": "9"
   },
   "scripts": {
     "postinstall": "bower install && gulp deploy",
