@@ -10,12 +10,12 @@ const localFonts = () => {
 };
 
 const vendorFonts = () => {
-  return gulp.src(bowerFiles(config.selectors.fonts));
+  return gulp.src(bowerFiles());
 };
 
 const cleanFonts = () => {
   return gulp
-    .src(config.dest.fonts, { read: false })
+    .src(config.dest.fonts, { read: false, allowEmpty: true })
     .pipe(clean());
 };
 

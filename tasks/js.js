@@ -2,35 +2,47 @@ const gulp = require('gulp');
 const gulpIf = require('gulp-if');
 const bowerFiles = require('main-bower-files');
 const concat = require('gulp-concat');
-const jshint = require('gulp-jshint');
 const eslint = require('gulp-eslint');
 const order = require('gulp-order');
 const babel = require('gulp-babel');
 const eventStream = require('event-stream');
 const sourcemaps = require('gulp-sourcemaps');
-const uglify = require('gulp-uglify-es').default;
+const stripJsComments = require('gulp-strip-comments');
+const uglify = require('gulp-uglify');
 const rename = require('gulp-rename');
 const browserSync = require('browser-sync');
-const config = require('../package').gulp;
 const replace = require('gulp-replace');
+const config = require('../package').gulp;
 
 const fetchVendorJs = () => {
   return gulp
-    .src(bowerFiles(config.selectors.js))
-    .pipe(concat(config.vendor.js));
+    .src(bowerFiles())
+    .pipe(stripJsComments())
+    .pipe(order([
+      config.vendor.gsap,
+      config.vendor.preloadjs,
+      config.vendor.lethargyjs,
+      config.vendor.smoothscrolling
+    ]))
+    .pipe(concat(config.output.vendor));
 };
 
 const validateLocalJs = () => {
   return gulp
     .src(`${config.src.js}${config.selectors.js}`)
     .pipe(eslint())
-    .pipe(eslint.format());
+    .pipe(eslint.format('stylish'));
 };
 
 const fetchLocalJs = () => {
   return validateLocalJs()
-    .pipe(order([config.main.js, config.selectors.js]))
-    .pipe(babel({ presets: ['env'], ignore: ['**/*/pixi.js'] }));
+    .pipe(order([
+      config.selectors.pixi,
+      config.selectors.js,
+      config.main.js
+    ]))
+    .pipe(babel({ presets: ['env'], ignore: [config.selectors.pixi] }))
+    .pipe(concat(config.output.js));
 };
 
 const buildJs = () => {
@@ -39,9 +51,9 @@ const buildJs = () => {
 
   return eventStream
     .merge(vendorJs, localJs)
-    .pipe(order([config.vendor.js, '**/*/pixi.js', config.selectors.js])) // .pipe(order(['**/*/pixi.js', config.vendor.js, config.selectors.js]))
+    .pipe(order([config.vendor.js, config.selectors.js]))
     .pipe(gulpIf(global.production, replace('http://localhost:4000', process.env.API_URL)))
-    .pipe(concat(config.output.js))
+    .pipe(gulpIf(global.production, concat(config.output.js)))
     .pipe(sourcemaps.init())
     .pipe(gulpIf(global.production, uglify({ output: { max_line_len: false } })))
     .pipe(gulpIf(global.production, rename({ suffix: '.min' })))
